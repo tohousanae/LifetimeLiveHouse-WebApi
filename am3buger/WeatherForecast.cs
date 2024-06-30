@@ -1,4 +1,4 @@
-namespace am3buger
+namespace am3burger
 {
     public class WeatherForecast
     {
