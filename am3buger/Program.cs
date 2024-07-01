@@ -16,15 +16,15 @@ builder.Services.AddMemoryCache();
 builder.Services.AddDistributedMemoryCache();
 
 // 加入分散式redis快取服務
-builder.Services.AddSingleton<IConnectionMultiplexer>(
-    ConnectionMultiplexer.Connect(
-        new ConfigurationOptions()
-        {
-            EndPoints = { { "redis-12602.c282.east-us-mz.azure.redns.redis-cloud.com", 12602 } },
-            Password = ""
-        }
-    )
-);
+//builder.Services.AddSingleton<IConnectionMultiplexer>(
+//    ConnectionMultiplexer.Connect(
+//        new ConfigurationOptions()
+//        {
+//            EndPoints = { { "redis-12602.c282.east-us-mz.azure.redns.redis-cloud.com", 12602 } },
+//            Password = ""
+//        }
+//    )
+//);
 
 // CORS跨來源共用設定
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
