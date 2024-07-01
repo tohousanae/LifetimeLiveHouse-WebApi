@@ -21,7 +21,7 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(
         new ConfigurationOptions()
         {
             EndPoints = { { "redis-12602.c282.east-us-mz.azure.redns.redis-cloud.com", 12602 } },
-            Password = "oDkyRkCYQPp9u2fwIAEro0ZjLt3IfMUd"
+            Password = ""
         }
     )
 );
