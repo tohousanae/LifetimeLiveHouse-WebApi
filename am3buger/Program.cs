@@ -1,6 +1,4 @@
-using StackExchange.Redis;
-
-var builder = WebApplication.CreateBuilder(args);
+ï»¿var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
@@ -9,24 +7,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// ¥[¤J¥»¾÷°O¾ĞÅé§Ö¨ú
-builder.Services.AddMemoryCache();
-
-// ¥[¤J¥»¾÷¤À´²¦¡°O¾ĞÅé§Ö¨úªA°È
+// åŠ å…¥æœ¬æ©Ÿåˆ†æ•£å¼è¨˜æ†¶é«”å¿«å–æœå‹™
 builder.Services.AddDistributedMemoryCache();
 
-// ¥[¤J¤À´²¦¡redis§Ö¨úªA°È
-//builder.Services.AddSingleton<IConnectionMultiplexer>(
-//    ConnectionMultiplexer.Connect(
-//        new ConfigurationOptions()
-//        {
-//            EndPoints = { { "redis-12602.c282.east-us-mz.azure.redns.redis-cloud.com", 12602 } },
-//            Password = ""
-//        }
-//    )
-//);
-
-// CORS¸ó¨Ó·½¦@¥Î³]©w
+// CORSè·¨ä¾†æºå…±ç”¨è¨­å®š
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddCors(options =>
 {
