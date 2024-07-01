@@ -1,4 +1,13 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using am3burger.Models;
+using Microsoft.EntityFrameworkCore;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// 注入am3burgerContext的類別
+var Am3burgerConnectionString = builder.Configuration.GetConnectionString("am3burger");
+builder.Services.AddDbContext<Am3burgerContext>(Options => {
+    Options.UseSqlServer(Am3burgerConnectionString);
+});
 
 // Add services to the container.
 
