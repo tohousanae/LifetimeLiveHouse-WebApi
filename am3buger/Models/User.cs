@@ -3,7 +3,7 @@
 namespace am3burger.Models
 {
     // 會員資料表
-    public class Users
+    public class User
     {
         [Key]
         [Display(Name = "會員Id")]

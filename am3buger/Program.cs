@@ -1,3 +1,5 @@
+using StackExchange.Redis;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -7,8 +9,22 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// 加入本機記憶體快取
+builder.Services.AddMemoryCache();
+
 // 加入本機分散式記憶體快取服務
 builder.Services.AddDistributedMemoryCache();
+
+// 加入分散式redis快取服務
+builder.Services.AddSingleton<IConnectionMultiplexer>(
+    ConnectionMultiplexer.Connect(
+        new ConfigurationOptions()
+        {
+            EndPoints = { { "redis-12602.c282.east-us-mz.azure.redns.redis-cloud.com", 12602 } },
+            Password = "oDkyRkCYQPp9u2fwIAEro0ZjLt3IfMUd"
+        }
+    )
+);
 
 // CORS跨來源共用設定
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
