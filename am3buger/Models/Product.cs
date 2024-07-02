@@ -2,7 +2,7 @@
 
 namespace am3burger.Models
 {
-    public class Products
+    public class Product
     {
         [Key]
         [Display(Name = "商品Id")]
