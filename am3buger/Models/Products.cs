@@ -19,6 +19,11 @@ namespace am3burger.Models
         public string? Description { get; set; }
 
         [Required]
+        [Display(Name = "商品圖檔名稱")]
+        [StringLength(50)]
+        public string? PhotoName { get; set; }
+
+        [Required]
         [Display(Name = "商品價格")]
         public int? Price { get; set; }
     }

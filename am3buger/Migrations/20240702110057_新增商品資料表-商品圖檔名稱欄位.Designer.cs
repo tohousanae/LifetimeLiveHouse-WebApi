@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using am3burger.Models;
 
@@ -11,9 +12,11 @@ using am3burger.Models;
 namespace am3burger.Migrations
 {
     [DbContext(typeof(Am3burgerContext))]
-    partial class Am3burgerContextModelSnapshot : ModelSnapshot
+    [Migration("20240702110057_新增商品資料表-商品圖檔名稱欄位")]
+    partial class 新增商品資料表商品圖檔名稱欄位
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

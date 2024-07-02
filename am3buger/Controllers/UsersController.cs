@@ -43,6 +43,7 @@ namespace am3burger.Controllers
             return user;
         }
 
+        // 修改個別會員資料
         // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -74,6 +75,7 @@ namespace am3burger.Controllers
             return NoContent();
         }
 
+        // 新增會員資料
         // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -99,6 +101,7 @@ namespace am3burger.Controllers
             return CreatedAtAction("GetUser", new { id = user.Id }, user);
         }
 
+        // 刪除會員資料
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
