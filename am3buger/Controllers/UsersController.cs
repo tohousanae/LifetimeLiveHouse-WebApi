@@ -20,6 +20,7 @@ namespace am3burger.Controllers
             _context = context;
         }
 
+        // 查詢所有會員
         // GET: api/Users
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
@@ -27,6 +28,7 @@ namespace am3burger.Controllers
             return await _context.Users.ToListAsync();
         }
 
+        // 查詢個別會員
         // GET: api/Users/5
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
