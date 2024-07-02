@@ -14,6 +14,11 @@ namespace am3burger.Models
         public string? Name { get; set; }
 
         [Required]
+        [Display(Name = "商品描述")]
+        [StringLength(1000)]
+        public string? Description { get; set; }
+
+        [Required]
         [Display(Name = "商品價格")]
         public int? Price { get; set; }
     }

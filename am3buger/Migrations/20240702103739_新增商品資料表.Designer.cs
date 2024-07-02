@@ -12,7 +12,7 @@ using am3burger.Models;
 namespace am3burger.Migrations
 {
     [DbContext(typeof(Am3burgerContext))]
-    [Migration("20240701182359_新增商品資料表")]
+    [Migration("20240702103739_新增商品資料表")]
     partial class 新增商品資料表
     {
         /// <inheritdoc />
@@ -24,6 +24,33 @@ namespace am3burger.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("am3burger.Models.Products", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("Price")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Products");
+                });
 
             modelBuilder.Entity("am3burger.Models.User", b =>
                 {

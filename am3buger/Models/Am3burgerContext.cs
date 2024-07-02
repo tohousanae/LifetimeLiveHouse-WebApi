@@ -14,8 +14,10 @@ public partial class Am3burgerContext : DbContext
         : base(options)
     {
     }
-
+    
+    // code first資料庫名稱
     public virtual DbSet<User> Users { get; set; }
+    public DbSet<Products> Products { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
