@@ -1,5 +1,6 @@
 ﻿using am3burger.Models;
 using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,16 @@ builder.Services.AddSwaggerGen();
 
 // 加入本機分散式記憶體快取服務
 builder.Services.AddDistributedMemoryCache();
+
+// 加入redis分散式快取服務
+builder.Services.AddSingleton<IConnectionMultiplexer>(
+    ConnectionMultiplexer.Connect(
+        new ConfigurationOptions()
+        {
+            EndPoints = { { "localhost", 6379 } }
+        }
+    )
+ );
 
 // CORS跨來源共用設定
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
