@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using am3burger.Models;
 
@@ -11,9 +12,11 @@ using am3burger.Models;
 namespace am3burger.Migrations
 {
     [DbContext(typeof(Am3burgerContext))]
-    partial class Am3burgerContextModelSnapshot : ModelSnapshot
+    [Migration("20240703181204_新增商品名稱、商品描述的索引")]
+    partial class 新增商品名稱商品描述的索引
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -109,8 +112,8 @@ namespace am3burger.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(4000)
-                        .HasColumnType("nvarchar(4000)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -126,14 +129,9 @@ namespace am3burger.Migrations
                         .IsRequired()
                         .HasColumnType("int");
 
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("Name", "Description", "Type");
+                    b.HasIndex("Name", "Description");
 
                     b.ToTable("Product");
                 });
@@ -164,6 +162,10 @@ namespace am3burger.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<bool?>("EmailVaildation")
+                        .IsRequired()
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -181,6 +183,10 @@ namespace am3burger.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool?>("PhoneVaildation")
+                        .IsRequired()
+                        .HasColumnType("bit");
 
                     b.Property<string>("Sex")
                         .IsRequired()

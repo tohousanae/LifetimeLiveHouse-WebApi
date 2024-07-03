@@ -1,7 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace am3burger.Models
 {
+    [Index(nameof(Name), nameof(Description),nameof(Type))]
     public class Product
     {
         [Key]
@@ -14,8 +16,13 @@ namespace am3burger.Models
         public string? Name { get; set; }
 
         [Required]
+        [Display(Name = "商品類別")]
+        [StringLength(50)]
+        public string? Type { get; set; }
+
+        [Required]
         [Display(Name = "商品描述")]
-        [StringLength(1000)]
+        [StringLength(4000)]
         public string? Description { get; set; }
 
         [Required]

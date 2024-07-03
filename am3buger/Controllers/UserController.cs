@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using am3burger.Models;
+using Microsoft.CodeAnalysis.Scripting;
 
 namespace am3burger.Controllers
 {
@@ -18,6 +19,32 @@ namespace am3burger.Controllers
         public UserController(Am3burgerContext context)
         {
             _context = context;
+        }
+
+        // 登入註冊api參考資料：https://ithelp.ithome.com.tw/articles/10337994
+        public static User user = new User();//宣告了一個名為 **user** 的**User**對象，並設為static靜態成員，表示無論何時訪問這個類別都會使用相同的User對象。
+
+        [HttpPost("register")]
+        public ActionResult<User> Register(UserDto request)
+        {
+            //使用了 **BCrypt.Net** 函式庫來將 **request.Password** 中的密碼進行哈希加密演算法處理，處理後的密碼存儲在 **passwordHash** 變數中。
+            string passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
+
+            user.Username = request.Username;
+            user.PasswordHash = passwordHash;
+
+            return Ok(user);
+        }
+
+        [HttpPost("login")]
+        public ActionResult<User> Login(UserDto request)
+        {
+            if (user.Username != request.Username) { return BadRequest("User not found."); }
+            if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+            {
+                return BadRequest("Wrong Username Or Password");
+            }
+            return Ok(user);
         }
 
         // 查詢所有會員

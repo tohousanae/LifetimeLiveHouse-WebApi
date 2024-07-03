@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using am3burger.Models;
+using StackExchange.Redis;
 
 namespace am3burger.Controllers
 {
@@ -13,11 +14,13 @@ namespace am3burger.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
+        private readonly IConnectionMultiplexer _redisService; // 加入redis快取
         private readonly Am3burgerContext _context;
-
-        public ProductController(Am3burgerContext context)
+        
+        public ProductController(Am3burgerContext context, IConnectionMultiplexer redisService)
         {
             _context = context;
+            _redisService = redisService;
         }
 
         // GET: api/Products

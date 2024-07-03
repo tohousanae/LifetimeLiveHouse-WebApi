@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using am3burger.Models;
 
@@ -11,9 +12,11 @@ using am3burger.Models;
 namespace am3burger.Migrations
 {
     [DbContext(typeof(Am3burgerContext))]
-    partial class Am3burgerContextModelSnapshot : ModelSnapshot
+    [Migration("20240703184854_新增商品資料表商品類別欄位，並且新增到索引")]
+    partial class 新增商品資料表商品類別欄位並且新增到索引
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -164,6 +167,10 @@ namespace am3burger.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<bool?>("EmailVaildation")
+                        .IsRequired()
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -181,6 +188,10 @@ namespace am3burger.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool?>("PhoneVaildation")
+                        .IsRequired()
+                        .HasColumnType("bit");
 
                     b.Property<string>("Sex")
                         .IsRequired()

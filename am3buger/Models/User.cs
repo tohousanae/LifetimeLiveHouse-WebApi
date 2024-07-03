@@ -48,16 +48,6 @@ namespace am3burger.Models
         public DateTime Birthday { get; set; }
 
         [Required]
-        [Display(Name = "信箱驗證狀態")]
-        // 信箱驗證狀態
-        public bool? EmailVaildation { get; set; }
-
-        [Required]
-        [Display(Name = "手機驗證狀態")]
-        // 手機驗證狀態
-        public bool? PhoneVaildation { get; set; }
-
-        [Required]
         [Display(Name = "權限")]
         // 權限
         public int Permission { get; set; }
