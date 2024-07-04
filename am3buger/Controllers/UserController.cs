@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using am3burger.Models;
 using Microsoft.CodeAnalysis.Scripting;
+using am3burger.DTO.Users;
 
 namespace am3burger.Controllers
 {
@@ -24,25 +25,27 @@ namespace am3burger.Controllers
         // 登入註冊api參考資料：https://ithelp.ithome.com.tw/articles/10337994
         public static User user = new User();//宣告了一個名為 **user** 的**User**對象，並設為static靜態成員，表示無論何時訪問這個類別都會使用相同的User對象。
 
+        // 註冊api
         [HttpPost("register")]
-        public ActionResult<User> Register(UserDto request)
+        public ActionResult<User> Register(LoginDTO request)
         {
             //使用了 **BCrypt.Net** 函式庫來將 **request.Password** 中的密碼進行哈希加密演算法處理，處理後的密碼存儲在 **passwordHash** 變數中。
             string passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
 
-            user.Username = request.Username;
-            user.PasswordHash = passwordHash;
+            user.Email = request.Email;
+            user.Password = passwordHash;
 
             return Ok(user);
         }
 
+        // 登入api
         [HttpPost("login")]
-        public ActionResult<User> Login(UserDto request)
+        public ActionResult<User> Login(LoginDTO request)
         {
-            if (user.Username != request.Username) { return BadRequest("User not found."); }
-            if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+            if (user.Email != request.Email) { return BadRequest("該使用者不存在"); }
+            if (!BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
             {
-                return BadRequest("Wrong Username Or Password");
+                return BadRequest("信箱或密碼錯誤");
             }
             return Ok(user);
         }
