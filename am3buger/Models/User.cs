@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace am3burger.Models
 {
@@ -7,6 +8,7 @@ namespace am3burger.Models
     {
         [Key]
         [Display(Name = "會員Id")]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         // 會員Id
         public int Id { get; set; }
 

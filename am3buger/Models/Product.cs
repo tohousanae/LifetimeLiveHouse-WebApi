@@ -1,13 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace am3burger.Models
 {
     [Index(nameof(Name), nameof(Description),nameof(Type))]
+    [Table("Product")]
     public class Product
     {
         [Key]
         [Display(Name = "商品Id")]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         [Required]
