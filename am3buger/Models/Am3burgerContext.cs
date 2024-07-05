@@ -16,7 +16,7 @@ public partial class Am3burgerContext : DbContext
     }
 
     // code first資料庫DbSet
-    public virtual DbSet<User> User { get; set; }
+    public DbSet<User> User { get; set; }
     public DbSet<Product> Product { get; set; }
     public DbSet<Store> Store { get; set; }
     public DbSet<DeliveryBoy> DeliveryBoy { get; set; }
