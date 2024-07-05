@@ -27,7 +27,7 @@ namespace am3burger.Controllers
 
         // 註冊api
         [HttpPost("register")]
-        public ActionResult<User> Register(LoginDTO request)
+        public ActionResult<User> Register(RegisterDTO request)
         {
             //使用了 **BCrypt.Net** 函式庫來將 **request.Password** 中的密碼進行哈希加密演算法處理，處理後的密碼存儲在 **passwordHash** 變數中。
             string passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
