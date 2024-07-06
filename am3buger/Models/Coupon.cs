@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace am3burger.Models
 {
-    [Table("Coupon")]
     public class Coupon
     {
         [Key]

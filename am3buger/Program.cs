@@ -5,10 +5,9 @@ using StackExchange.Redis;
 var builder = WebApplication.CreateBuilder(args);
 
 // 注入am3burgerContext的類別
-var Am3burgerConnectionString = builder.Configuration.GetConnectionString("am3burger");
-builder.Services.AddDbContext<Am3burgerContext>(Options => {
-    Options.UseSqlServer(Am3burgerConnectionString);
-});
+builder.Services.AddDbContext<Am3burgerContext>(options =>
+options.UseSqlServer(builder.Configuration.GetConnectionString("am3burger")));
+
 
 // Add services to the container.
 

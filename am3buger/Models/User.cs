@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace am3burger.Models
 {
-    [Table("User")]
     // 會員資料表
     public class User
     {
