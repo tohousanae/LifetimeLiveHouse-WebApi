@@ -39,15 +39,38 @@ namespace am3burger.Controllers
         }
 
         // 登入api
+        //[HttpPost("login")]
+        //public ActionResult<User> Login(LoginDTO request)
+        //{
+        //    if (user.Email != request.Email) { return BadRequest("該使用者不存在"); }
+        //    if (!BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
+        //    {
+        //        return BadRequest("信箱或密碼錯誤");
+        //    }
+        //    return Ok(user);
+        //}
         [HttpPost("login")]
-        public ActionResult<User> Login(LoginDTO request)
+        public async Task<ActionResult<User>> Login(LoginDTO request)
         {
-            if (user.Email != request.Email) { return BadRequest("該使用者不存在"); }
+            user = await _context.User.FirstOrDefaultAsync(u => u.Email == request.Email)
+
+            if (user.Email == null) { 
+
+            }
             if (!BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
             {
-                return BadRequest("信箱或密碼錯誤");
+                return Unauthorized("密碼錯誤");
             }
-            return Ok(user);
+            else
+            {
+                // 将用户的唯一标识符添加到Cookie中
+                CookieOptions option = new CookieOptions();
+                option.Expires = DateTime.Now.AddYears(1);
+                option.HttpOnly = true;
+                option.Secure = true;
+                Response.Cookies.Append("UserId", user.Id.ToString(), option);
+                return Ok(user);
+            }
         }
 
         // 查詢所有會員
