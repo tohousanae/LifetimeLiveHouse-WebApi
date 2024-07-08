@@ -23,18 +23,21 @@ namespace am3burger.Controllers
         }
 
         // 登入註冊api參考資料：https://ithelp.ithome.com.tw/articles/10337994
-        public static User user = new User();//宣告了一個名為 **user** 的**User**對象，並設為static靜態成員，表示無論何時訪問這個類別都會使用相同的User對象。
-
         // 註冊api
         [HttpPost("register")]
-        public ActionResult<User> Register(RegisterDTO request)
+        public async Task<ActionResult<User>> Register(RegisterDTO request)
         {
             //使用了 **BCrypt.Net** 函式庫來將 **request.Password** 中的密碼進行哈希加密演算法處理，處理後的密碼存儲在 **passwordHash** 變數中。
             string passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
 
-            user.Email = request.Email;
-            user.Password = passwordHash;
-
+            User user = new User
+            {
+                Email = request.Email,
+                Password = passwordHash,
+            };
+            
+            _context.User.Add(user);
+            await _context.SaveChangesAsync();
             return Ok(user);
         }
 
@@ -49,29 +52,29 @@ namespace am3burger.Controllers
         //    }
         //    return Ok(user);
         //}
-        [HttpPost("login")]
-        public async Task<ActionResult<User>> Login(LoginDTO request)
-        {
-            user = await _context.User.FirstOrDefaultAsync(u => u.Email == request.Email)
+        //[HttpPost("login")]
+        //public async Task<ActionResult<User>> Login(LoginDTO request)
+        //{
+        //    user = await _context.User.FirstOrDefaultAsync(u => u.Email == request.Email)
 
-            if (user.Email == null) { 
+        //    if (user.Email == null) { 
 
-            }
-            if (!BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
-            {
-                return Unauthorized("密碼錯誤");
-            }
-            else
-            {
-                // 将用户的唯一标识符添加到Cookie中
-                CookieOptions option = new CookieOptions();
-                option.Expires = DateTime.Now.AddYears(1);
-                option.HttpOnly = true;
-                option.Secure = true;
-                Response.Cookies.Append("UserId", user.Id.ToString(), option);
-                return Ok(user);
-            }
-        }
+        //    }
+        //    if (!BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
+        //    {
+        //        return Unauthorized("密碼錯誤");
+        //    }
+        //    else
+        //    {
+        //        // 将用户的唯一标识符添加到Cookie中
+        //        CookieOptions option = new CookieOptions();
+        //        option.Expires = DateTime.Now.AddYears(1);
+        //        option.HttpOnly = true;
+        //        option.Secure = true;
+        //        Response.Cookies.Append("UserId", user.Id.ToString(), option);
+        //        return Ok(user);
+        //    }
+        //}
 
         // 查詢所有會員
         // GET: api/Users
