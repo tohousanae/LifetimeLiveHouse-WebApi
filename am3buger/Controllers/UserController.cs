@@ -68,7 +68,7 @@ namespace am3burger.Controllers
             }
             if (!BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
             {
-                return Unauthorized("信箱或密碼錯誤"); // 刻意將回傳訊息設定成信箱或密碼錯誤，防止攻擊者針對密碼做攻擊測試
+                return Unauthorized("信箱或密碼錯誤"); // 刻意將回傳訊息設定成信箱或密碼錯誤，防止攻擊者針對密碼做攻擊測試114514
             }
             else
             {
