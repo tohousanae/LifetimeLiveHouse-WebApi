@@ -46,7 +46,7 @@ namespace am3burger.Controllers
             return Ok(user);
         }
 
-        // 登入api
+        // 登入api(cookie based驗證)
         //[HttpPost("login")]
         //public ActionResult<User> Login(LoginDTO request)
         //{
@@ -60,15 +60,15 @@ namespace am3burger.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<User>> Login(LoginDTO request)
         {
-            user = await _context.User.FirstOrDefaultAsync(u => u.Email == request.Email)
+            var user = await _context.User.FirstOrDefaultAsync(u => u.Email == request.Email);
 
-            if (user.Email == null)
+            if (user == null)
             {
-
+                return Unauthorized("信箱不存在");
             }
             if (!BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
             {
-                return Unauthorized("密碼錯誤");
+                return Unauthorized("信箱或密碼錯誤"); // 刻意將回傳訊息設定成信箱或密碼錯誤，防止攻擊者針對密碼做攻擊測試
             }
             else
             {
@@ -78,7 +78,7 @@ namespace am3burger.Controllers
                 option.HttpOnly = true;
                 option.Secure = true;
                 Response.Cookies.Append("UserId", user.Id.ToString(), option);
-                return Ok(user);
+                return Ok("登入成功");
             }
         }
 
