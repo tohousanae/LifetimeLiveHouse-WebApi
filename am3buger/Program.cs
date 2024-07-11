@@ -1,6 +1,7 @@
 ﻿using am3burger.Models;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
+using static am3burger.Models.MailSetting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +39,9 @@ builder.Services.AddCors(options =>
         policy.WithOrigins("http://localhost:5173","https://am3burger.sakuyaonline.uk").WithHeaders("*").WithMethods("*");
     });
 });
+
+// 從appsettings.json當中取得寄件人設定
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 
 var app = builder.Build();
 
