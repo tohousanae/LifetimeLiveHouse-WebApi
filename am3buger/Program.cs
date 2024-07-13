@@ -42,6 +42,7 @@ builder.Services.AddCors(options =>
 
 // 從appsettings.json當中取得寄件人設定
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+builder.Services.AddSingleton<am3burger.Helper.IMailService, am3burger.Helper.MailService>();
 
 var app = builder.Build();
 

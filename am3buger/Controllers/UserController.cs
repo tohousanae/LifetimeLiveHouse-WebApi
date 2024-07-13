@@ -28,21 +28,26 @@ namespace am3burger.Controllers
         public async Task<ActionResult<User>> Register(RegisterDTO request)
         {
             // 检查邮箱、电子邮件和电话号码是否已被注册
-            if (await _context.User.AnyAsync(u => u.Email == u.Email))
+            if (await _context.User.AnyAsync(u => u.Email == request.Email))
             {
                 return Unauthorized("信箱已被註冊");
             }
-            else if (await _context.User.AnyAsync(u => u.PhoneNumber == u.PhoneNumber))
+            else if (await _context.User.AnyAsync(u => u.PhoneNumber == request.PhoneNumber))
             {
                 return Unauthorized("電話已被註冊");
             }
             else
             {
                 /*
-                以下使用了 **BCrypt.Net** 函式庫來將 **request.Password** 中的密碼進行哈希加密演算法處理，處理後的密碼存儲在 **passwordHash** 變數中。
+                1. 以下使用了 **BCrypt.Net** 函式庫來將 **request.Password** 中的密碼進行哈希加密演算法處理，處理後的密碼存儲在 **passwordHash** 變數中。
                 cost是指加密的複雜度，預設為11，
-                cost設定越高密碼安全性就越高，但也會導致花太多效能在加密上導致效能下降，參考：https://github.com/BcryptNet/bcrypt.net
+                cost設定越高密碼安全性就越高，但也會導致花太多效能在加密上導致效能下降
+
+                2. ByCrypt加密會經過加鹽處理，會將加鹽與密碼一起進行哈希加密，即便是兩個使用者使用相同的密碼其經過加密的值也不會相同，增加破解難度
+
+                3. 參考資料：https://github.com/BcryptNet/bcrypt.net、https://ithelp.ithome.com.tw/articles/10337514
                 */
+
                 /*var cost = 11;*/
                 string passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password/*, workFactor: cost*/);
 
@@ -56,7 +61,7 @@ namespace am3burger.Controllers
                     Birthday = request.Birthday,
                     Permission = request.Permission,
                 };
-
+                 
                 _context.User.Add(user);
                 await _context.SaveChangesAsync();
                 return Ok(user);
@@ -71,7 +76,7 @@ namespace am3burger.Controllers
 
             if (user == null)
             {
-                return Unauthorized("信箱不存在");
+                return Unauthorized("信箱不存在"); // 檢查輸入的信箱是否為使用者輸入的信箱
             }
             if (!BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
             {
@@ -89,24 +94,68 @@ namespace am3burger.Controllers
             }
         }
 
-        // 送出忘記密碼驗證性
+        // 生成忘記密碼的token，作為一次性連結使用
         [HttpPost("forgetpassword")]
         public async Task<ActionResult<User>> forgetpassword(ForgetPasswordDto request)
         {
+            /* 忘記密碼設計 
+                
+            start 使用者輸入信箱(需在前端設計
+            -->驗證是否為註冊信箱
+            -->是(若為否則告知使用者信箱不存在)
+            -->基於安全性考量，將token加密儲存到cookie內並設定option.Secure = true;防止前端用js直接讀取cookie，並設定cookie(token的失效時間)
+            -->發送忘記密碼重設信件，token加入到忘記密碼頁面的一次性連結內
+            -->當使用者完成密碼重設，或超過token保存時效未重設密碼時，連結失效
+            -->通知使用者密碼已完成重設
+
+             */
             var user = await _context.User.FirstOrDefaultAsync(u => u.Email == request.Email);
 
             if (user == null)
             {
-                return Unauthorized("信箱不存在");
+                return Unauthorized("信箱不存在"); // 檢查輸入的信箱是否為使用者輸入的信箱
             }
             else
             {
-                return Ok($"已送出重設密碼郵件到{request.Email}，請檢察您的信箱");
+                /* 生成token參考資料：
+                 * 1. https://blog.csdn.net/m0_38013946/article/details/134849150
+                 * 2. https://hackercat.org/diy-tools/generate-random-password-from-command-line
+                 */
+                Guid guid = Guid.NewGuid(); // 生成GUID token
+                string token = guid.ToString("N");
+
+                // 將token雜湊加密
+                string tokenHash = BCrypt.Net.BCrypt.HashPassword(token);
+
+                // 將token儲存到cookie中，並設置該cookie失效時間
+                CookieOptions option = new CookieOptions();
+                option.Expires = DateTime.Now.AddMinutes(30); // 設定忘記密碼token的失效時間，作為忘記密碼連結失效時間
+                option.HttpOnly = true;
+                option.Secure = true;
+                Response.Cookies.Append("forgetPwdToken", tokenHash, option);
+
+                return Ok(tokenHash);
+            }
+        }
+
+        // 查看忘記密碼的token值
+        [HttpPost("forgetPwdTokenCkeck")]
+        public IActionResult CheckForgetPwdToken()
+        {
+            string? cookieValue = Request.Cookies["forgetPwdToken"];
+
+            if (cookieValue != null)
+            {
+                return Ok(cookieValue);
+            }
+            else
+            {
+                return Unauthorized("你點擊的連結不存在");
             }
         }
 
         // 讀取cookie驗證是否登入
-        [HttpGet("loginCkeck")]
+        [HttpPost("loginCkeck")]
         public IActionResult CheckLoginStatus()
         {
             // 获取请求中的 cookie 数据
