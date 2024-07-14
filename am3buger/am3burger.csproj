@@ -26,6 +26,8 @@
 
   <ItemGroup>
     <Folder Include="DTO\Products\" />
+    <Folder Include="Interfaces\" />
+    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>

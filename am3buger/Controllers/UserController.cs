@@ -129,7 +129,7 @@ namespace am3burger.Controllers
 
                 // 將token儲存到cookie中，並設置該cookie失效時間
                 CookieOptions option = new CookieOptions();
-                option.Expires = DateTime.Now.AddMinutes(30); // 設定忘記密碼token的失效時間，作為忘記密碼連結失效時間
+                option.Expires = DateTime.Now.AddMinutes(30); // 設定token的失效時間，作為忘記密碼連結失效時間
                 option.HttpOnly = true;
                 option.Secure = true;
                 Response.Cookies.Append("forgetPwdToken", tokenHash, option);
@@ -138,7 +138,7 @@ namespace am3burger.Controllers
             }
         }
 
-        // 查看忘記密碼的token值
+        // 使用者點擊信箱當中的忘記密碼連結時，驗證忘記密碼的token是否存在
         [HttpPost("forgetPwdTokenCkeck")]
         public IActionResult CheckForgetPwdToken()
         {
@@ -152,6 +152,20 @@ namespace am3burger.Controllers
             {
                 return Unauthorized("你點擊的連結不存在");
             }
+        }
+
+        // 使用者完成修改密碼操作後，清除儲存忘記密碼token的cookie，並且清除使用者Id的cookie讓使用者在所有裝置上登出
+        [HttpPost("clearForgetPwdToken")]
+        public IActionResult ClearForgetPwdToken()
+        {
+            CookieOptions option = new CookieOptions();
+            option.Expires = DateTime.Now.AddDays(-1);
+            option.HttpOnly = true;
+            option.Secure = true;
+            Response.Cookies.Append("forgetPwdToken", "", option);
+            Response.Cookies.Append("UserId", "", option);
+            return Ok("成功重設密碼，請重新登入");
+            // 返回成功响应
         }
 
         // 讀取cookie驗證是否登入

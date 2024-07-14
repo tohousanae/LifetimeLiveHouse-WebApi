@@ -46,5 +46,13 @@ namespace am3burger.Models
         [Display(Name = "權限")]
         // 權限
         public int Permission { get; set; }
+
+        [Display(Name = "手機驗證狀態")]
+        // 手機號碼
+        public bool? PhoneValidation { get; set; }
+
+        [Display(Name = "信箱驗證狀態")]
+        // 手機號碼
+        public bool? EmailValidation { get; set; }
     }
 }
