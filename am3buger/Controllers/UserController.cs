@@ -133,12 +133,13 @@ namespace am3burger.Controllers
                 option.HttpOnly = true;
                 option.Secure = true;
                 Response.Cookies.Append("forgetPwdToken", tokenHash, option);
+                Response.Cookies.Append("InputEmail",request.Email.ToString(), option);
 
                 return Ok(tokenHash);
             }
         }
 
-        // 使用者點擊信箱當中的忘記密碼連結時，驗證忘記密碼的token是否存在
+        // 查看忘記密碼cookie
         [HttpPost("forgetPwdTokenCkeck")]
         public IActionResult CheckForgetPwdToken()
         {
