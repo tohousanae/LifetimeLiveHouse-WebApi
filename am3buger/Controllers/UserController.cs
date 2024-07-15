@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using am3burger.Models;
 using Microsoft.CodeAnalysis.Scripting;
 using am3burger.DTO.Users;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 
 namespace am3burger.Controllers
 {
@@ -95,8 +96,8 @@ namespace am3burger.Controllers
         }
 
         // 生成忘記密碼的token，作為一次性連結使用
-        [HttpPost("forgetpassword")]
-        public async Task<ActionResult<User>> forgetpassword(ForgetPasswordDto request)
+        [HttpPost("forgetpasswordEmailSend")]
+        public async Task<ActionResult<User>> ForgetpasswordEmailSend(ForgetPasswordDto request)
         {
             /* 忘記密碼設計 
                 
@@ -139,9 +140,9 @@ namespace am3burger.Controllers
             }
         }
 
-        // 查看忘記密碼cookie
-        [HttpPost("forgetPwdTokenCkeck")]
-        public IActionResult CheckForgetPwdToken()
+        // 使用者點擊忘記密碼連結時，驗證cookie是否有效
+        [HttpPost("checkforgetPwdlink")]
+        public IActionResult CheckforgetPwdlink()
         {
             string? cookieValue = Request.Cookies["forgetPwdToken"];
 
@@ -156,17 +157,40 @@ namespace am3burger.Controllers
         }
 
         // 使用者完成修改密碼操作後，清除儲存忘記密碼token的cookie，並且清除使用者Id的cookie讓使用者在所有裝置上登出
-        [HttpPost("clearForgetPwdToken")]
-        public IActionResult ClearForgetPwdToken()
+        [HttpPatch("modifyPwd")]
+        public async Task<IActionResult> ModifyPwd(ForgetPasswordModifyPasswordDto request)
         {
-            CookieOptions option = new CookieOptions();
-            option.Expires = DateTime.Now.AddDays(-1);
-            option.HttpOnly = true;
-            option.Secure = true;
-            Response.Cookies.Append("forgetPwdToken", "", option);
-            Response.Cookies.Append("UserId", "", option);
-            return Ok("成功重設密碼，請重新登入");
-            // 返回成功响应
+            // 從cookie取得使用者輸入的email
+            string? inputemail = System.Net.WebUtility.UrlDecode(Request.Cookies["InputEmail"]);
+            var user = await _context.User.FirstOrDefaultAsync(u => u.Email == inputemail); // 將URL編碼的字串轉換回原始的字串
+
+            if (user == null) 
+            {
+                return BadRequest("使用者紀錄不存在");
+            }
+            else
+            {
+                user.Password = BCrypt.Net.BCrypt.HashPassword(request.Password); // 修改的密碼雜湊加密後儲存
+                _context.Entry(user).State = EntityState.Modified;
+
+                try
+                {
+                    // 儲存修改密碼
+                    await _context.SaveChangesAsync();
+                    CookieOptions option = new CookieOptions();
+                    option.Expires = DateTime.Now.AddDays(-1);
+                    option.HttpOnly = true;
+                    option.Secure = true;
+                    Response.Cookies.Append("forgetPwdToken", "", option);
+                    Response.Cookies.Append("UserId", "", option);
+                    Response.Cookies.Append("InputEmail", "", option);
+                }
+                catch (DbUpdateConcurrencyException) 
+                { 
+                    throw;
+                }
+                return Ok("成功重設密碼，請重新登入");
+            }
         }
 
         // 讀取cookie驗證是否登入
