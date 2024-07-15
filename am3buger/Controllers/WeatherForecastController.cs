@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace am3buger.Controllers
+namespace am3burger.Controllers
 {
     [ApiController]
     [Route("[controller]")]

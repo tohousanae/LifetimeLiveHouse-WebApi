@@ -1,4 +1,14 @@
+﻿using am3burger.Models;
+using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
+using static am3burger.Models.MailSetting;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// 注入am3burgerContext的類別
+builder.Services.AddDbContext<Am3burgerContext>(options =>
+options.UseSqlServer(builder.Configuration.GetConnectionString("am3burger")));
+
 
 // Add services to the container.
 
@@ -7,8 +17,32 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// �[�J�����֨�
-builder.Services.AddMemoryCache();
+// 加入本機分散式記憶體快取服務
+builder.Services.AddDistributedMemoryCache();
+
+// 加入redis分散式快取服務
+builder.Services.AddSingleton<IConnectionMultiplexer>(
+    ConnectionMultiplexer.Connect(
+        new ConfigurationOptions()
+        {
+            EndPoints = { { "localhost", 6379 } }
+        }
+    )
+ );
+
+// CORS跨來源共用設定
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins, policy =>
+    {
+        policy.WithOrigins("http://localhost:5173","https://am3burger.sakuyaonline.uk").WithHeaders("*").WithMethods("*");
+    });
+});
+
+// 從appsettings.json當中取得寄件人設定
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+builder.Services.AddSingleton<am3burger.Helper.IMailService, am3burger.Helper.MailService>();
 
 var app = builder.Build();
 
@@ -20,6 +54,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors(MyAllowSpecificOrigins);
 
 app.UseAuthorization();
 
