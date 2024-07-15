@@ -94,6 +94,10 @@ namespace am3burger.Controllers
             }
         }
 
+        // 在 forgetpassword API 中實現 Token Bucket
+        private static readonly Dictionary<string, int> TokenBucket = new Dictionary<string, int>();
+        private static readonly int MaxTokensPerMinute = 1; // 每分鐘最多 1 個令牌
+
         // 生成忘記密碼的token，作為一次性連結使用
         [HttpPost("forgetpassword")]
         public async Task<ActionResult<User>> forgetpassword(ForgetPasswordDto request)
@@ -139,7 +143,7 @@ namespace am3burger.Controllers
             }
         }
 
-        // 查看忘記密碼cookie
+        // 使用者點擊忘記密碼信件當中的連結時，驗證token
         [HttpPost("forgetPwdTokenCkeck")]
         public IActionResult CheckForgetPwdToken()
         {
@@ -155,7 +159,7 @@ namespace am3burger.Controllers
             }
         }
 
-        // 使用者完成修改密碼操作後，清除儲存忘記密碼token的cookie，並且清除使用者Id的cookie讓使用者在所有裝置上登出
+        // 使用者完成修改密碼操作後，清除儲存忘記密碼token與使用者輸入的Email的cookie，並且清除使用者Id的cookie讓使用者在所有裝置上登出
         [HttpPost("clearForgetPwdToken")]
         public IActionResult ClearForgetPwdToken()
         {
@@ -165,6 +169,7 @@ namespace am3burger.Controllers
             option.Secure = true;
             Response.Cookies.Append("forgetPwdToken", "", option);
             Response.Cookies.Append("UserId", "", option);
+            Response.Cookies.Append("InputEmail", "", option);
             return Ok("成功重設密碼，請重新登入");
             // 返回成功响应
         }
