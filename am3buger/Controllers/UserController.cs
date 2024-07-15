@@ -95,6 +95,10 @@ namespace am3burger.Controllers
             }
         }
 
+        // 在 forgetpassword API 中實現 Token Bucket
+        private static readonly Dictionary<string, int> TokenBucket = new Dictionary<string, int>();
+        private static readonly int MaxTokensPerMinute = 1; // 每分鐘最多 1 個令牌
+
         // 生成忘記密碼的token，作為一次性連結使用
         [HttpPost("forgetpasswordEmailSend")]
         public async Task<ActionResult<User>> ForgetpasswordEmailSend(ForgetPasswordDto request)
