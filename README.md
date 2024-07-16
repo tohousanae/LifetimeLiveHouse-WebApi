@@ -13,7 +13,8 @@ https://github.com/tohousanae/am3buger-vue
 
 ### 商品相關
 ### 商家後臺相關
-
+### 寄送Email
+![image](https://github.com/user-attachments/assets/8c765f05-9c97-43b4-aec6-2f1898848b8a)
 
 ## 功能
 ###會員中心顯示會員資料
