@@ -21,10 +21,12 @@ https://github.com/tohousanae/am3buger-vue
 
 ![image](https://github.com/user-attachments/assets/8c765f05-9c97-43b4-aec6-2f1898848b8a)
 
+
 ## 功能
+
 ### 取得會員中心顯示的會員資料
 
-![image](https://github.com/user-attachments/assets/c2b359eb-d453-429c-95e0-b085663f548e)
+![image](https://github.com/user-attachments/assets/1de8c9b8-0a0f-4ffe-81a2-29749ff3caf5)
 
 
 ## 畫面
