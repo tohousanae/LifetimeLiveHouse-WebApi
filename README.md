@@ -5,8 +5,10 @@
 https://github.com/tohousanae/am3buger-vue
 
 ## api介紹
+```
 ### 會員相關
 ![image](https://github.com/user-attachments/assets/5ebde749-feb1-417a-a324-a6a6b08a1bab)
+```
 
 ### 商品、購物車、訂單相關
 ### 商家後臺相關
