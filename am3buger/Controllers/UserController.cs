@@ -100,8 +100,8 @@ namespace am3burger.Controllers
         private static readonly int MaxTokensPerMinute = 1; // 每分鐘最多 1 個令牌
 
         // 生成忘記密碼的token，作為一次性連結使用
-        [HttpPost("forgetpasswordEmailSend")]
-        public async Task<ActionResult<User>> ForgetpasswordEmailSend(ForgetPasswordDto request)
+        [HttpPost("forgetpasswordEmailSendTokenGen")]
+        public async Task<ActionResult<User>> ForgetpasswordEmailSendTokenGen(ForgetPasswordDto request)
         {
             /* 忘記密碼設計 
                 
@@ -165,8 +165,8 @@ namespace am3burger.Controllers
         public async Task<IActionResult> ModifyPwd(ForgetPasswordModifyPasswordDto request)
         {
             // 從cookie取得使用者輸入的email
-            string? inputemail = System.Net.WebUtility.UrlDecode(Request.Cookies["InputEmail"]);
-            var user = await _context.User.FirstOrDefaultAsync(u => u.Email == inputemail); // 將URL編碼的字串轉換回原始的字串
+            string? inputemail = System.Net.WebUtility.UrlDecode(Request.Cookies["InputEmail"]); // 將URL編碼的字串轉換回原始的字串
+            var user = await _context.User.FirstOrDefaultAsync(u => u.Email == inputemail); 
 
             if (user == null) 
             {
