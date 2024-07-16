@@ -27,7 +27,7 @@ https://github.com/tohousanae/am3buger-vue
 
 ## 功能
 
-### 取得會員中心顯示的會員資料
+1. 取得會員中心顯示的會員資料<br>
 
 ![image](https://github.com/user-attachments/assets/11e78c58-7947-4181-aa03-d0637036e286)
 
