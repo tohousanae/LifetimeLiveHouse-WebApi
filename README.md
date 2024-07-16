@@ -11,7 +11,7 @@ https://github.com/tohousanae/am3buger-vue
 
 ![image](https://github.com/user-attachments/assets/eee2af9b-143a-478f-9a56-3c4fb3bd10f8)
 
-### 商品訂購相關
+### 商品相關
 
 
 ### 商家後臺相關
