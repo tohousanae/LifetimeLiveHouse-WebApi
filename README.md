@@ -9,7 +9,7 @@ https://github.com/tohousanae/am3buger-vue
 
 ### 會員相關
 
-![image](https://github.com/user-attachments/assets/5ebde749-feb1-417a-a324-a6a6b08a1bab)
+![image](https://github.com/user-attachments/assets/eee2af9b-143a-478f-9a56-3c4fb3bd10f8)
 
 ### 商品訂購相關
 
@@ -19,14 +19,14 @@ https://github.com/tohousanae/am3buger-vue
 
 ### 寄送Email
 
-![image](https://github.com/user-attachments/assets/8c765f05-9c97-43b4-aec6-2f1898848b8a)
+![image](https://github.com/user-attachments/assets/3912ef39-bb63-4e6b-986f-f8b95db3e3da)
 
 
 ## 功能
 
 ### 取得會員中心顯示的會員資料
 
-![image](https://github.com/user-attachments/assets/1de8c9b8-0a0f-4ffe-81a2-29749ff3caf5)
+![image](https://github.com/user-attachments/assets/11e78c58-7947-4181-aa03-d0637036e286)
 
 
 ## 畫面
