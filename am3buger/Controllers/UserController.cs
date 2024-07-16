@@ -23,6 +23,26 @@ namespace am3burger.Controllers
             _context = context;
         }
 
+        // 會員中心，顯示會員資料
+        [HttpGet("user/{id}")]
+        public async Task<UserManageDto> GetUserInfo(int id)
+        {
+            var user = await _context.User.FindAsync(id);
+            if (user == null) 
+            {
+                return null;
+            }
+            UserManageDto userManageDto = new UserManageDto
+            {
+                Name = user.Name,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                Sex = user.Sex,
+                Birthday = user.Birthday,
+            };
+            return userManageDto;
+        }
+
         // 登入註冊api參考資料：https://ithelp.ithome.com.tw/articles/10337994
         // 註冊api
         [HttpPost("register")]
