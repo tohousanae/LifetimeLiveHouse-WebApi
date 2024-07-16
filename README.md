@@ -13,8 +13,11 @@ https://github.com/tohousanae/am3buger-vue
 
 ### 商品、購物車、訂單相關
 ### 商家後臺相關
+
+
 ## 功能
 ###會員中心顯示會員資料
+
 ![image](https://github.com/user-attachments/assets/c2b359eb-d453-429c-95e0-b085663f548e)
 
 ## 畫面
