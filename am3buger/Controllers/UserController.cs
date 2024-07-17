@@ -25,12 +25,12 @@ namespace am3burger.Controllers
 
         // 會員中心，顯示會員資料
         [HttpGet("user/{id}")]
-        public async Task<UserManageDto> GetUserInfo(int id)
+        public async Task<ActionResult<UserManageDto>> GetUserInfo(int id)
         {
             var user = await _context.User.FindAsync(id);
             if (user == null) 
             {
-                return null;
+                return NotFound("找不到此會員");
             }
             UserManageDto userManageDto = new UserManageDto
             {
