@@ -14,7 +14,5 @@
         public string? Sex { get; set; }
 
         public DateTime Birthday { get; set; }
-
-        public int Permission { get; set; }
     }
 }
