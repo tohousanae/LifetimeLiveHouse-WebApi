@@ -85,7 +85,7 @@ namespace am3burger.Controllers
                  
                 _context.User.Add(user);
                 await _context.SaveChangesAsync();
-                return Ok(user);
+                return Ok("註冊成功");
             }
         }
 
