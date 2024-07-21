@@ -81,6 +81,8 @@ namespace am3burger.Controllers
                     Sex = request.Sex,
                     Birthday = request.Birthday,
                     Permission = 1000, //預設權限1000，為一般會員權限
+                    PhoneValidation = false,
+                    EmailValidation = false,
                 };
                  
                 _context.User.Add(user);

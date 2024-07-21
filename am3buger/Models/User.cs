@@ -12,7 +12,7 @@ namespace am3burger.Models
         // 會員Id  
         public int Id { get; set; }
 
-        [Display(Name = "姓名")]
+        [Display(Name = "會員名稱")]
         [StringLength(50)]
         // 姓名
         public string? Name { get; set; }

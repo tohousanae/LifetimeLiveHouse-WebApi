@@ -14,5 +14,9 @@
         public string? Sex { get; set; }
 
         public DateTime Birthday { get; set; }
+
+        public bool? PhoneValidation { get; set; }
+
+        public bool? EmailValidation { get; set; }
     }
 }
