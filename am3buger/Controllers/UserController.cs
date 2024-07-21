@@ -80,6 +80,9 @@ namespace am3burger.Controllers
                     Password = passwordHash,
                     Sex = request.Sex,
                     Birthday = request.Birthday,
+                    Permission = request.Permission,
+                    PhoneValidation = request.PhoneValidation,
+                    EmailValidation = request.EmailValidation,
                 };
                  
                 _context.User.Add(user);

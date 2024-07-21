@@ -15,8 +15,11 @@
 
         public DateTime Birthday { get; set; }
 
+        public int Permission { get; set; }
+
         public bool? PhoneValidation { get; set; }
 
         public bool? EmailValidation { get; set; }
+
     }
 }
