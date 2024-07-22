@@ -87,7 +87,7 @@ namespace am3burger.Controllers
                  
                 _context.User.Add(user);
                 await _context.SaveChangesAsync();
-                return Ok("註冊成功，請到會員中心完成信箱與手機驗證，方可使用完整功能");
+                return Ok("註冊成功，請到會員中心完成信箱驗證，方可使用完整功能");
             }
         }
 
