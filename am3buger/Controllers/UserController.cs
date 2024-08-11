@@ -162,6 +162,21 @@ namespace am3burger.Controllers
             }
         }
 
+        // 取得忘記密碼token的值
+        [HttpPost("getforgetPwdtoken")]
+        public IActionResult CheckforgetPwdlink()
+        {
+            string? cookieValue = Request.Cookies["forgetPwdToken"];
+            if (cookieValue != null)
+            {
+                return Ok(cookieValue);
+            }
+            else
+            {
+                return Unauthorized("你點擊的連結不存在");
+            }
+        }
+
         // 使用者完成修改密碼操作後，清除儲存忘記密碼token的cookie，並且清除使用者Id的cookie讓使用者在所有裝置上登出
         [HttpPatch("modifyPwd")]
         public async Task<IActionResult> ModifyPwd(ForgetPasswordModifyPasswordDto request)
