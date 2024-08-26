@@ -153,8 +153,8 @@ namespace am3burger.Controllers
                 // 將token儲存到cookie中，並設置該cookie失效時間
                 CookieOptions option = new CookieOptions();
                 option.Expires = DateTime.Now.AddMinutes(30); // 設定token的失效時間，作為忘記密碼連結失效時間
-                option.HttpOnly = true;
-                option.Secure = true;
+                option.HttpOnly = true; // 強制使用https存取cookie
+                option.Secure = true; // 禁用js讀取cookie防止xss攻擊
                 Response.Cookies.Append("forgetPwdToken", tokenHash, option);
                 Response.Cookies.Append("InputEmail",request.Email.ToString(), option);
 
