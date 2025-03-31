@@ -23,6 +23,26 @@ namespace am3burger.Controllers
             _context = context;
         }
 
+        // 會員中心，顯示會員資料
+        [HttpGet("user/{id}")]
+        public async Task<ActionResult<UserManageDto>> GetUserInfo(int id)
+        {
+            var user = await _context.User.FindAsync(id);
+            if (user == null) 
+            {
+                return NotFound("找不到此會員");
+            }
+            UserManageDto userManageDto = new UserManageDto
+            {
+                Name = user.Name,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                Sex = user.Sex,
+                Birthday = user.Birthday,
+            };
+            return userManageDto;
+        }
+
         // 登入註冊api參考資料：https://ithelp.ithome.com.tw/articles/10337994
         // 註冊api
         [HttpPost("register")]
@@ -61,11 +81,13 @@ namespace am3burger.Controllers
                     Sex = request.Sex,
                     Birthday = request.Birthday,
                     Permission = request.Permission,
+                    PhoneValidation = request.PhoneValidation,
+                    EmailValidation = request.EmailValidation,
                 };
                  
                 _context.User.Add(user);
                 await _context.SaveChangesAsync();
-                return Ok(user);
+                return Ok("註冊成功，請到會員中心完成信箱驗證，方可使用完整功能");
             }
         }
 
@@ -131,8 +153,8 @@ namespace am3burger.Controllers
                 // 將token儲存到cookie中，並設置該cookie失效時間
                 CookieOptions option = new CookieOptions();
                 option.Expires = DateTime.Now.AddMinutes(30); // 設定token的失效時間，作為忘記密碼連結失效時間
-                option.HttpOnly = true;
-                option.Secure = true;
+                option.HttpOnly = true; // 強制使用https存取cookie
+                option.Secure = true; // 禁用js讀取cookie防止xss攻擊
                 Response.Cookies.Append("forgetPwdToken", tokenHash, option);
                 Response.Cookies.Append("InputEmail",request.Email.ToString(), option);
 
@@ -140,12 +162,11 @@ namespace am3burger.Controllers
             }
         }
 
-        // 使用者點擊忘記密碼連結時，透過驗證token來驗證連結是否有效
-        [HttpPost("checkforgetPwdlink")]
+        // 取得忘記密碼token的值
+        [HttpPost("getforgetPwdtoken")]
         public IActionResult CheckforgetPwdlink()
         {
             string? cookieValue = Request.Cookies["forgetPwdToken"];
-
             if (cookieValue != null)
             {
                 return Ok(cookieValue);
