@@ -31,8 +31,10 @@ https://github.com/tohousanae/am3buger-vue
 
 ![image](https://github.com/user-attachments/assets/11e78c58-7947-4181-aa03-d0637036e286)
 
+## 基本技術
+1. .net core 8 MVC(Web Api)
 
-## 優化技術
+## 進階技術
 1. redis快取
 2. 資料庫語法優化
 3. code-first建立資料庫
