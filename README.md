@@ -25,12 +25,16 @@ https://github.com/tohousanae/am3buger-vue
 ![image](https://github.com/user-attachments/assets/3912ef39-bb63-4e6b-986f-f8b95db3e3da)
 
 
-## 功能
+## 基本功能
 
 1. 取得會員中心顯示的會員資料<br>
 
 ![image](https://github.com/user-attachments/assets/11e78c58-7947-4181-aa03-d0637036e286)
 
+
+## 優化技術
+1. redis快取
+2. 資料庫語法優化
 
 ## 畫面
 
