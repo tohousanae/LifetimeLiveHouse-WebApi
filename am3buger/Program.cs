@@ -36,7 +36,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: MyAllowSpecificOrigins, policy =>
     {
-        policy.WithOrigins("http://localhost:5173","https://am3burger.sakuyaonline.uk").WithHeaders("*").WithMethods("*");
+        policy.WithOrigins("http://localhost:5173","https://am3burger.sakuyaonline.uk", "https://sanae.am3buger-vue.pages.dev/").WithHeaders("*").WithMethods("*").AllowCredentials();
     });
 });
 
