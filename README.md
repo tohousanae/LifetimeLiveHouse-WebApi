@@ -33,6 +33,8 @@ https://github.com/tohousanae/am3buger-vue
 
 ## 基本技術
 1. .net core 8 MVC(Web Api)
+2. c#
+3. SQL Server
 
 ## 進階技術
 1. redis快取
