@@ -40,6 +40,7 @@ https://github.com/tohousanae/am3buger-vue
 1. redis快取
 2. 資料庫語法優化
 3. code-first建立資料庫
+4. 部署到azure app servive
 
 ## 畫面
 
