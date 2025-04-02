@@ -35,13 +35,12 @@ https://github.com/tohousanae/am3buger-vue
 1. .net core 8 MVC(Web Api)
 2. c#
 3. SQL Server
+4. code-first建立資料庫
 
 ## 進階技術
 1. redis快取
-2. 資料庫語法優化
-3. code-first建立資料庫
-4. 部署到azure app servive
-5. 串接第三方金流
+2. 部署到azure app servive
+3. 串接綠界第三方金流
 
 ## 畫面
 
