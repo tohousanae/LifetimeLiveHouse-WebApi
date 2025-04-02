@@ -83,7 +83,7 @@ namespace am3burger.Controllers
                     Password = passwordHash,
                     Sex = request.Sex,
                     Birthday = request.Birthday,
-                    Permission = request.Permission,
+                    Identity = request.Identity,
                     PhoneValidation = request.PhoneValidation,
                     EmailValidation = request.EmailValidation,
                 };

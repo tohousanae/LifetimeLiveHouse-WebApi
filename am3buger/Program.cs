@@ -55,6 +55,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// 呼叫 MapSwagger().RequireAuthorization 來保護 Swagger UI 端點。
 app.MapSwagger().RequireAuthorization();
 
 app.UseCors(MyAllowSpecificOrigins);

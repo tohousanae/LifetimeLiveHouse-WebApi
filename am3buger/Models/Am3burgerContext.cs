@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Reflection.Metadata;
+using Microsoft.EntityFrameworkCore;
 
 namespace am3burger.Models
 {
@@ -6,6 +7,12 @@ namespace am3burger.Models
     {
         public Am3burgerContext(DbContextOptions<Am3burgerContext> options) : base(options)
         {
+        }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<User>()
+                .Property(b => b.Identity)
+                .HasDefaultValue("顧客");
         }
 
         public DbSet<Coupon> Coupon {  get; set; }
