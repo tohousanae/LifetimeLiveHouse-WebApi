@@ -41,7 +41,7 @@ https://github.com/tohousanae/am3buger-vue
 
 ## 進階技術
 1. redis快取
-2. 部署到azure app servive
+2. azure雲端伺服器與資料庫
 3. 串接綠界第三方金流
 
 ## 畫面
