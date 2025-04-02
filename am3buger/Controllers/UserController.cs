@@ -25,14 +25,14 @@ namespace am3burger.Controllers
 
         // 會員中心，顯示會員資料
         [HttpGet("user/{id}")]
-        public async Task<ActionResult<UserManageDto>> GetUserInfo(int id)
+        public async Task<ActionResult<UserDto>> GetUserInfo(int id)
         {
             var user = await _context.User.FindAsync(id);
             if (user == null) 
             {
                 return NotFound("找不到此會員");
             }
-            UserManageDto userManageDto = new UserManageDto
+            UserDto userManageDto = new UserDto
             {
                 Name = user.Name,
                 Email = user.Email,
@@ -72,7 +72,7 @@ namespace am3burger.Controllers
                 */
 
                 /*var cost = 11;*/
-                /*使用者註冊寫入密碼到資料庫時採用ByCrypt加密，防止密碼被服主看光光*/
+                /*使用者註冊寫入密碼到資料庫時採用ByCrypt加密*/
                 string passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password/*, workFactor: cost*/);
 
                 User user = new User
@@ -99,15 +99,18 @@ namespace am3burger.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<User>> Login(LoginDTO request)
         {
-            var user = await _context.User.FirstOrDefaultAsync(u => u.Email == request.Email);
+            // 檢查輸入的信箱是否為使用者輸入的信箱
+            var user = await _context.User.FirstOrDefaultAsync(u => u.Email == request.Email); 
 
             if (user == null)
             {
-                return Unauthorized("信箱不存在"); // 檢查輸入的信箱是否為使用者輸入的信箱
+                return Unauthorized("電子郵件或密碼不存在"); 
             }
+
+            // 檢查輸入的密碼是否為使用者輸入的密碼
             if (!BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
             {
-                return Unauthorized("信箱或密碼錯誤"); // 刻意將回傳訊息設定成信箱或密碼錯誤，防止攻擊者針對密碼做攻擊測試
+                return Unauthorized("電子郵件或密碼不存在"); // 刻意將回傳訊息設定成信箱或密碼錯誤，防止攻擊者針對密碼做攻擊測試
             }
             else
             {

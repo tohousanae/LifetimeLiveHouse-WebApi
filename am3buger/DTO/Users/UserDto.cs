@@ -1,6 +1,6 @@
 ﻿namespace am3burger.DTO.Users
 {
-    public class UserManageDto
+    public class UserDto
     {
         public string? Name { get; set; }
 
