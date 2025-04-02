@@ -10,6 +10,7 @@ namespace am3burger.Models
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // User資料表的Identity欄位預設值為顧客
             modelBuilder.Entity<User>()
                 .Property(b => b.Identity)
                 .HasDefaultValue("顧客");
