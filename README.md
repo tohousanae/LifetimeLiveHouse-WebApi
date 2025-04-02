@@ -24,6 +24,8 @@ https://github.com/tohousanae/am3buger-vue
 
 ![image](https://github.com/user-attachments/assets/3912ef39-bb63-4e6b-986f-f8b95db3e3da)
 
+2. 產生Email格式網頁
+
 
 ## 基本功能
 
