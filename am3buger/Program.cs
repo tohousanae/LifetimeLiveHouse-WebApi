@@ -21,14 +21,14 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDistributedMemoryCache();
 
 // 加入redis分散式快取服務
-builder.Services.AddSingleton<IConnectionMultiplexer>(
-    ConnectionMultiplexer.Connect(
-        new ConfigurationOptions()
-        {
-            EndPoints = { { "localhost", 6379 } }
-        }
-    )
- );
+//builder.Services.AddSingleton<IConnectionMultiplexer>(
+//    ConnectionMultiplexer.Connect(
+//        new ConfigurationOptions()
+//        {
+//            EndPoints = { { "localhost", 6379 } }
+//        }
+//    )
+// );
 
 // CORS跨來源共用設定
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -36,7 +36,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: MyAllowSpecificOrigins, policy =>
     {
-        policy.WithOrigins("http://localhost:5173","https://am3burger.sakuyaonline.uk").WithHeaders("*").WithMethods("*");
+        policy.WithOrigins("http://localhost:5173","https://am3burger.sakuyaonline.uk", "https://sanae.am3buger-vue.pages.dev/").WithHeaders("*").WithMethods("*").AllowCredentials();
     });
 });
 
