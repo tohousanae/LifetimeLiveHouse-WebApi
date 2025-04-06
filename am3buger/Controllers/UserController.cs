@@ -84,13 +84,11 @@ namespace am3burger.Controllers
                     Sex = request.Sex,
                     Birthday = request.Birthday,
                     Identity = request.Identity,
-                    PhoneValidation = request.PhoneValidation,
-                    EmailValidation = request.EmailValidation,
                 };
                  
                 _context.User.Add(user);
                 await _context.SaveChangesAsync();
-                return Ok("註冊成功，請到會員中心完成信箱驗證，方可使用完整功能");
+                return Ok("註冊成功");
             }
         }
 
@@ -117,8 +115,8 @@ namespace am3burger.Controllers
                 // 将用户的唯一标识符添加到Cookie中
                 CookieOptions option = new CookieOptions();
                 option.Expires = DateTime.Now.AddYears(1); // cookie過期時間設定
-                option.HttpOnly = true;
-                option.Secure = true;
+                option.HttpOnly = true; // 強制使用https存取cookie 
+                option.Secure = true; // 禁用js讀取cookie防止xss攻擊
                 Response.Cookies.Append("UserId", user.Id.ToString(), option);
                 return Ok("登入成功");
             }

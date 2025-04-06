@@ -14,6 +14,14 @@ namespace am3burger.Models
             modelBuilder.Entity<User>()
                 .Property(b => b.Identity)
                 .HasDefaultValue("顧客");
+
+            modelBuilder.Entity<User>()
+                .Property(b => b.PhoneValidation)
+                .HasDefaultValue(false);
+
+            modelBuilder.Entity<User>()
+                .Property(b => b.EmailValidation)
+                .HasDefaultValue(false);
         }
 
         public DbSet<Coupon> Coupon {  get; set; }
