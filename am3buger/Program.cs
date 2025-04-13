@@ -30,6 +30,9 @@ builder.Services.AddDistributedMemoryCache();
 //    )
 // );
 
+// redis win11安裝教學
+//https://redis.io/blog/install-redis-windows-11/
+
 // CORS跨來源共用設定
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddCors(options =>
