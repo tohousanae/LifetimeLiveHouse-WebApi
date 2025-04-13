@@ -57,6 +57,10 @@ namespace am3burger.Controllers
             {
                 return Unauthorized("電話已被註冊");
             }
+            else if (await _context.User.AnyAsync(u => u.Name == request.Name))
+            {
+                return Unauthorized("使用者名稱已被使用");
+            }
             else
             {
                 /*
