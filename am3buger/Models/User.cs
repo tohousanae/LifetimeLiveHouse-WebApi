@@ -33,7 +33,7 @@ namespace am3burger.Models
         public string? Password { get; set; }
 
         [Display(Name = "性別")]
-        [StringLength(1)]
+        [StringLength(5)]
         // 性別
         public string? Sex { get; set; }
 
