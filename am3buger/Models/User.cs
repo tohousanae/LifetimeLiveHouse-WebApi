@@ -13,7 +13,7 @@ namespace am3burger.Models
         public int Id { get; set; }
 
         [Display(Name = "會員名稱")]
-        [StringLength(50)]
+        [StringLength(10)]
         // 姓名
         public string? Name { get; set; }
 
@@ -23,7 +23,7 @@ namespace am3burger.Models
         public string? Email { get; set; }
 
         [Display(Name = "手機號碼")]
-        [StringLength(50)]
+        [StringLength(10)]
         // 手機號碼
         public string? PhoneNumber { get; set; }
 
@@ -33,7 +33,7 @@ namespace am3burger.Models
         public string? Password { get; set; }
 
         [Display(Name = "性別")]
-        [StringLength(50)]
+        [StringLength(1)]
         // 性別
         public string? Sex { get; set; }
 
@@ -44,6 +44,7 @@ namespace am3burger.Models
         public DateTime Birthday { get; set; }
 
         [Display(Name = "身分")]
+        [MaxLength(5)]
         // 權限
         public string? Identity { get; set; }
 
