@@ -43,9 +43,9 @@ namespace am3burger.Models
         [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd}", ApplyFormatInEditMode = true)]
         public DateTime Birthday { get; set; }
 
-        [Display(Name = "權限")]
+        [Display(Name = "身分")]
         // 權限
-        public int Permission { get; set; }
+        public string? Identity { get; set; }
 
         [Display(Name = "手機驗證狀態")]
         // 手機號碼

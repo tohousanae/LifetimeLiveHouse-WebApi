@@ -25,14 +25,14 @@ namespace am3burger.Controllers
 
         // 會員中心，顯示會員資料
         [HttpGet("user/{id}")]
-        public async Task<ActionResult<UserManageDto>> GetUserInfo(int id)
+        public async Task<ActionResult<UserDto>> GetUserInfo(int id)
         {
             var user = await _context.User.FindAsync(id);
             if (user == null) 
             {
                 return NotFound("找不到此會員");
             }
-            UserManageDto userManageDto = new UserManageDto
+            UserDto userManageDto = new UserDto
             {
                 Name = user.Name,
                 Email = user.Email,
@@ -57,6 +57,10 @@ namespace am3burger.Controllers
             {
                 return Unauthorized("電話已被註冊");
             }
+            else if (await _context.User.AnyAsync(u => u.Name == request.Name))
+            {
+                return Unauthorized("使用者名稱已被使用");
+            }
             else
             {
                 /*
@@ -67,9 +71,12 @@ namespace am3burger.Controllers
                 2. ByCrypt加密會經過加鹽處理，會將加鹽與密碼一起進行哈希加密，即便是兩個使用者使用相同的密碼其經過加密的值也不會相同，增加破解難度
 
                 3. 參考資料：https://github.com/BcryptNet/bcrypt.net、https://ithelp.ithome.com.tw/articles/10337514
+
+                4. 雖說在資料庫的權限設定好的情況下外人是連不進來的，不過加密的作用在於萬一資料庫不慎被竊取時至少私密資料不容易被破解
                 */
 
                 /*var cost = 11;*/
+                /*使用者註冊寫入密碼到資料庫時採用ByCrypt加密*/
                 string passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password/*, workFactor: cost*/);
 
                 User user = new User
@@ -80,38 +87,40 @@ namespace am3burger.Controllers
                     Password = passwordHash,
                     Sex = request.Sex,
                     Birthday = request.Birthday,
-                    Permission = request.Permission,
-                    PhoneValidation = request.PhoneValidation,
-                    EmailValidation = request.EmailValidation,
+                    Identity = request.Identity,
                 };
                  
                 _context.User.Add(user);
                 await _context.SaveChangesAsync();
-                return Ok("註冊成功，請到會員中心完成信箱驗證，方可使用完整功能");
+                return Ok("註冊成功");
             }
         }
 
         // 登入api(cookie based驗證)
+
         [HttpPost("login")]
         public async Task<ActionResult<User>> Login(LoginDTO request)
         {
-            var user = await _context.User.FirstOrDefaultAsync(u => u.Email == request.Email);
+            // 檢查輸入的信箱是否為使用者輸入的信箱
+            var user = await _context.User.FirstOrDefaultAsync(u => u.Email == request.Email); 
 
             if (user == null)
             {
-                return Unauthorized("信箱不存在"); // 檢查輸入的信箱是否為使用者輸入的信箱
+                return Unauthorized("電子郵件或密碼不存在"); 
             }
+
+            // 檢查輸入的密碼是否為使用者輸入的密碼
             if (!BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
             {
-                return Unauthorized("信箱或密碼錯誤"); // 刻意將回傳訊息設定成信箱或密碼錯誤，防止攻擊者針對密碼做攻擊測試
+                return Unauthorized("電子郵件或密碼不存在"); // 刻意將回傳訊息設定成信箱或密碼錯誤，防止攻擊者針對密碼做攻擊測試
             }
             else
             {
                 // 将用户的唯一标识符添加到Cookie中
                 CookieOptions option = new CookieOptions();
                 option.Expires = DateTime.Now.AddYears(1); // cookie過期時間設定
-                option.HttpOnly = true;
-                option.Secure = true;
+                option.HttpOnly = true; // 強制使用https存取cookie 
+                option.Secure = true; // 禁用js讀取cookie防止xss攻擊
                 Response.Cookies.Append("UserId", user.Id.ToString(), option);
                 return Ok("登入成功");
             }
@@ -144,6 +153,11 @@ namespace am3burger.Controllers
                  * 1. https://blog.csdn.net/m0_38013946/article/details/134849150
                  * 2. https://hackercat.org/diy-tools/generate-random-password-from-command-line
                  */
+
+                /* cookie相關參考：
+                 * 1. 網站安全🔒 再探同源政策，談 SameSite 設定對 Cookie 的影響與注意事項 https://medium.com/%E7%A8%8B%E5%BC%8F%E7%8C%BF%E5%90%83%E9%A6%99%E8%95%89/%E5%86%8D%E6%8E%A2%E5%90%8C%E6%BA%90%E6%94%BF%E7%AD%96-%E8%AB%87-samesite-%E8%A8%AD%E5%AE%9A%E5%B0%8D-cookie-%E7%9A%84%E5%BD%B1%E9%9F%BF%E8%88%87%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A0%85-6195d10d4441
+                 *
+                 */
                 Guid guid = Guid.NewGuid(); // 生成GUID token
                 string token = guid.ToString("N");
 
@@ -155,6 +169,7 @@ namespace am3burger.Controllers
                 option.Expires = DateTime.Now.AddMinutes(30); // 設定token的失效時間，作為忘記密碼連結失效時間
                 option.HttpOnly = true; // 強制使用https存取cookie
                 option.Secure = true; // 禁用js讀取cookie防止xss攻擊
+                option.SameSite = SameSiteMode.None; // SameSiteMode設置為None以允許前端發送post請求存取cookie
                 Response.Cookies.Append("forgetPwdToken", tokenHash, option);
                 Response.Cookies.Append("InputEmail",request.Email.ToString(), option);
 
