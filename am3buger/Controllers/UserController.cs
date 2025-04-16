@@ -71,7 +71,7 @@ namespace am3burger.Controllers
 
                 3. 參考資料：https://github.com/BcryptNet/bcrypt.net、https://ithelp.ithome.com.tw/articles/10337514
 
-                4. 雖說在資料庫的權限設定好的情況下外人是連不進來的，不過加密的作用在於萬一資料庫不慎被竊取時至少私密資料不容易被破解
+                4. 雖說在資料庫的連線設定好的情況下外人是連不進來的，不過加密的作用在於萬一資料庫不慎被竊取時至少私密資料不容易被破解
                 */
 
                 /*var cost = 11;*/
