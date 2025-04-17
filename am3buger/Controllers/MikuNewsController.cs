@@ -6,7 +6,7 @@ namespace am3burger.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MikuController : ControllerBase
+    public class MikuNewsController : ControllerBase
     {
         // GET: api/<MikuController>
         [HttpGet]
