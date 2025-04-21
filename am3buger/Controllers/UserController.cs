@@ -38,58 +38,51 @@ namespace am3burger.Controllers
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
                 Sex = user.Sex,
-                Birthday = user.Birthday,
+                Birthday = (DateTime)user?.Birthday,
             };
             return userManageDto;
         }
 
-        // 登入註冊api參考資料：https://ithelp.ithome.com.tw/articles/10337994
-        // 註冊api
         [HttpPost("register")]
-        public async Task<ActionResult<User>> Register(RegisterDTO request)
+        public async Task<ActionResult<string>> Register(RegisterDTO request)
         {
-            // 检查邮箱、电子邮件和电话号码是否已被注册
-            if (await _context.User.AnyAsync(u => u.Email == request.Email))
+            // 儲存密碼哈希加密+加鹽，避免資料庫不慎被竊取時密碼外洩，預設cost11
+            string passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
+
+            var user = new User
             {
-                return Unauthorized("信箱已被註冊");
-            }
-            else if (await _context.User.AnyAsync(u => u.PhoneNumber == request.PhoneNumber))
+                Name = request.Name,
+                Email = request.Email,
+                PhoneNumber = request.PhoneNumber,
+                Password = passwordHash,
+                Sex = request.Sex,
+                Birthday = request.Birthday,
+                Identity = request.Identity,
+            };
+
+            _context.User.Add(user);
+
+            try
             {
-                return Unauthorized("電話已被註冊");
-            }
-            else
-            {
-                /*
-                1. 以下使用了 **BCrypt.Net** 函式庫來將 **request.Password** 中的密碼進行哈希加密演算法處理，處理後的密碼存儲在 **passwordHash** 變數中。
-                cost是指加密的複雜度，預設為11，複雜度高會導致加密時的效能下降
-
-                2. ByCrypt加密會經過加鹽處理，會將加鹽與密碼一起進行哈希加密，即便是兩個使用者使用相同的密碼其經過加密的值也不會相同，增加破解難度
-
-                3. 參考資料：https://github.com/BcryptNet/bcrypt.net、https://ithelp.ithome.com.tw/articles/10337514
-
-                4. 資料庫的連線設定好的情況下外人是連不進來的，加密的作用在於萬一資料庫不慎被竊取時私密資料不容易被破解
-                */
-
-                /*var cost = 11;*/
-                /*使用者註冊寫入密碼到資料庫時採用ByCrypt加密*/
-                string passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password/*, workFactor: cost*/);
-
-                User user = new User
-                {
-                    Name = request.Name,
-                    Email = request.Email,
-                    PhoneNumber = request.PhoneNumber,
-                    Password = passwordHash,
-                    Sex = request.Sex,
-                    Birthday = request.Birthday,
-                    Identity = request.Identity,
-                };
-                 
-                _context.User.Add(user);
                 await _context.SaveChangesAsync();
                 return Ok("註冊成功");
             }
+            catch (DbUpdateException ex)
+            {
+                // 根據不同資料庫可以判斷欄位（以下示範是 SQL Server 的情境）
+                if (ex.InnerException?.Message.Contains("IX_User_Email") == true)
+                {
+                    return Conflict("信箱已被註冊");
+                }
+                else if (ex.InnerException?.Message.Contains("IX_User_PhoneNumber") == true)
+                {
+                    return Conflict("電話已被註冊");
+                }
+
+                return StatusCode(500, "發生未知錯誤：" + ex.Message);
+            }
         }
+
 
         // 登入api(cookie based驗證)
 
