@@ -43,49 +43,47 @@ namespace am3burger.Controllers
             return userManageDto;
         }
 
+        // 登入註冊api參考資料：https://ithelp.ithome.com.tw/articles/10337994
+        // 註冊api
         [HttpPost("register")]
-        public async Task<ActionResult<string>> Register(RegisterDTO request)
+        public async Task<ActionResult<User>> Register(RegisterDTO request)
         {
-            // 儲存密碼哈希加密+加鹽，避免資料庫不慎被竊取時密碼外洩，預設cost11
-            string passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
-
-            var user = new User
+            // 检查邮箱、电子邮件和电话号码是否已被注册
+            if (await _context.User.AnyAsync(u => u.Email == request.Email))
             {
-                Name = request.Name,
-                Email = request.Email,
-                PhoneNumber = request.PhoneNumber,
-                Password = passwordHash,
-                Sex = request.Sex,
-                Birthday = request.Birthday,
-                Identity = request.Identity,
-            };
-
-            _context.User.Add(user);
-
-            try
+                return Unauthorized("信箱已被註冊");
+            }
+            else if (await _context.User.AnyAsync(u => u.PhoneNumber == request.PhoneNumber))
             {
+                return Unauthorized("電話已被註冊");
+            }
+            else
+            {
+                /*
+                哈希加密參考資料：https://github.com/BcryptNet/bcrypt.net、https://ithelp.ithome.com.tw/articles/10337514
+                */
+
+                /*密碼加密與加鹽處理，避免密碼遭到破解，預設var cost = 11;*/
+                string passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password/*, workFactor: cost*/);
+
+                User user = new User
+                {
+                    Name = request.Name,
+                    Email = request.Email,
+                    PhoneNumber = request.PhoneNumber,
+                    Password = passwordHash,
+                    Sex = request.Sex,
+                    Birthday = request.Birthday,
+                    Identity = request.Identity,
+                };
+
+                _context.User.Add(user);
                 await _context.SaveChangesAsync();
                 return Ok("註冊成功");
             }
-            catch (DbUpdateException ex)
-            {
-                // 根據不同資料庫可以判斷欄位（以下示範是 SQL Server 的情境）
-                if (ex.InnerException?.Message.Contains("IX_User_Email") == true)
-                {
-                    return Conflict("信箱已被註冊");
-                }
-                else if (ex.InnerException?.Message.Contains("IX_User_PhoneNumber") == true)
-                {
-                    return Conflict("電話已被註冊");
-                }
-
-                return StatusCode(500, "發生未知錯誤：" + ex.Message);
-            }
         }
 
-
         // 登入api(cookie based驗證)
-
         [HttpPost("login")]
         public async Task<ActionResult<User>> Login(LoginDTO request)
         {
