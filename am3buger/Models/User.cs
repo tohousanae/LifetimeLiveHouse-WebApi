@@ -47,7 +47,7 @@ namespace am3burger.Models
         public DateTime? Birthday { get; set; }
 
         [Display(Name = "身分")]
-        [MaxLength(5)]
+        [StringLength(5)]
         // 權限
         public string? Identity { get; set; }
 

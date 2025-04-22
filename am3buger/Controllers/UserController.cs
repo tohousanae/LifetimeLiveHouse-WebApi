@@ -157,7 +157,7 @@ namespace am3burger.Controllers
                 option.Secure = true; // 禁用js讀取cookie防止xss攻擊
                 option.SameSite = SameSiteMode.None; // SameSiteMode設置為None以允許前端發送post請求存取cookie
                 Response.Cookies.Append("forgetPwdToken", tokenHash, option);
-                Response.Cookies.Append("InputEmail",request.Email.ToString(), option);
+                Response.Cookies.Append("InputEmail", request.Email.ToString(), option);
 
                 return Ok(tokenHash);
             }
