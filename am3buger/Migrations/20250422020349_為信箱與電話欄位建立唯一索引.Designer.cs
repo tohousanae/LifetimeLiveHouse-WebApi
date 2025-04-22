@@ -12,8 +12,8 @@ using am3burger.Models;
 namespace am3burger.Migrations
 {
     [DbContext(typeof(Am3burgerContext))]
-    [Migration("20250421131250_會員名稱也設置索引")]
-    partial class 會員名稱也設置索引
+    [Migration("20250422020349_為信箱與電話欄位建立唯一索引")]
+    partial class 為信箱與電話欄位建立唯一索引
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -123,8 +123,6 @@ namespace am3burger.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name", "Description", "Type");
-
                     b.ToTable("Product");
                 });
 
@@ -190,37 +188,13 @@ namespace am3burger.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex(new[] { "Birthday" }, "IX_User_Birthday")
-                        .IsUnique()
-                        .HasFilter("[Birthday] IS NOT NULL");
-
                     b.HasIndex(new[] { "Email" }, "IX_User_Email")
                         .IsUnique()
                         .HasFilter("[Email] IS NOT NULL");
 
-                    b.HasIndex(new[] { "EmailValidation" }, "IX_User_EmailValidation")
-                        .IsUnique()
-                        .HasFilter("[EmailValidation] IS NOT NULL");
-
-                    b.HasIndex(new[] { "Identity" }, "IX_User_Identity")
-                        .IsUnique()
-                        .HasFilter("[Identity] IS NOT NULL");
-
-                    b.HasIndex(new[] { "Name" }, "IX_User_Name")
-                        .IsUnique()
-                        .HasFilter("[Name] IS NOT NULL");
-
                     b.HasIndex(new[] { "PhoneNumber" }, "IX_User_PhoneNumber")
                         .IsUnique()
                         .HasFilter("[PhoneNumber] IS NOT NULL");
-
-                    b.HasIndex(new[] { "PhoneValidation" }, "IX_User_PhoneValidation")
-                        .IsUnique()
-                        .HasFilter("[PhoneValidation] IS NOT NULL");
-
-                    b.HasIndex(new[] { "Sex" }, "IX_User_Sex")
-                        .IsUnique()
-                        .HasFilter("[Sex] IS NOT NULL");
 
                     b.ToTable("User");
                 });

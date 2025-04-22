@@ -5,7 +5,7 @@
 namespace am3burger.Migrations
 {
     /// <inheritdoc />
-    public partial class 資料表已有主鍵作為作為叢集索引鍵不需要另外設置索引因此將資料庫除主鍵外的索引刪除 : Migration
+    public partial class 為信箱與電話欄位建立唯一索引 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,23 +15,11 @@ namespace am3burger.Migrations
                 table: "User");
 
             migrationBuilder.DropIndex(
-                name: "IX_User_Email",
-                table: "User");
-
-            migrationBuilder.DropIndex(
                 name: "IX_User_EmailValidation",
                 table: "User");
 
             migrationBuilder.DropIndex(
                 name: "IX_User_Identity",
-                table: "User");
-
-            migrationBuilder.DropIndex(
-                name: "IX_User_Name",
-                table: "User");
-
-            migrationBuilder.DropIndex(
-                name: "IX_User_PhoneNumber",
                 table: "User");
 
             migrationBuilder.DropIndex(
@@ -58,13 +46,6 @@ namespace am3burger.Migrations
                 filter: "[Birthday] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_User_Email",
-                table: "User",
-                column: "Email",
-                unique: true,
-                filter: "[Email] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_User_EmailValidation",
                 table: "User",
                 column: "EmailValidation",
@@ -77,20 +58,6 @@ namespace am3burger.Migrations
                 column: "Identity",
                 unique: true,
                 filter: "[Identity] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_User_Name",
-                table: "User",
-                column: "Name",
-                unique: true,
-                filter: "[Name] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_User_PhoneNumber",
-                table: "User",
-                column: "PhoneNumber",
-                unique: true,
-                filter: "[PhoneNumber] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_User_PhoneValidation",

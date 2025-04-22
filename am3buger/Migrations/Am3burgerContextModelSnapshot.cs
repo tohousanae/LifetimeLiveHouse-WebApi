@@ -185,6 +185,14 @@ namespace am3burger.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex(new[] { "Email" }, "IX_User_Email")
+                        .IsUnique()
+                        .HasFilter("[Email] IS NOT NULL");
+
+                    b.HasIndex(new[] { "PhoneNumber" }, "IX_User_PhoneNumber")
+                        .IsUnique()
+                        .HasFilter("[PhoneNumber] IS NOT NULL");
+
                     b.ToTable("User");
                 });
 #pragma warning restore 612, 618
