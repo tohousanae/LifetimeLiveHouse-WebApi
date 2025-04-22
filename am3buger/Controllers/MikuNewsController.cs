@@ -8,6 +8,8 @@ namespace am3burger.Controllers
     [ApiController]
     public class MikuNewsController : ControllerBase
     {
+        // 新聞的儲存將採用mongodb資料庫+redis+記憶體快取儲存
+        // 新聞一天更新一次，每次更新100筆資料，每頁儲存15筆資料，當使用者下滑時隨機抽取不重複資料更新，更新前將在資料庫的舊資料刪除
         // GET: api/<MikuController>
         [HttpGet]
         public IEnumerable<string> Get()
