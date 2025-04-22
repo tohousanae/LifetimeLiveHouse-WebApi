@@ -4,15 +4,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace am3burger.Models
 {
-    // 不常變動的資料增加索引，提高查詢速度
-    [Index(nameof(Name), IsUnique = true, Name = "IX_User_Name")]
-    [Index(nameof(Email), IsUnique = true, Name = "IX_User_Email")]
-    [Index(nameof(PhoneNumber), IsUnique = true, Name = "IX_User_PhoneNumber")]
-    [Index(nameof(Sex), IsUnique = true, Name = "IX_User_Sex")]
-    [Index(nameof(Birthday), IsUnique = true, Name = "IX_User_Birthday")]
-    [Index(nameof(Identity), IsUnique = true, Name = "IX_User_Identity")]
-    [Index(nameof(PhoneValidation), IsUnique = true, Name = "IX_User_PhoneValidation")]
-    [Index(nameof(EmailValidation), IsUnique = true, Name = "IX_User_EmailValidation")]
     // 會員資料表
     public class User
     {

@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace am3burger.Models
 {
-    [Index(nameof(Name), nameof(Description),nameof(Type))]
     public class Product
     {
         [Key]
