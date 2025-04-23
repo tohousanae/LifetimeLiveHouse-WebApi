@@ -104,7 +104,7 @@ namespace am3burger.Controllers
             {
                 // 将用户的唯一标识符添加到Cookie中
                 CookieOptions option = new CookieOptions();
-                option.Expires = DateTime.Now.AddYears(1); // cookie過期時間設定
+                option.Expires = DateTime.Now.AddMonths(6); // cookie過期時間設定
                 option.HttpOnly = true; // 強制使用https存取cookie 
                 option.Secure = true; // 禁用js讀取cookie防止xss攻擊
                 Response.Cookies.Append("UserId", user.Id.ToString(), option);
