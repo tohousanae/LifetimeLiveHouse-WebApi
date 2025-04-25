@@ -43,6 +43,7 @@ https://github.com/tohousanae/am3buger-vue
 1. redis快取
 2. azure雲端伺服器與資料庫
 3. 串接綠界第三方金流
+4. python爬蟲
 
 ## 畫面
 
