@@ -5,6 +5,7 @@ using static am3burger.Models.MailSetting;
 
 namespace am3burger.Controllers
 {
+    // 寄送email程式碼引用：https://ithelp.ithome.com.tw/articles/10307773
     [Route("api/[controller]")]
     [ApiController]
     public class MailController : ControllerBase

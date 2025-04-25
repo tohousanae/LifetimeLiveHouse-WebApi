@@ -10,9 +10,8 @@ namespace am3burger.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int id { get; set; }
 
-        // stroe表的分店Id
+        // stroe表的分店Id，代表外送員所屬的分店
         [Display(Name = "分店Id")]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int store_id { get; set; }
     }
 }
