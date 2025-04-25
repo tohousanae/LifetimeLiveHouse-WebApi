@@ -46,3 +46,5 @@ https://github.com/tohousanae/am3buger-vue
 
 ## 畫面
 
+## 參考引用資料
+1. https://ithelp.ithome.com.tw/articles/10307773
