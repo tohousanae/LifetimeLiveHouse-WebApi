@@ -32,7 +32,7 @@ namespace am3burger.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Coupon");
+                    b.ToTable("Coupon", (string)null);
                 });
 
             modelBuilder.Entity("am3burger.Models.DeliveryBoy", b =>
@@ -48,7 +48,7 @@ namespace am3burger.Migrations
 
                     b.HasKey("id");
 
-                    b.ToTable("DeliveryBoy");
+                    b.ToTable("DeliveryBoy", (string)null);
                 });
 
             modelBuilder.Entity("am3burger.Models.OrderForm", b =>
@@ -91,7 +91,7 @@ namespace am3burger.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("OrderForm");
+                    b.ToTable("OrderForm", (string)null);
                 });
 
             modelBuilder.Entity("am3burger.Models.Product", b =>
@@ -123,7 +123,7 @@ namespace am3burger.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Product");
+                    b.ToTable("Product", (string)null);
                 });
 
             modelBuilder.Entity("am3burger.Models.Store", b =>
@@ -136,7 +136,7 @@ namespace am3burger.Migrations
 
                     b.HasKey("id");
 
-                    b.ToTable("Store");
+                    b.ToTable("Store", (string)null);
                 });
 
             modelBuilder.Entity("am3burger.Models.User", b =>
@@ -196,7 +196,7 @@ namespace am3burger.Migrations
                         .IsUnique()
                         .HasFilter("[PhoneNumber] IS NOT NULL");
 
-                    b.ToTable("User");
+                    b.ToTable("User", (string)null);
                 });
 #pragma warning restore 612, 618
         }
