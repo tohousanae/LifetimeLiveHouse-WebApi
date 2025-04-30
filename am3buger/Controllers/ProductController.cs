@@ -12,16 +12,10 @@ namespace am3burger.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductController : ControllerBase
+    public class ProductController(Am3burgerContext context, IConnectionMultiplexer redisService) : ControllerBase
     {
-        private readonly IConnectionMultiplexer _redisService; // 加入redis快取
-        private readonly Am3burgerContext _context;
-        
-        public ProductController(Am3burgerContext context, IConnectionMultiplexer redisService)
-        {
-            _context = context;
-            _redisService = redisService;
-        }
+        private readonly IConnectionMultiplexer _redisService = redisService; // 加入redis快取
+        private readonly Am3burgerContext _context = context;
 
         // GET: api/Products
         [HttpGet]
