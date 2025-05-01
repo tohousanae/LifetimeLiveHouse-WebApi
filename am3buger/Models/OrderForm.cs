@@ -28,12 +28,6 @@ namespace am3burger.Models
         [Display(Name = "商品售價")]
         public int? Price { get; set; }
 
-        [Display(Name = "外送費")]
-        public int? Delivery_fee { get; set; }
-
-        [Display(Name = "服務費")]
-        public int? Service_charge { get; set; }
-
         [Display(Name = "總計")]
         public int? Total_price { get; set; }
 
