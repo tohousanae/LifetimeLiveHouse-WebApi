@@ -25,9 +25,9 @@ namespace am3burger.Controllers
 
         // 會員中心，顯示會員資料
         [HttpGet("user/{id}")]
-        public async Task<ActionResult<UserDto>> GetUserInfo(int id)
+        public async Task<ActionResult<UserDto>> GetUserInfo(int inputId)
         {
-            var user = await _context.User.FindAsync(id);
+            var user = await _context.User.FindAsync(inputId);
             if (user == null) 
             {
                 return NotFound("找不到此會員");
@@ -46,14 +46,14 @@ namespace am3burger.Controllers
         // 登入註冊api參考資料：https://ithelp.ithome.com.tw/articles/10337994
         // 註冊api
         [HttpPost("register")]
-        public async Task<ActionResult<User>> Register(RegisterDTO request)
+        public async Task<ActionResult<User>> Register(RegisterDTO input)
         {
             // 检查邮箱、电子邮件和电话号码是否已被注册
-            if (await _context.User.AnyAsync(u => u.Email == request.Email))
+            if (await _context.User.AnyAsync(u => u.Email == input.Email))
             {
                 return Unauthorized("信箱已被註冊");
             }
-            else if (await _context.User.AnyAsync(u => u.PhoneNumber == request.PhoneNumber))
+            else if (await _context.User.AnyAsync(u => u.PhoneNumber == input.PhoneNumber))
             {
                 return Unauthorized("電話已被註冊");
             }
@@ -64,17 +64,17 @@ namespace am3burger.Controllers
                 */
 
                 /*密碼加密與加鹽處理，避免密碼遭到破解，預設var cost = 11;*/
-                string passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password/*, workFactor: cost*/);
+                string passwordHash = BCrypt.Net.BCrypt.HashPassword(input.Password/*, workFactor: cost*/);
 
                 User user = new User
                 {
-                    Name = request.Name,
-                    Email = request.Email,
-                    PhoneNumber = request.PhoneNumber,
+                    Name = input.Name,
+                    Email = input.Email,
+                    PhoneNumber = input.PhoneNumber,
                     Password = passwordHash,
-                    Sex = request.Sex,
-                    Birthday = request.Birthday,
-                    Identity = request.Identity,
+                    Sex = input.Sex,
+                    Birthday = input.Birthday,
+                    Identity = input.Identity,
                 };
 
                 _context.User.Add(user);
@@ -85,10 +85,10 @@ namespace am3burger.Controllers
 
         // 登入api(cookie based驗證)
         [HttpPost("login")]
-        public async Task<ActionResult<User>> Login(LoginDTO request)
+        public async Task<ActionResult<User>> Login(LoginDTO input)
         {
             // 檢查輸入的信箱是否為使用者輸入的信箱
-            var user = await _context.User.FirstOrDefaultAsync(u => u.Email == request.Email); 
+            var user = await _context.User.FirstOrDefaultAsync(u => u.Email == input.Email); 
 
             if (user == null)
             {
@@ -96,7 +96,7 @@ namespace am3burger.Controllers
             }
 
             // 檢查輸入的密碼是否為使用者輸入的密碼
-            if (!BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
+            if (!BCrypt.Net.BCrypt.Verify(input.Password, user.Password))
             {
                 return Unauthorized("電子郵件或密碼不存在"); // 刻意將回傳訊息設定成信箱或密碼錯誤，防止攻擊者針對密碼做攻擊測試
             }
@@ -183,8 +183,8 @@ namespace am3burger.Controllers
         public async Task<IActionResult> ModifyPwd(ForgetPasswordModifyPasswordDto request)
         {
             // 從cookie取得使用者輸入的email
-            string? inputemail = System.Net.WebUtility.UrlDecode(Request.Cookies["InputEmail"]); // 將URL編碼的字串轉換回原始的字串
-            var user = await _context.User.FirstOrDefaultAsync(u => u.Email == inputemail); 
+            string? inputEmail = System.Net.WebUtility.UrlDecode(Request.Cookies["InputEmail"]); // 將URL編碼的字串轉換回原始的字串
+            var user = await _context.User.FirstOrDefaultAsync(u => u.Email == inputEmail); 
 
             if (user == null) 
             {
