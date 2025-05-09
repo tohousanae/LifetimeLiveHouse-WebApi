@@ -39,6 +39,7 @@ namespace am3burger.Controllers
                 PhoneNumber = user.PhoneNumber,
                 Sex = user.Sex,
                 Birthday = (DateTime)user?.Birthday,
+                MikuPoint = user.MikuPoint,
             };
             return userManageDto;
         }
@@ -75,6 +76,7 @@ namespace am3burger.Controllers
                     Sex = input.Sex,
                     Birthday = input.Birthday,
                     Identity = input.Identity,
+                    MikuPoint = 0
                 };
 
                 _context.User.Add(user);

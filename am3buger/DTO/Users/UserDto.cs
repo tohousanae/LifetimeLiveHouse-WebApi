@@ -7,5 +7,6 @@
         public string? PhoneNumber { get; set; }
         public string? Sex { get; set; }
         public DateTime Birthday { get; set; }
+        public int? MikuPoint { get; set; }
     }
 }

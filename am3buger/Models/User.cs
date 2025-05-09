@@ -6,6 +6,7 @@ namespace am3burger.Models
 {
     [Index(nameof(Email), IsUnique = true, Name = "IX_User_Email")]
     [Index(nameof(PhoneNumber), IsUnique = true, Name = "IX_User_PhoneNumber")]
+    [Index(nameof(Name), IsUnique = false, Name = "IX_User_Name")]
     // 會員資料表
     public class User
     {
@@ -58,5 +59,9 @@ namespace am3burger.Models
         [Display(Name = "信箱驗證狀態")]
         // 手機號碼
         public bool? EmailValidation { get; set; }
+
+        [Display(Name = "miku點數")]
+        // 會員Id  
+        public int MikuPoint { get; set; }
     }
 }
