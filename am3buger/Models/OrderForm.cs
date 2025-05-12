@@ -11,9 +11,9 @@ namespace am3burger.Models
         public int Id { get; set; }
 
         [Display(Name = "訂單時間")]
-        public DateTime OrderTime { get; set; }
+        public required DateTime OrderTime { get; set; }
 
         [Display(Name = "付款方式")]
-        public string? Payment { get; set; }
+        public required string Payment { get; set; }
     }
 }

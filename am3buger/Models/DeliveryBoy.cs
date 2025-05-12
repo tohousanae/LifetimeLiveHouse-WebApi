@@ -12,6 +12,6 @@ namespace am3burger.Models
 
         // stroe表分店Id，代表外送員所屬的分店
         [Display(Name = "分店Id")]
-        public int store_id { get; set; }
+        public required int store_id { get; set; }
     }
 }
