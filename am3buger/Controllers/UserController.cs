@@ -61,7 +61,7 @@ namespace am3burger.Controllers
                 /*密碼加密與加鹽處理，避免密碼遭到破解，預設var cost = 11;*/
                 string passwordHash = BCrypt.Net.BCrypt.HashPassword(input.Password/*, workFactor: cost*/);
 
-                User user = new User
+                RegisterDTO user = new RegisterDTO
                 {
                     Name = input.Name,
                     Email = input.Email,

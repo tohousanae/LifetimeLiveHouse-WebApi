@@ -21,5 +21,7 @@
 
         public bool EmailValidation { get; set; }
 
+        public int MikuPoint { get; set; }
+
     }
 }
