@@ -38,12 +38,11 @@ namespace am3burger.Controllers
             return userManageDto;
         }
 
-        // 登入註冊api參考資料：https://ithelp.ithome.com.tw/articles/10337994
-        // 註冊api
+        // 修改 Register 方法中的以下代碼
         [HttpPost("register")]
         public async Task<ActionResult<User>> Register(RegisterDTO input)
         {
-            // 检查邮箱、电子邮件和电话号码是否已被注册
+            // 檢查信箱、電話是否已被註冊
             if (await _context.User.AnyAsync(u => u.Email == input.Email))
             {
                 return Unauthorized("信箱已被註冊");
@@ -54,14 +53,11 @@ namespace am3burger.Controllers
             }
             else
             {
-                /*
-                哈希加密參考資料：https://github.com/BcryptNet/bcrypt.net、https://ithelp.ithome.com.tw/articles/10337514
-                */
+                // 密碼加密與加鹽處理
+                string passwordHash = BCrypt.Net.BCrypt.HashPassword(input.Password);
 
-                /*密碼加密與加鹽處理，避免密碼遭到破解，預設var cost = 11;*/
-                string passwordHash = BCrypt.Net.BCrypt.HashPassword(input.Password/*, workFactor: cost*/);
-
-                RegisterDTO user = new RegisterDTO
+                // 將 RegisterDTO 轉換為 User 模型
+                User user = new()
                 {
                     Name = input.Name,
                     Email = input.Email,
@@ -69,8 +65,6 @@ namespace am3burger.Controllers
                     Password = passwordHash,
                     Sex = input.Sex,
                     Birthday = input.Birthday,
-                    Identity = input.Identity,
-                    MikuPoint = 0
                 };
 
                 _context.User.Add(user);

@@ -19,49 +19,49 @@ namespace am3burger.Models
         [Display(Name = "會員名稱")]
         [StringLength(10)]
         // 姓名
-        public required string Name { get; set; }
+        public string Name { get; set; } = null!;
 
         [Display(Name = "信箱")]
         [StringLength(50)]
         // 信箱
-        public required string Email { get; set; }
+        public string Email { get; set; } = null!;
 
         [Display(Name = "手機號碼")]
         [StringLength(10)]
         // 手機號碼
-        public required string PhoneNumber { get; set; }
+        public string PhoneNumber { get; set; } = null!;
 
         [Display(Name = "密碼")]
         [StringLength(4000)]
         // 密碼
-        public required string Password { get; set; }
+        public string Password { get; set; } = null!;
 
         [Display(Name = "性別")]
         [StringLength(5)]
         // 性別
-        public required string Sex { get; set; }
+        public string Sex { get; set; } = null!;
 
         [Display(Name = "生日")]
         // 生日
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd}", ApplyFormatInEditMode = true)]
-        public required DateTime Birthday { get; set; }
+        public DateTime Birthday { get; set; } = DateTime.Now;
 
         [Display(Name = "身分")]
         [StringLength(5)]
         // 權限
-        public required string Identity { get; set; }
+        public string Identity { get; set; } = null!;
 
         [Display(Name = "手機驗證狀態")]
         // 手機號碼
-        public required bool PhoneValidation { get; set; }
+        public bool PhoneValidation { get; set; } = false;
 
         [Display(Name = "信箱驗證狀態")]
         // 手機號碼
-        public required bool EmailValidation { get; set; }
+        public bool EmailValidation { get; set; } = false;
 
         [Display(Name = "miku點數")]
         // 會員Id  
-        public required int MikuPoint { get; set; }
+        public int MikuPoint { get; set; } = 0;
     }
 }
