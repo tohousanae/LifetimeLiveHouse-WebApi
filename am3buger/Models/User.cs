@@ -24,7 +24,7 @@ namespace am3burger.Models
         [Display(Name = "頭像圖片檔名")]
         [StringLength(int.MaxValue)]
         // 姓名
-        public string headPictureName { get; set; } = null!;
+        public string headPicture { get; set; } = null!;
 
         [Display(Name = "信箱")]
         [StringLength(50)]
