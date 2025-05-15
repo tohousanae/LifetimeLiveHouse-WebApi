@@ -8,21 +8,6 @@ namespace am3burger.Models
         public Am3burgerContext(DbContextOptions<Am3burgerContext> options) : base(options)
         {
         }
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            // User資料表的Identity欄位預設值為顧客
-            modelBuilder.Entity<User>()
-                .Property(b => b.Identity)
-                .HasDefaultValue("顧客");
-
-            modelBuilder.Entity<User>()
-                .Property(b => b.PhoneValidation)
-                .HasDefaultValue(false);
-
-            modelBuilder.Entity<User>()
-                .Property(b => b.EmailValidation)
-                .HasDefaultValue(false);
-        }
 
         public DbSet<Coupon> Coupon {  get; set; }
         public DbSet<DeliveryBoy> DeliveryBoy { get; set; }

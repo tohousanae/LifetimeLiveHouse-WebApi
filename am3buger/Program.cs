@@ -9,7 +9,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<Am3burgerContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("am3burger")));
 
-
 // Add services to the container.
 
 builder.Services.AddControllers();
