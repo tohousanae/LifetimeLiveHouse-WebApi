@@ -21,6 +21,11 @@ namespace am3burger.Models
         // 姓名
         public string Name { get; set; } = null!;
 
+        [Display(Name = "頭像圖片檔名")]
+        [StringLength(int.MaxValue)]
+        // 姓名
+        public string headPictureName { get; set; } = null!;
+
         [Display(Name = "信箱")]
         [StringLength(50)]
         // 信箱
@@ -32,12 +37,12 @@ namespace am3burger.Models
         public string PhoneNumber { get; set; } = null!;
 
         [Display(Name = "密碼")]
-        [StringLength(4000)]
+        [StringLength(int.MaxValue)]
         // 密碼
         public string Password { get; set; } = null!;
 
         [Display(Name = "性別")]
-        [StringLength(5)]
+        [StringLength(6)]
         // 性別
         public string Sex { get; set; } = null!;
 
