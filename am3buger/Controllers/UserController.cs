@@ -344,38 +344,36 @@ namespace am3burger.Controllers
         }
 
         // 上傳頭像
-        [HttpPost("headUpload")]
-        public IActionResult headUpload(IFormFile photo)
+        [HttpPost("headPictureUpload")]
+        public string HeadUpload(IFormFile inputImage)
         {
-            if (photo == null || photo.Length == 0)
+            if (inputImage == null || inputImage.Length == 0)
             {
-                ViewData["ErrMessage"] = "別開玩笑了!!你根本沒上傳檔案!!";
-                return View();
+                return "沒有上傳檔案";
             }
 
             //只允許上傳圖片
-            if (photo.ContentType != "image/jpeg" && photo.ContentType != "image/png")
+            if (inputImage.ContentType != "image/jpeg" && inputImage.ContentType != "image/png")
             {
-                ViewData["ErrMessage"] = "只允許上傳.jpg或.png的圖片檔案!!";
-                return View();
+                return "僅支援上傳.jpg或.png格式"; ;
             }
 
 
             //取得檔案名稱
-            string fileName = Path.GetFileName(photo.FileName);
+            string fileName = Path.GetFileName(inputImage.FileName);
 
             //取得檔案的完整路徑
-            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Photos", fileName);
+            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", fileName);
             // /wwwroot/Photos/xxx.jpg
 
             //將檔案上傳並儲存於指定的路徑
 
             using (FileStream fs = new FileStream(filePath, FileMode.Create))
             {
-                photo.CopyTo(fs);
+                inputImage.CopyTo(fs);
             }
 
-            ViewData["Result"] = "檔案上傳成功!!";
+            return "檔案上傳成功!!";
         }
     }
 }
