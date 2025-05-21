@@ -1,12 +1,11 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace am3burger.Migrations
 {
     /// <inheritdoc />
-    public partial class 為信箱跟電話欄位增加唯一索引 : Migration
+    public partial class 重建資料表 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,15 +15,54 @@ namespace am3burger.Migrations
                 table: "Product");
 
             migrationBuilder.DropColumn(
+                name: "Delivery_fee",
+                table: "OrderForm");
+
+            migrationBuilder.DropColumn(
+                name: "Payment",
+                table: "OrderForm");
+
+            migrationBuilder.DropColumn(
+                name: "PhotoName",
+                table: "OrderForm");
+
+            migrationBuilder.DropColumn(
+                name: "Price",
+                table: "OrderForm");
+
+            migrationBuilder.DropColumn(
+                name: "ProductName",
+                table: "OrderForm");
+
+            migrationBuilder.DropColumn(
+                name: "Service_charge",
+                table: "OrderForm");
+
+            migrationBuilder.DropColumn(
+                name: "Store",
+                table: "OrderForm");
+
+            migrationBuilder.RenameColumn(
                 name: "Permission",
-                table: "User");
+                table: "User",
+                newName: "MikuPoint");
+
+            migrationBuilder.RenameColumn(
+                name: "Total_price",
+                table: "OrderForm",
+                newName: "PaymentId");
+
+            migrationBuilder.RenameColumn(
+                name: "Id",
+                table: "DeliveryBoy",
+                newName: "id");
 
             migrationBuilder.AlterColumn<string>(
                 name: "Sex",
                 table: "User",
-                type: "nvarchar(5)",
-                maxLength: 5,
-                nullable: true,
+                type: "nvarchar(6)",
+                maxLength: 6,
+                nullable: false,
                 oldClrType: typeof(string),
                 oldType: "nvarchar(50)",
                 oldMaxLength: 50);
@@ -34,7 +72,7 @@ namespace am3burger.Migrations
                 table: "User",
                 type: "nvarchar(10)",
                 maxLength: 10,
-                nullable: true,
+                nullable: false,
                 oldClrType: typeof(string),
                 oldType: "nvarchar(50)",
                 oldMaxLength: 50);
@@ -42,9 +80,9 @@ namespace am3burger.Migrations
             migrationBuilder.AlterColumn<string>(
                 name: "Password",
                 table: "User",
-                type: "nvarchar(4000)",
-                maxLength: 4000,
-                nullable: true,
+                type: "nvarchar(max)",
+                maxLength: 2147483647,
+                nullable: false,
                 oldClrType: typeof(string),
                 oldType: "nvarchar(50)",
                 oldMaxLength: 50);
@@ -54,34 +92,16 @@ namespace am3burger.Migrations
                 table: "User",
                 type: "nvarchar(10)",
                 maxLength: 10,
-                nullable: true,
+                nullable: false,
                 oldClrType: typeof(string),
                 oldType: "nvarchar(50)",
                 oldMaxLength: 50);
-
-            migrationBuilder.AlterColumn<string>(
-                name: "Email",
-                table: "User",
-                type: "nvarchar(50)",
-                maxLength: 50,
-                nullable: true,
-                oldClrType: typeof(string),
-                oldType: "nvarchar(50)",
-                oldMaxLength: 50);
-
-            migrationBuilder.AlterColumn<DateTime>(
-                name: "Birthday",
-                table: "User",
-                type: "datetime2",
-                nullable: true,
-                oldClrType: typeof(DateTime),
-                oldType: "datetime2");
 
             migrationBuilder.AddColumn<bool>(
                 name: "EmailValidation",
                 table: "User",
                 type: "bit",
-                nullable: true,
+                nullable: false,
                 defaultValue: false);
 
             migrationBuilder.AddColumn<string>(
@@ -89,14 +109,14 @@ namespace am3burger.Migrations
                 table: "User",
                 type: "nvarchar(5)",
                 maxLength: 5,
-                nullable: true,
-                defaultValue: "顧客");
+                nullable: false,
+                defaultValue: "");
 
             migrationBuilder.AddColumn<bool>(
                 name: "PhoneValidation",
                 table: "User",
                 type: "bit",
-                nullable: true,
+                nullable: false,
                 defaultValue: false);
 
             migrationBuilder.AlterColumn<string>(
@@ -147,96 +167,55 @@ namespace am3burger.Migrations
                 oldType: "nvarchar(4000)",
                 oldMaxLength: 4000);
 
-            migrationBuilder.AlterColumn<int>(
-                name: "Total_price",
-                table: "OrderForm",
+            migrationBuilder.AddColumn<int>(
+                name: "store_id",
+                table: "DeliveryBoy",
                 type: "int",
-                nullable: true,
-                oldClrType: typeof(int),
-                oldType: "int");
+                nullable: false,
+                defaultValue: 0);
 
-            migrationBuilder.AlterColumn<string>(
-                name: "Store",
-                table: "OrderForm",
-                type: "nvarchar(50)",
-                maxLength: 50,
-                nullable: true,
-                oldClrType: typeof(string),
-                oldType: "nvarchar(50)",
-                oldMaxLength: 50);
-
-            migrationBuilder.AlterColumn<int>(
-                name: "Service_charge",
-                table: "OrderForm",
-                type: "int",
-                nullable: true,
-                oldClrType: typeof(int),
-                oldType: "int");
-
-            migrationBuilder.AlterColumn<string>(
-                name: "ProductName",
-                table: "OrderForm",
-                type: "nvarchar(50)",
-                maxLength: 50,
-                nullable: true,
-                oldClrType: typeof(string),
-                oldType: "nvarchar(50)",
-                oldMaxLength: 50);
-
-            migrationBuilder.AlterColumn<int>(
-                name: "Price",
-                table: "OrderForm",
-                type: "int",
-                nullable: true,
-                oldClrType: typeof(int),
-                oldType: "int");
-
-            migrationBuilder.AlterColumn<string>(
-                name: "PhotoName",
-                table: "OrderForm",
-                type: "nvarchar(50)",
-                maxLength: 50,
-                nullable: true,
-                oldClrType: typeof(string),
-                oldType: "nvarchar(50)",
-                oldMaxLength: 50);
-
-            migrationBuilder.AlterColumn<string>(
-                name: "Payment",
-                table: "OrderForm",
-                type: "nvarchar(max)",
-                nullable: true,
-                oldClrType: typeof(string),
-                oldType: "nvarchar(max)");
-
-            migrationBuilder.AlterColumn<int>(
-                name: "Delivery_fee",
-                table: "OrderForm",
-                type: "int",
-                nullable: true,
-                oldClrType: typeof(int),
-                oldType: "int");
+            migrationBuilder.CreateTable(
+                name: "HeadPicture",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    headPictureFileName = table.Column<string>(type: "nvarchar(4000)", maxLength: 4000, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_HeadPicture", x => new { x.UserId, x.headPictureFileName });
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_User_Email",
                 table: "User",
                 column: "Email",
-                unique: true,
-                filter: "[Email] IS NOT NULL");
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_User_Name",
+                table: "User",
+                column: "Name");
 
             migrationBuilder.CreateIndex(
                 name: "IX_User_PhoneNumber",
                 table: "User",
                 column: "PhoneNumber",
-                unique: true,
-                filter: "[PhoneNumber] IS NOT NULL");
+                unique: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "HeadPicture");
+
             migrationBuilder.DropIndex(
                 name: "IX_User_Email",
+                table: "User");
+
+            migrationBuilder.DropIndex(
+                name: "IX_User_Name",
                 table: "User");
 
             migrationBuilder.DropIndex(
@@ -255,17 +234,34 @@ namespace am3burger.Migrations
                 name: "PhoneValidation",
                 table: "User");
 
+            migrationBuilder.DropColumn(
+                name: "store_id",
+                table: "DeliveryBoy");
+
+            migrationBuilder.RenameColumn(
+                name: "MikuPoint",
+                table: "User",
+                newName: "Permission");
+
+            migrationBuilder.RenameColumn(
+                name: "PaymentId",
+                table: "OrderForm",
+                newName: "Total_price");
+
+            migrationBuilder.RenameColumn(
+                name: "id",
+                table: "DeliveryBoy",
+                newName: "Id");
+
             migrationBuilder.AlterColumn<string>(
                 name: "Sex",
                 table: "User",
                 type: "nvarchar(50)",
                 maxLength: 50,
                 nullable: false,
-                defaultValue: "",
                 oldClrType: typeof(string),
-                oldType: "nvarchar(5)",
-                oldMaxLength: 5,
-                oldNullable: true);
+                oldType: "nvarchar(6)",
+                oldMaxLength: 6);
 
             migrationBuilder.AlterColumn<string>(
                 name: "PhoneNumber",
@@ -273,11 +269,9 @@ namespace am3burger.Migrations
                 type: "nvarchar(50)",
                 maxLength: 50,
                 nullable: false,
-                defaultValue: "",
                 oldClrType: typeof(string),
                 oldType: "nvarchar(10)",
-                oldMaxLength: 10,
-                oldNullable: true);
+                oldMaxLength: 10);
 
             migrationBuilder.AlterColumn<string>(
                 name: "Password",
@@ -285,11 +279,9 @@ namespace am3burger.Migrations
                 type: "nvarchar(50)",
                 maxLength: 50,
                 nullable: false,
-                defaultValue: "",
                 oldClrType: typeof(string),
-                oldType: "nvarchar(4000)",
-                oldMaxLength: 4000,
-                oldNullable: true);
+                oldType: "nvarchar(max)",
+                oldMaxLength: 2147483647);
 
             migrationBuilder.AlterColumn<string>(
                 name: "Name",
@@ -297,40 +289,9 @@ namespace am3burger.Migrations
                 type: "nvarchar(50)",
                 maxLength: 50,
                 nullable: false,
-                defaultValue: "",
                 oldClrType: typeof(string),
                 oldType: "nvarchar(10)",
-                oldMaxLength: 10,
-                oldNullable: true);
-
-            migrationBuilder.AlterColumn<string>(
-                name: "Email",
-                table: "User",
-                type: "nvarchar(50)",
-                maxLength: 50,
-                nullable: false,
-                defaultValue: "",
-                oldClrType: typeof(string),
-                oldType: "nvarchar(50)",
-                oldMaxLength: 50,
-                oldNullable: true);
-
-            migrationBuilder.AlterColumn<DateTime>(
-                name: "Birthday",
-                table: "User",
-                type: "datetime2",
-                nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                oldClrType: typeof(DateTime),
-                oldType: "datetime2",
-                oldNullable: true);
-
-            migrationBuilder.AddColumn<int>(
-                name: "Permission",
-                table: "User",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
+                oldMaxLength: 10);
 
             migrationBuilder.AlterColumn<string>(
                 name: "Type",
@@ -390,91 +351,57 @@ namespace am3burger.Migrations
                 oldMaxLength: 4000,
                 oldNullable: true);
 
-            migrationBuilder.AlterColumn<int>(
-                name: "Total_price",
+            migrationBuilder.AddColumn<int>(
+                name: "Delivery_fee",
                 table: "OrderForm",
                 type: "int",
                 nullable: false,
-                defaultValue: 0,
-                oldClrType: typeof(int),
-                oldType: "int",
-                oldNullable: true);
+                defaultValue: 0);
 
-            migrationBuilder.AlterColumn<string>(
-                name: "Store",
+            migrationBuilder.AddColumn<string>(
+                name: "Payment",
                 table: "OrderForm",
-                type: "nvarchar(50)",
-                maxLength: 50,
+                type: "nvarchar(max)",
                 nullable: false,
-                defaultValue: "",
-                oldClrType: typeof(string),
-                oldType: "nvarchar(50)",
-                oldMaxLength: 50,
-                oldNullable: true);
+                defaultValue: "");
 
-            migrationBuilder.AlterColumn<int>(
-                name: "Service_charge",
-                table: "OrderForm",
-                type: "int",
-                nullable: false,
-                defaultValue: 0,
-                oldClrType: typeof(int),
-                oldType: "int",
-                oldNullable: true);
-
-            migrationBuilder.AlterColumn<string>(
-                name: "ProductName",
-                table: "OrderForm",
-                type: "nvarchar(50)",
-                maxLength: 50,
-                nullable: false,
-                defaultValue: "",
-                oldClrType: typeof(string),
-                oldType: "nvarchar(50)",
-                oldMaxLength: 50,
-                oldNullable: true);
-
-            migrationBuilder.AlterColumn<int>(
-                name: "Price",
-                table: "OrderForm",
-                type: "int",
-                nullable: false,
-                defaultValue: 0,
-                oldClrType: typeof(int),
-                oldType: "int",
-                oldNullable: true);
-
-            migrationBuilder.AlterColumn<string>(
+            migrationBuilder.AddColumn<string>(
                 name: "PhotoName",
                 table: "OrderForm",
                 type: "nvarchar(50)",
                 maxLength: 50,
                 nullable: false,
-                defaultValue: "",
-                oldClrType: typeof(string),
-                oldType: "nvarchar(50)",
-                oldMaxLength: 50,
-                oldNullable: true);
+                defaultValue: "");
 
-            migrationBuilder.AlterColumn<string>(
-                name: "Payment",
-                table: "OrderForm",
-                type: "nvarchar(max)",
-                nullable: false,
-                defaultValue: "",
-                oldClrType: typeof(string),
-                oldType: "nvarchar(max)",
-                oldNullable: true);
-
-            migrationBuilder.AlterColumn<int>(
-                name: "Delivery_fee",
+            migrationBuilder.AddColumn<int>(
+                name: "Price",
                 table: "OrderForm",
                 type: "int",
                 nullable: false,
-                defaultValue: 0,
-                oldClrType: typeof(int),
-                oldType: "int",
-                oldNullable: true);
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<string>(
+                name: "ProductName",
+                table: "OrderForm",
+                type: "nvarchar(50)",
+                maxLength: 50,
+                nullable: false,
+                defaultValue: "");
+
+            migrationBuilder.AddColumn<int>(
+                name: "Service_charge",
+                table: "OrderForm",
+                type: "int",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<string>(
+                name: "Store",
+                table: "OrderForm",
+                type: "nvarchar(50)",
+                maxLength: 50,
+                nullable: false,
+                defaultValue: "");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Product_Name_Description_Type",

@@ -12,8 +12,8 @@ using am3burger.Models;
 namespace am3burger.Migrations
 {
     [DbContext(typeof(Am3burgerContext))]
-    [Migration("20250422061459_MaxLenght改StringLength")]
-    partial class MaxLenght改StringLength
+    [Migration("20250521045604_重建資料表")]
+    partial class 重建資料表
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,15 +40,32 @@ namespace am3burger.Migrations
 
             modelBuilder.Entity("am3burger.Models.DeliveryBoy", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
-                    b.HasKey("Id");
+                    b.Property<int>("store_id")
+                        .HasColumnType("int");
+
+                    b.HasKey("id");
 
                     b.ToTable("DeliveryBoy");
+                });
+
+            modelBuilder.Entity("am3burger.Models.HeadPicture", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("headPictureFileName")
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.HasKey("UserId", "headPictureFileName");
+
+                    b.ToTable("HeadPicture");
                 });
 
             modelBuilder.Entity("am3burger.Models.OrderForm", b =>
@@ -59,34 +76,10 @@ namespace am3burger.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("Delivery_fee")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("OrderTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Payment")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhotoName")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<int?>("Price")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ProductName")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<int?>("Service_charge")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Store")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<int?>("Total_price")
+                    b.Property<int>("PaymentId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -147,54 +140,57 @@ namespace am3burger.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("Birthday")
+                    b.Property<DateTime>("Birthday")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<bool?>("EmailValidation")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                    b.Property<bool>("EmailValidation")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Identity")
-                        .ValueGeneratedOnAdd()
+                        .IsRequired()
                         .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)")
-                        .HasDefaultValue("顧客");
+                        .HasColumnType("nvarchar(5)");
+
+                    b.Property<int>("MikuPoint")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("Password")
-                        .HasMaxLength(4000)
-                        .HasColumnType("nvarchar(4000)");
+                        .IsRequired()
+                        .HasMaxLength(2147483647)
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
+                        .IsRequired()
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
-                    b.Property<bool?>("PhoneValidation")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                    b.Property<bool>("PhoneValidation")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Sex")
-                        .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
+                        .IsRequired()
+                        .HasMaxLength(6)
+                        .HasColumnType("nvarchar(6)");
 
                     b.HasKey("Id");
 
                     b.HasIndex(new[] { "Email" }, "IX_User_Email")
-                        .IsUnique()
-                        .HasFilter("[Email] IS NOT NULL");
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "Name" }, "IX_User_Name");
 
                     b.HasIndex(new[] { "PhoneNumber" }, "IX_User_PhoneNumber")
-                        .IsUnique()
-                        .HasFilter("[PhoneNumber] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("User");
                 });

@@ -51,6 +51,20 @@ namespace am3burger.Migrations
                     b.ToTable("DeliveryBoy");
                 });
 
+            modelBuilder.Entity("am3burger.Models.HeadPicture", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("headPictureFileName")
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.HasKey("UserId", "headPictureFileName");
+
+                    b.ToTable("HeadPicture");
+                });
+
             modelBuilder.Entity("am3burger.Models.OrderForm", b =>
                 {
                     b.Property<int>("Id")
@@ -164,11 +178,6 @@ namespace am3burger.Migrations
                         .IsRequired()
                         .HasMaxLength(6)
                         .HasColumnType("nvarchar(6)");
-
-                    b.Property<string>("headPicture")
-                        .IsRequired()
-                        .HasMaxLength(2147483647)
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

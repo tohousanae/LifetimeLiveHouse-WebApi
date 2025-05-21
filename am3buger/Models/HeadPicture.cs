@@ -1,10 +1,21 @@
-﻿namespace am3burger.Models
+﻿using Microsoft.EntityFrameworkCore;
+using Mono.TextTemplating;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Reflection.Metadata;
+
+namespace am3burger.Models
 {
+    [PrimaryKey(nameof(UserId), nameof(headPictureFileName))]
     public class HeadPicture
     {
-        public int Id { get; set; }
-        public string FileName { get; set; } = null!;
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public DateTime UpdatedAt { get; set; } = DateTime.Now;
+        [Display(Name = "會員Id")]
+        [ForeignKey(nameof(User))]
+        public int UserId { get; set; }
+
+        [Display(Name = "頭像圖片檔名")]
+        [StringLength(4000)]
+        // 姓名
+        public string headPictureFileName { get; set; } = null!;
     }
 }
