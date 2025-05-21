@@ -344,7 +344,7 @@ namespace am3burger.Controllers
         }
 
         // 上傳頭像
-        [HttpPost("headPictureUpload")]
+        [HttpPost("headPictureUpload")] //紀錄會員id、頭像檔名、頭像圖片檔案，頭像更新時刪除原有檔案
         public string HeadUpload(IFormFile inputImage)
         {
             if (inputImage == null || inputImage.Length == 0)
@@ -363,7 +363,7 @@ namespace am3burger.Controllers
             string fileName = Path.GetFileName(inputImage.FileName);
 
             //取得檔案的完整路徑
-            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", fileName);
+            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "images", fileName);
             // /wwwroot/Photos/xxx.jpg
 
             //將檔案上傳並儲存於指定的路徑

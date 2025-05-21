@@ -25,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Assets\images\" />
     <Folder Include="DTO\Products\" />
     <Folder Include="Interfaces\" />
     <Folder Include="Services\" />
