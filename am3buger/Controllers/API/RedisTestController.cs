@@ -2,7 +2,7 @@
 using StackExchange.Redis;
 using am3burger.Models;
 
-namespace am3burger.Controllers
+namespace am3burger.Controllers.API
 {
     [Route("api/[controller]")]
     [ApiController]

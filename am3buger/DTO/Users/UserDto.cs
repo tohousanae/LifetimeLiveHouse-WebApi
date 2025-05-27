@@ -1,4 +1,5 @@
 ﻿namespace am3burger.DTO.User
+    // dto，
 {
     public class UserDto
     {

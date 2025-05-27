@@ -4,8 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using am3burger.Models;
 using StackExchange.Redis;
 
-namespace am3burger.Controllers
+namespace am3burger.Controllers.API
 {
+    // 查詢時須限制一次撈出的筆數，避免一次撈出過多資料導致效能問題
     [Route("api/[controller]")]
     [ApiController]
     public class ProductController(Am3burgerContext context, IConnectionMultiplexer redisService) : ControllerBase

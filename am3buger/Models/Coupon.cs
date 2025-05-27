@@ -8,6 +8,6 @@ namespace am3burger.Models
         [Key]
         [Display(Name = "優惠券Id")]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        public int CouponId { get; set; }
     }
 }

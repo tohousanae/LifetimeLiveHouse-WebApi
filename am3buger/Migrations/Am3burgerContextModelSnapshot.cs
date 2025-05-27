@@ -24,29 +24,29 @@ namespace am3burger.Migrations
 
             modelBuilder.Entity("am3burger.Models.Coupon", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("CouponId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CouponId"));
 
-                    b.HasKey("Id");
+                    b.HasKey("CouponId");
 
                     b.ToTable("Coupon");
                 });
 
             modelBuilder.Entity("am3burger.Models.DeliveryBoy", b =>
                 {
-                    b.Property<int>("id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("store_id")
+                    b.Property<int>("Store_Id")
                         .HasColumnType("int");
 
-                    b.HasKey("id");
+                    b.HasKey("Id");
 
                     b.ToTable("DeliveryBoy");
                 });
@@ -104,13 +104,13 @@ namespace am3burger.Migrations
 
             modelBuilder.Entity("am3burger.Models.Store", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("Store_Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Store_Id"));
 
-                    b.HasKey("Id");
+                    b.HasKey("Store_Id");
 
                     b.ToTable("Store");
                 });

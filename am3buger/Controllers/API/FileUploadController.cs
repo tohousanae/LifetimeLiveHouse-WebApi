@@ -1,7 +1,6 @@
-﻿
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
-namespace am3burger.Controllers
+namespace am3burger.Controllers.API
 {
     [Route("api/[controller]")]
     [ApiController]

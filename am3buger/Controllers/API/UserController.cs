@@ -3,9 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using am3burger.Models;
 using am3burger.DTO.Users;
 using am3burger.DTO.User;
-using Microsoft.DotNet.Scaffolding.Shared.CodeModifier.CodeChange;
 
-namespace am3burger.Controllers
+namespace am3burger.Controllers.API
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -33,13 +32,12 @@ namespace am3burger.Controllers
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
                 Sex = user.Sex,
-                Birthday = (DateTime)user?.Birthday,
+                Birthday = user.Birthday,
                 MikuPoint = user.MikuPoint,
             };
             return userManageDto;
         }
 
-        // 修改 Register 方法中的以下代碼
         [HttpPost("register")]
         public async Task<ActionResult<User>> Register(RegisterDTO input)
         {
@@ -100,109 +98,6 @@ namespace am3burger.Controllers
                 option.Secure = true; // 禁用js讀取cookie防止xss攻擊
                 Response.Cookies.Append("UserId", user.Id.ToString(), option);
                 return Ok("登入成功");
-            }
-        }
-
-        // 生成忘記密碼的token，作為一次性連結使用
-        [HttpPost("forgetpasswordEmailSendTokenGen")]
-        public async Task<ActionResult<User>> ForgetpasswordEmailSendTokenGen(ForgetPasswordDto request)
-        {
-            /* 忘記密碼設計 
-                
-            start 使用者輸入信箱(需在前端設計
-            -->驗證是否為註冊信箱
-            -->是(若為否則告知使用者信箱不存在)
-            -->基於安全性考量，將token加密儲存到cookie內並設定option.Secure = true;防止前端用js直接讀取cookie，並設定cookie(token的失效時間)
-            -->發送忘記密碼重設信件，token加入到忘記密碼頁面的一次性連結內
-            -->當使用者完成密碼重設，或超過token保存時效未重設密碼時，連結失效
-            -->通知使用者密碼已完成重設
-
-             */
-            var user = await _context.User.FirstOrDefaultAsync(u => u.Email == request.Email);
-
-            if (user == null)
-            {
-                return Unauthorized("信箱不存在"); // 檢查輸入的信箱是否為使用者輸入的信箱
-            }
-            else
-            {
-                /* 生成token參考資料：
-                 * 1. https://blog.csdn.net/m0_38013946/article/details/134849150
-                 * 2. https://hackercat.org/diy-tools/generate-random-password-from-command-line
-                 */
-
-                /* cookie相關參考：
-                 * 1. 網站安全🔒 再探同源政策，談 SameSite 設定對 Cookie 的影響與注意事項 https://medium.com/%E7%A8%8B%E5%BC%8F%E7%8C%BF%E5%90%83%E9%A6%99%E8%95%89/%E5%86%8D%E6%8E%A2%E5%90%8C%E6%BA%90%E6%94%BF%E7%AD%96-%E8%AB%87-samesite-%E8%A8%AD%E5%AE%9A%E5%B0%8D-cookie-%E7%9A%84%E5%BD%B1%E9%9F%BF%E8%88%87%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A0%85-6195d10d4441
-                 *
-                 */
-                Guid guid = Guid.NewGuid(); // 生成GUID token
-                string token = guid.ToString("N");
-
-                // 將token雜湊加密
-                string tokenHash = BCrypt.Net.BCrypt.HashPassword(token);
-
-                // 將token儲存到cookie中，並設置該cookie失效時間
-                CookieOptions option = new CookieOptions();
-                option.Expires = DateTime.Now.AddMinutes(30); // 設定token的失效時間，作為忘記密碼連結失效時間
-                option.HttpOnly = true; // 強制使用https存取cookie
-                option.Secure = true; // 禁用js讀取cookie防止xss攻擊
-                option.SameSite = SameSiteMode.None; // SameSiteMode設置為None以允許前端發送post請求存取cookie
-                Response.Cookies.Append("forgetPwdToken", tokenHash, option);
-                Response.Cookies.Append("InputEmail", request.Email.ToString(), option);
-
-                return Ok(tokenHash);
-            }
-        }
-
-        // 取得忘記密碼token的值
-        [HttpPost("getforgetPwdtoken")]
-        public IActionResult CheckforgetPwdlink()
-        {
-            string? cookieValue = Request.Cookies["forgetPwdToken"];
-            if (cookieValue != null)
-            {
-                return Ok(cookieValue);
-            }
-            else
-            {
-                return Unauthorized("你點擊的連結不存在");
-            }
-        }
-
-        // 使用者完成修改密碼操作後，清除儲存忘記密碼token的cookie，並且清除使用者Id的cookie讓使用者在所有裝置上登出
-        [HttpPatch("modifyPwd")]
-        public async Task<IActionResult> ModifyPwd(ForgetPasswordModifyPasswordDto request)
-        {
-            // 從cookie取得使用者輸入的email
-            string? inputEmail = System.Net.WebUtility.UrlDecode(Request.Cookies["InputEmail"]); // 將URL編碼的字串轉換回原始的字串
-            var user = await _context.User.FirstOrDefaultAsync(u => u.Email == inputEmail); 
-
-            if (user == null) 
-            {
-                return BadRequest("使用者紀錄不存在");
-            }
-            else
-            {
-                user.Password = BCrypt.Net.BCrypt.HashPassword(request.Password); // 修改的密碼雜湊加密後儲存
-                _context.Entry(user).State = EntityState.Modified;
-
-                try
-                {
-                    // 儲存修改密碼
-                    await _context.SaveChangesAsync();
-                    CookieOptions option = new CookieOptions();
-                    option.Expires = DateTime.Now.AddDays(-1);
-                    option.HttpOnly = true;
-                    option.Secure = true;
-                    Response.Cookies.Append("forgetPwdToken", "", option);
-                    Response.Cookies.Append("UserId", "", option);
-                    Response.Cookies.Append("InputEmail", "", option);
-                }
-                catch (DbUpdateConcurrencyException) 
-                { 
-                    throw;
-                }
-                return Ok("成功重設密碼，請重新登入");
             }
         }
 
