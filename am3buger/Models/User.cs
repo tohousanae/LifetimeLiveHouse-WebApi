@@ -37,7 +37,7 @@ namespace am3burger.Models
         public string Password { get; set; } = null!;
 
         [Display(Name = "性別")]
-        [StringLength(6)]
+        [StringLength(10)]
         // 性別
         public string Sex { get; set; } = null!;
 
@@ -48,7 +48,7 @@ namespace am3burger.Models
         public DateTime Birthday { get; set; } = DateTime.Now;
 
         [Display(Name = "身分")]
-        [StringLength(5)]
+        [StringLength(10)]
         // 權限
         public string Identity { get; set; } = null!;
 

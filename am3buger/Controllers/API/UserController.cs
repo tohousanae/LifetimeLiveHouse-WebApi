@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using am3burger.Models;
 using am3burger.DTO.Users;
 using am3burger.DTO.User;
+using HatsuneMikuMusicShop.Models;
 
 namespace am3burger.Controllers.API
 {
@@ -10,9 +11,9 @@ namespace am3burger.Controllers.API
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly Am3burgerContext _context;
+        private readonly MikuMusicShopContext _context;
 
-        public UserController(Am3burgerContext context)
+        public UserController(MikuMusicShopContext context)
         {
             _context = context;
         }

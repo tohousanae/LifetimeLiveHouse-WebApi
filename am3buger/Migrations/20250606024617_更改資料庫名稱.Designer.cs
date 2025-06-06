@@ -4,6 +4,7 @@ using HatsuneMikuMusicShop.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace am3burger.Migrations
 {
     [DbContext(typeof(MikuMusicShopContext))]
-    partial class Am3burgerContextModelSnapshot : ModelSnapshot
+    [Migration("20250606024617_更改資料庫名稱")]
+    partial class 更改資料庫名稱
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -150,8 +153,8 @@ namespace am3burger.Migrations
 
                     b.Property<string>("Identity")
                         .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
 
                     b.Property<int>("MikuPoint")
                         .HasColumnType("int");
@@ -176,8 +179,8 @@ namespace am3burger.Migrations
 
                     b.Property<string>("Sex")
                         .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasMaxLength(6)
+                        .HasColumnType("nvarchar(6)");
 
                     b.HasKey("Id");
 

@@ -5,13 +5,13 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using am3burger.Models;
+using HatsuneMikuMusicShop.Models;
 
 #nullable disable
 
 namespace am3burger.Migrations
 {
-    [DbContext(typeof(Am3burgerContext))]
+    [DbContext(typeof(MikuMusicShopContext))]
     [Migration("20250526081650_重建變")]
     partial class 重建變
     {

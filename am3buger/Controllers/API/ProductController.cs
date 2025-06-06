@@ -3,16 +3,17 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using am3burger.Models;
 using StackExchange.Redis;
+using HatsuneMikuMusicShop.Models;
 
 namespace am3burger.Controllers.API
 {
     // 查詢時須限制一次撈出的筆數，避免一次撈出過多資料導致效能問題
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductController(Am3burgerContext context, IConnectionMultiplexer redisService) : ControllerBase
+    public class ProductController(MikuMusicShopContext context, IConnectionMultiplexer redisService) : ControllerBase
     {
         private readonly IConnectionMultiplexer _redisService = redisService; // 加入redis快取
-        private readonly Am3burgerContext _context = context;
+        private readonly MikuMusicShopContext _context = context;
 
         // GET: api/Products
         [HttpGet]

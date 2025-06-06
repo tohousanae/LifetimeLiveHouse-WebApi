@@ -1,12 +1,12 @@
-﻿using am3burger.Models;
+﻿using HatsuneMikuMusicShop.Models;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // 注入am3burgerContext的類別
-builder.Services.AddDbContext<Am3burgerContext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("am3burger")));
+builder.Services.AddDbContext<MikuMusicShopContext>(options =>
+options.UseSqlServer(builder.Configuration.GetConnectionString("MikuMusicShop")));
 
 // Add services to the container.
 
@@ -19,14 +19,14 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDistributedMemoryCache();
 
 // 加入redis分散式快取服務
-builder.Services.AddSingleton<IConnectionMultiplexer>(
-    ConnectionMultiplexer.Connect(
-        new ConfigurationOptions()
-        {
-            EndPoints = { { "localhost", 6379 } }
-        }
-    )
- );
+//builder.Services.AddSingleton<IConnectionMultiplexer>(
+//    ConnectionMultiplexer.Connect(
+//        new ConfigurationOptions()
+//        {
+//            EndPoints = { { "localhost", 6379 } }
+//        }
+//    )
+// );
 
 // redis win11安裝教學
 //https://redis.io/blog/install-redis-windows-11/
