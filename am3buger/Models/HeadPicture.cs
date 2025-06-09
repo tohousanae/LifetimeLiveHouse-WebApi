@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Mono.TextTemplating;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Reflection.Metadata;
 
 namespace am3burger.Models
 {

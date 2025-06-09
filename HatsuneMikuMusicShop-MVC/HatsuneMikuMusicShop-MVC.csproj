@@ -5,16 +5,12 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>HatsuneMikuMusicShop_MVC</RootNamespace>
-    <UserSecretsId>4391bb8c-b2c3-4748-8824-c0a38cf610ae</UserSecretsId>
+    <UserSecretsId>ee275851-2245-4239-b41c-b5304b200f21</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="DTO\Products\" />
   </ItemGroup>
 
 </Project>

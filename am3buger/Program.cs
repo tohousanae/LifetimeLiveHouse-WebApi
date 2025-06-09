@@ -1,6 +1,6 @@
 ﻿using HatsuneMikuMusicShop.Models;
 using Microsoft.EntityFrameworkCore;
-using StackExchange.Redis;
+//using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
