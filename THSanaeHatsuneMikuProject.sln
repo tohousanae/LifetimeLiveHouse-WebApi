@@ -5,6 +5,8 @@ VisualStudioVersion = 17.10.35013.160
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HatsuneMikuMusicShop", "am3buger\HatsuneMikuMusicShop.csproj", "{EC31AB53-CD27-4B7B-ABA8-0C92DB0E7AAC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HatsuneMikuMusicShop-MVC", "HatsuneMikuMusicShop-MVC\HatsuneMikuMusicShop-MVC.csproj", "{F2A4E6D1-7C60-4C30-946E-02AB9AD6FFD6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{EC31AB53-CD27-4B7B-ABA8-0C92DB0E7AAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EC31AB53-CD27-4B7B-ABA8-0C92DB0E7AAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EC31AB53-CD27-4B7B-ABA8-0C92DB0E7AAC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2A4E6D1-7C60-4C30-946E-02AB9AD6FFD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2A4E6D1-7C60-4C30-946E-02AB9AD6FFD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2A4E6D1-7C60-4C30-946E-02AB9AD6FFD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2A4E6D1-7C60-4C30-946E-02AB9AD6FFD6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
