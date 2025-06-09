@@ -19,14 +19,14 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDistributedMemoryCache();
 
 // 加入redis分散式快取服務
-//builder.Services.AddSingleton<IConnectionMultiplexer>(
-//    ConnectionMultiplexer.Connect(
-//        new ConfigurationOptions()
-//        {
-//            EndPoints = { { "localhost", 6379 } }
-//        }
-//    )
-// );
+builder.Services.AddSingleton<IConnectionMultiplexer>(
+    ConnectionMultiplexer.Connect(
+        new ConfigurationOptions()
+        {
+            EndPoints = { { "localhost", 6379 } }
+        }
+    )
+ );
 
 // redis win11安裝教學
 //https://redis.io/blog/install-redis-windows-11/
