@@ -1,37 +1,35 @@
-ï»¿using HatsuneMikuMusicShop.Models;
+using HatsuneMikuMusicShop.Models;
 using Microsoft.EntityFrameworkCore;
-using StackExchange.Redis;
-
+//using StackExchange.Redis;
 var builder = WebApplication.CreateBuilder(args);
 
-// æ³¨å…¥am3burgerContextçš„é¡åˆ¥
+// ª`¤Jam3burgerContextªºÃş§O
 builder.Services.AddDbContext<MikuMusicShopContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("MikuMusicShop")));
-
 // Add services to the container.
-
+builder.Services.AddControllersWithViews();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// åŠ å…¥æœ¬æ©Ÿåˆ†æ•£å¼è¨˜æ†¶é«”å¿«å–æœå‹™
+// ¥[¤J¥»¾÷¤À´²¦¡°O¾ĞÅé§Ö¨úªA°È
 builder.Services.AddDistributedMemoryCache();
 
-// åŠ å…¥redisåˆ†æ•£å¼å¿«å–æœå‹™
-builder.Services.AddSingleton<IConnectionMultiplexer>(
-    ConnectionMultiplexer.Connect(
-        new ConfigurationOptions()
-        {
-            EndPoints = { { "localhost", 6379 } }
-        }
-    )
- );
+// ¥[¤Jredis¤À´²¦¡§Ö¨úªA°È
+//builder.Services.AddSingleton<IConnectionMultiplexer>(
+//    ConnectionMultiplexer.Connect(
+//        new ConfigurationOptions()
+//        {
+//            EndPoints = { { "localhost", 6379 } }
+//        }
+//    )
+// );
 
-// redis win11å®‰è£æ•™å­¸
+// redis win11¦w¸Ë±Ğ¾Ç
 //https://redis.io/blog/install-redis-windows-11/
 
-// CORSè·¨ä¾†æºå…±ç”¨è¨­å®š
+// CORS¸ó¨Ó·½¦@¥Î³]©w
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddCors(options =>
 {
@@ -44,21 +42,22 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (!app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseExceptionHandler("/Home/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 
-// å‘¼å« MapSwagger().RequireAuthorization ä¾†ä¿è­· Swagger UI ç«¯é»ã€‚
-app.MapSwagger().RequireAuthorization();
-
-app.UseCors(MyAllowSpecificOrigins);
+app.UseRouting();
 
 app.UseAuthorization();
 
-app.MapControllers();
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
