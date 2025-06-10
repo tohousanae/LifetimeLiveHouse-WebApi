@@ -1,14 +1,12 @@
-﻿using am3burger.Models;
+﻿using HatsuneMikuMusicShop.Models;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
-using static am3burger.Models.MailSetting;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // 注入am3burgerContext的類別
-builder.Services.AddDbContext<Am3burgerContext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("am3burger")));
-
+builder.Services.AddDbContext<MikuMusicShopContext>(options =>
+options.UseSqlServer(builder.Configuration.GetConnectionString("MikuMusicShop")));
 
 // Add services to the container.
 
@@ -21,14 +19,14 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDistributedMemoryCache();
 
 // 加入redis分散式快取服務
-//builder.Services.AddSingleton<IConnectionMultiplexer>(
-//    ConnectionMultiplexer.Connect(
-//        new ConfigurationOptions()
-//        {
-//            EndPoints = { { "localhost", 6379 } }
-//        }
-//    )
-// );
+builder.Services.AddSingleton<IConnectionMultiplexer>(
+    ConnectionMultiplexer.Connect(
+        new ConfigurationOptions()
+        {
+            EndPoints = { { "localhost", 6379 } }
+        }
+    )
+ );
 
 // redis win11安裝教學
 //https://redis.io/blog/install-redis-windows-11/
@@ -42,10 +40,6 @@ builder.Services.AddCors(options =>
         policy.WithOrigins("http://localhost:5173","https://am3burger.sakuyaonline.uk", "https://sanae.am3buger-vue.pages.dev/").WithHeaders("*").WithMethods("*").AllowCredentials();
     });
 });
-
-// 從appsettings.json當中取得寄件人設定
-builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
-builder.Services.AddSingleton<am3burger.Helper.IMailService, am3burger.Helper.MailService>();
 
 var app = builder.Build();
 
