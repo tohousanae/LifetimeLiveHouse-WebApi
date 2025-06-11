@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace am3burger.Migrations
+namespace HatsuneMikuMusicShop_MVC.Migrations
 {
     [DbContext(typeof(MikuMusicShopContext))]
     partial class Am3burgerContextModelSnapshot : ModelSnapshot
