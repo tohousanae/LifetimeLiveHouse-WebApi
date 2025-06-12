@@ -1,4 +1,4 @@
-# 初音未來早午餐店線上點餐-後端(非官方)
+# Fried & Cafe39-39揚物☆音樂咖啡廳feat.初音ミク 線上平台-後端(非官方)
 
 ## 前端部分
 
@@ -37,7 +37,6 @@ https://github.com/tohousanae/am3buger-vue
 1. .net core 8 MVC(Web Api)
 2. c#
 3. SQL Server
-4. code-first建立資料庫
 
 ## 進階技術
 1. redis快取
