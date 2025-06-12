@@ -1,4 +1,4 @@
-﻿namespace am3burger.DTO.User
+﻿namespace HatsuneMikuMusicShop_MVC.DTO.Users
 {
     public class RegisterDTO
     {

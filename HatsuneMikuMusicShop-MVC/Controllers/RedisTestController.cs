@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StackExchange.Redis;
-using am3burger.Models;
+using HatsuneMikuMusicShop_MVC.Models;
 
 namespace HatsuneMikuMusicShop_MVC.Controllers
 {

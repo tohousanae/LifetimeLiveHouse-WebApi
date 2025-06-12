@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using am3burger.Models;
-using am3burger.DTO.Users;
-using am3burger.DTO.User;
-using HatsuneMikuMusicShop.Models;
+using HatsuneMikuMusicShop_MVC.Models;
+using HatsuneMikuMusicShop_MVC.DTO.Users;
 
 namespace HatsuneMikuMusicShop_MVC.Controllers
 {

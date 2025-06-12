@@ -1,5 +1,5 @@
-﻿namespace am3burger.DTO.User
-    // dto，
+﻿namespace HatsuneMikuMusicShop_MVC.DTO.Users
+// dto，
 {
     public class UserDto
     {
