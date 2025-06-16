@@ -2,7 +2,7 @@
 using StackExchange.Redis;
 using HatsuneMikuMusicShop_MVC.Models;
 
-namespace HatsuneMikuMusicShop_MVC.Controllers
+namespace HatsuneMikuMusicShop_MVC.Controllers.API
 {
     [Route("api/[controller]")]
     [ApiController]

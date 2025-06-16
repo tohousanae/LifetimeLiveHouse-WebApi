@@ -2,7 +2,7 @@ using HatsuneMikuMusicShop_MVC.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
-namespace HatsuneMikuMusicShop_MVC.Controllers
+namespace HatsuneMikuMusicShop_MVC.Controllers.API
 {
     public class HomeController : Controller
     {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace HatsuneMikuMusicShop_MVC.Controllers
+namespace HatsuneMikuMusicShop_MVC.Controllers.API
 {
     [Route("api/[controller]")]
     [ApiController]

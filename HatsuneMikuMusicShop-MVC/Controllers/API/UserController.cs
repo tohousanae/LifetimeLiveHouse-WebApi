@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using HatsuneMikuMusicShop_MVC.Models;
 using HatsuneMikuMusicShop_MVC.DTO.Users;
 
-namespace HatsuneMikuMusicShop_MVC.Controllers
+namespace HatsuneMikuMusicShop_MVC.Controllers.API
 {
     [Route("api/[controller]")]
     [ApiController]
