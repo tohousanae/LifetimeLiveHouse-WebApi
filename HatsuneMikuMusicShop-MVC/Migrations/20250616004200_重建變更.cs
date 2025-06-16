@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace am3burger.Migrations
+namespace HatsuneMikuMusicShop_MVC.Migrations
 {
     /// <inheritdoc />
-    public partial class 重建變 : Migration
+    public partial class 重建變更 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -34,6 +34,18 @@ namespace am3burger.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_DeliveryBoy", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "HeadPicture",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    headPictureFileName = table.Column<string>(type: "nvarchar(4000)", maxLength: 4000, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_HeadPicture", x => new { x.UserId, x.headPictureFileName });
                 });
 
             migrationBuilder.CreateTable(
@@ -86,13 +98,12 @@ namespace am3burger.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-                    headPicture = table.Column<string>(type: "nvarchar(max)", maxLength: 2147483647, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", maxLength: 2147483647, nullable: false),
-                    Sex = table.Column<string>(type: "nvarchar(6)", maxLength: 6, nullable: false),
+                    Sex = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     Birthday = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Identity = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
+                    Identity = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     PhoneValidation = table.Column<bool>(type: "bit", nullable: false),
                     EmailValidation = table.Column<bool>(type: "bit", nullable: false),
                     MikuPoint = table.Column<int>(type: "int", nullable: false)
@@ -128,6 +139,9 @@ namespace am3burger.Migrations
 
             migrationBuilder.DropTable(
                 name: "DeliveryBoy");
+
+            migrationBuilder.DropTable(
+                name: "HeadPicture");
 
             migrationBuilder.DropTable(
                 name: "OrderForm");
