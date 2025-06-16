@@ -6,7 +6,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HatsuneMikuMusicShop_MVC.Migrations
 {
     /// <inheritdoc />
+<<<<<<<< HEAD:HatsuneMikuMusicShop-MVC/Migrations/20250616004200_重建變更.cs
     public partial class 重建變更 : Migration
+========
+    public partial class 重設變更 : Migration
+>>>>>>>> 6ec2753460df48c2034e208903df26ec08357992:HatsuneMikuMusicShop-MVC/Migrations/20250612151104_重設變更.cs
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

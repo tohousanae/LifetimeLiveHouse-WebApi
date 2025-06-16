@@ -1,7 +1,6 @@
-﻿using am3burger.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
-namespace HatsuneMikuMusicShop.Models
+namespace HatsuneMikuMusicShop_MVC.Models
 {
     public class MikuMusicShopContext(DbContextOptions<MikuMusicShopContext> options) : DbContext(options)
     {

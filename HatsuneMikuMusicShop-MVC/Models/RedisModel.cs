@@ -1,4 +1,4 @@
-﻿namespace am3burger.Models
+﻿namespace HatsuneMikuMusicShop_MVC.Models
 {
     public class RedisModel
     {
