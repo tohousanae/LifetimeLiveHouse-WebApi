@@ -9,10 +9,16 @@ namespace HatsuneMikuMusicShop_MVC.Controllers.API
     // 查詢時須限制一次撈出的筆數，避免一次撈出過多資料導致效能問題
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductController(MikuMusicShopContext context, IConnectionMultiplexer redisService) : ControllerBase
+    public class ProductController : ControllerBase
     {
-        private readonly IConnectionMultiplexer _redisService = redisService; // 加入redis快取
-        private readonly MikuMusicShopContext _context = context;
+        private readonly IDatabase _redisDb; // 加入redis快取
+        private readonly MikuMusicShopContext _context;
+
+        public ProductController(MikuMusicShopContext context, IConnectionMultiplexer redisService)
+        {
+            _context = context;
+            _redisDb = redisService.GetDatabase();
+        }
 
         // GET: api/Products
         [HttpGet]
