@@ -7,17 +7,20 @@ using HatsuneMikuMusicShop_MVC.Models;
 namespace HatsuneMikuMusicShop_MVC.Controllers.API
 {
     // 查詢時須限制一次撈出的筆數，避免一次撈出過多資料導致效能問題
+    // 快取策略參考：https://www.explainthis.io/zh-hant/swe/cache-mechanism
     [Route("api/[controller]")]
     [ApiController]
     public class ProductController : ControllerBase
     {
-        private readonly IDatabase _redisDb; // 加入redis快取
+        private readonly IConnectionMultiplexer _redisDb;
         private readonly MikuMusicShopContext _context;
+        private readonly IDatabase _cacheDb;
 
         public ProductController(MikuMusicShopContext context, IConnectionMultiplexer redisService)
         {
             _context = context;
-            _redisDb = redisService.GetDatabase();
+            _redisDb = redisService;
+            _cacheDb = _redisDb.GetDatabase();
         }
 
         // GET: api/Products
@@ -31,14 +34,30 @@ namespace HatsuneMikuMusicShop_MVC.Controllers.API
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProducts(int id)
         {
-            var products = await _context.Product.FindAsync(id);
+            // 用Read through快取商品資料，優先從快取讀取，若快取無資料則從資料庫讀取並更新快取
+            string cacheKey = $"Product_{id}";
 
-            if (products == null)
+            // 1. 先從 Redis 拿資料
+            var cachedProduct = await _cacheDb.StringGetAsync(cacheKey);
+            if (cachedProduct.HasValue)
+            {
+                // Redis 裡存的是字串，需反序列化回 Product 物件
+                var product = System.Text.Json.JsonSerializer.Deserialize<Product>(cachedProduct);
+                return product;
+            }
+
+            // 2. Redis 沒資料，從資料庫拿
+            var productFromDb = await _context.Product.FindAsync(id);
+            if (productFromDb == null)
             {
                 return NotFound();
             }
 
-            return products;
+            // 3. 寫回 Redis
+            var serializedProduct = System.Text.Json.JsonSerializer.Serialize(productFromDb);
+            await _cacheDb.StringSetAsync(cacheKey, serializedProduct, TimeSpan.FromMinutes(10)); // 10分鐘過期
+
+            return productFromDb;
         }
 
         // PUT: api/Products/5
@@ -77,6 +96,7 @@ namespace HatsuneMikuMusicShop_MVC.Controllers.API
         [HttpPost]
         public async Task<ActionResult<Product>> PostProducts(Product products)
         {
+            // 用Write-Through Cache，先把商品資料寫入資料庫，資料庫寫入成功後才寫入快取
             _context.Product.Add(products);
             await _context.SaveChangesAsync();
 

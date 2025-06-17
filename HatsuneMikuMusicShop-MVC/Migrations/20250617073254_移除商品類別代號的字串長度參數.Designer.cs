@@ -4,6 +4,7 @@ using HatsuneMikuMusicShop_MVC.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HatsuneMikuMusicShop_MVC.Migrations
 {
     [DbContext(typeof(MikuMusicShopContext))]
-    partial class MikuMusicShopContextModelSnapshot : ModelSnapshot
+    [Migration("20250617073254_移除商品類別代號的字串長度參數")]
+    partial class 移除商品類別代號的字串長度參數
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -32,7 +35,7 @@ namespace HatsuneMikuMusicShop_MVC.Migrations
 
                     b.HasKey("CouponId");
 
-                    b.ToTable("Coupon", (string)null);
+                    b.ToTable("Coupon");
                 });
 
             modelBuilder.Entity("HatsuneMikuMusicShop_MVC.Models.DeliveryBoy", b =>
@@ -48,7 +51,7 @@ namespace HatsuneMikuMusicShop_MVC.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("DeliveryBoy", (string)null);
+                    b.ToTable("DeliveryBoy");
                 });
 
             modelBuilder.Entity("HatsuneMikuMusicShop_MVC.Models.HeadPicture", b =>
@@ -62,7 +65,7 @@ namespace HatsuneMikuMusicShop_MVC.Migrations
 
                     b.HasKey("UserId", "headPictureFileName");
 
-                    b.ToTable("HeadPicture", (string)null);
+                    b.ToTable("HeadPicture");
                 });
 
             modelBuilder.Entity("HatsuneMikuMusicShop_MVC.Models.OrderForm", b =>
@@ -81,7 +84,7 @@ namespace HatsuneMikuMusicShop_MVC.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("OrderForm", (string)null);
+                    b.ToTable("OrderForm");
                 });
 
             modelBuilder.Entity("HatsuneMikuMusicShop_MVC.Models.Product", b =>
@@ -115,7 +118,7 @@ namespace HatsuneMikuMusicShop_MVC.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Product", (string)null);
+                    b.ToTable("Product");
                 });
 
             modelBuilder.Entity("HatsuneMikuMusicShop_MVC.Models.Store", b =>
@@ -128,7 +131,7 @@ namespace HatsuneMikuMusicShop_MVC.Migrations
 
                     b.HasKey("Store_Id");
 
-                    b.ToTable("Store", (string)null);
+                    b.ToTable("Store");
                 });
 
             modelBuilder.Entity("HatsuneMikuMusicShop_MVC.Models.User", b =>
@@ -191,7 +194,7 @@ namespace HatsuneMikuMusicShop_MVC.Migrations
                     b.HasIndex(new[] { "PhoneNumber" }, "IX_User_PhoneNumber")
                         .IsUnique();
 
-                    b.ToTable("User", (string)null);
+                    b.ToTable("User");
                 });
 #pragma warning restore 612, 618
         }

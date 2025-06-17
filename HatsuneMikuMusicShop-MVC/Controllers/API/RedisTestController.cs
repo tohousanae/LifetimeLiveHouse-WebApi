@@ -4,6 +4,7 @@ using HatsuneMikuMusicShop_MVC.Models;
 
 namespace HatsuneMikuMusicShop_MVC.Controllers.API
 {
+    // https://medium.com/@asdfg55887/use-redis-in-dotnet-core-53b63c28e80f
     [Route("api/[controller]")]
     [ApiController]
     public class RedisTestController : ControllerBase
