@@ -34,7 +34,7 @@ namespace HatsuneMikuMusicShop_MVC.Controllers.API
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProducts(int id)
         {
-            // 用Read through快取商品資料，優先從快取讀取，若快取無資料則從資料庫讀取並更新快取
+            // Read through，優先從快取讀取商品資料，若快取無資料則從資料庫讀取並更新快取
             string cacheKey = $"Product_{id}";
 
             // 1. 先從 Redis 拿資料
@@ -43,21 +43,23 @@ namespace HatsuneMikuMusicShop_MVC.Controllers.API
             {
                 // Redis 裡存的是字串，需反序列化回 Product 物件
                 var product = System.Text.Json.JsonSerializer.Deserialize<Product>(cachedProduct);
-                return product;
+                return Ok(product + "來源為快取"); // 修正：使用 Ok() 包裝返回的物件
             }
-
-            // 2. Redis 沒資料，從資料庫拿
-            var productFromDb = await _context.Product.FindAsync(id);
-            if (productFromDb == null)
+            else
             {
-                return NotFound();
+                // 2. Redis 沒資料，從資料庫拿
+                var productFromDb = await _context.Product.FindAsync(id);
+                if (productFromDb == null)
+                {
+                    return NotFound();
+                }
+
+                // 3. 寫回 Redis
+                var serializedProduct = System.Text.Json.JsonSerializer.Serialize(productFromDb);
+                await _cacheDb.StringSetAsync(cacheKey, serializedProduct, TimeSpan.FromHours(24)); // 24小時過期
+
+                return Ok(productFromDb + "來源為資料庫"); // 修正：使用 Ok() 包裝返回的物件
             }
-
-            // 3. 寫回 Redis
-            var serializedProduct = System.Text.Json.JsonSerializer.Serialize(productFromDb);
-            await _cacheDb.StringSetAsync(cacheKey, serializedProduct, TimeSpan.FromMinutes(10)); // 10分鐘過期
-
-            return productFromDb;
         }
 
         // PUT: api/Products/5
