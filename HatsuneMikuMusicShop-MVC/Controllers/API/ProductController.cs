@@ -56,7 +56,7 @@ namespace HatsuneMikuMusicShop_MVC.Controllers.API
 
                 // 3. 寫回 Redis
                 var serializedProduct = System.Text.Json.JsonSerializer.Serialize(productFromDb);
-                await _cacheDb.StringSetAsync(cacheKey, serializedProduct, TimeSpan.FromHours(24)); // 24小時過期
+                await _cacheDb.StringSetAsync(cacheKey, serializedProduct/*, TimeSpan.FromHours(24) 過期時間*/); 
 
                 return Ok(productFromDb + "來源為資料庫"); // 修正：使用 Ok() 包裝返回的物件
             }

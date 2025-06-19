@@ -32,7 +32,7 @@ namespace HatsuneMikuMusicShop_MVC.Controllers.API
                 PhoneNumber = user.PhoneNumber,
                 Sex = user.Sex,
                 Birthday = user.Birthday,
-                MikuPoint = user.MikuPoint,
+                MikuMikuPoint = user.MikuMikuPoint,
             };
             return userManageDto;
         }
@@ -61,7 +61,7 @@ namespace HatsuneMikuMusicShop_MVC.Controllers.API
                     Email = input.Email,
                     PhoneNumber = input.PhoneNumber,
                     Password = passwordHash,
-                    Sex = input.Sex,
+                    Sex = false,
                     Birthday = input.Birthday,
                 };
 

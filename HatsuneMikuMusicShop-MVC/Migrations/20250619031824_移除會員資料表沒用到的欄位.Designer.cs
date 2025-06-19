@@ -4,6 +4,7 @@ using HatsuneMikuMusicShop_MVC.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HatsuneMikuMusicShop_MVC.Migrations
 {
     [DbContext(typeof(MikuMusicShopContext))]
-    partial class MikuMusicShopContextModelSnapshot : ModelSnapshot
+    [Migration("20250619031824_移除會員資料表沒用到的欄位")]
+    partial class 移除會員資料表沒用到的欄位
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
