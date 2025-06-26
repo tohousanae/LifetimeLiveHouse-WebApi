@@ -98,11 +98,15 @@ namespace HatsuneMikuMusicShop_MVC.Controllers.API
         [HttpPost]
         public async Task<ActionResult<Product>> PostProducts(Product products)
         {
-            // 用Write-Through Cache，先把商品資料寫入資料庫，資料庫寫入成功後才寫入快取
-            _context.Product.Add(products);
-            await _context.SaveChangesAsync();
+            if (ModelState.IsValid == true) //模型驗證是否完全符合規則
+            {
+                // 用Write-Through Cache，先把商品資料寫入資料庫，資料庫寫入成功後才寫入快取
+                _context.Product.Add(products);
+                await _context.SaveChangesAsync();
 
+            }
             return CreatedAtAction("GetProducts", new { id = products.Id }, products);
+
         }
 
         // DELETE: api/Products/5
