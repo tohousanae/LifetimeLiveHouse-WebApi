@@ -11,7 +11,7 @@
 
         public required string Password { get; set; }
 
-        public required string Sex { get; set; }
+        public required bool Sex { get; set; }
 
         public DateTime Birthday { get; set; }
 

@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
 var builder = WebApplication.CreateBuilder(args);
 
-// 注入am3burgerContext的類別
+// 注入MikuMusicShopContext的類別
 builder.Services.AddDbContext<MikuMusicShopContext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("MikuMusicShop")));
+options.UseSqlServer(builder.Configuration.GetConnectionString("MikuMusicShopConnection")));
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddControllers();
