@@ -38,31 +38,29 @@ namespace HatsuneMikuMusicShop_MVC.Controllers.API
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<User>> Register(RegisterDTO input)
+        public async Task<ActionResult<User>> Register(RegisterDTO inputRegisterInfo)
         {
             // 檢查信箱、電話是否已被註冊
-            if (await _context.User.AnyAsync(u => u.Email == input.Email))
+            if (await _context.User.AnyAsync(u => u.Email == inputRegisterInfo.Email))
             {
                 return Unauthorized("信箱已被註冊");
             }
-            else if (await _context.User.AnyAsync(u => u.PhoneNumber == input.PhoneNumber))
+            else if (await _context.User.AnyAsync(u => u.PhoneNumber == inputRegisterInfo.PhoneNumber))
             {
                 return Unauthorized("電話已被註冊");
             }
             else
             {
-                // 密碼加密與加鹽處理
-                string passwordHash = BCrypt.Net.BCrypt.HashPassword(input.Password);
-
+                
                 // 將 RegisterDTO 轉換為 User 模型
                 User user = new()
                 {
-                    Name = input.Name,
-                    Email = input.Email,
-                    PhoneNumber = input.PhoneNumber,
-                    Password = passwordHash,
-                    Sex = false,
-                    Birthday = input.Birthday,
+                    Name = inputRegisterInfo.Name,
+                    Email = inputRegisterInfo.Email,
+                    PhoneNumber = inputRegisterInfo.PhoneNumber,
+                    Password = BCrypt.Net.BCrypt.HashPassword(inputRegisterInfo.Password), // 密碼哈希加密與加鹽處理
+                    Sex = inputRegisterInfo.Sex,
+                    Birthday = inputRegisterInfo.Birthday,
                 };
 
                 _context.User.Add(user);
@@ -73,10 +71,10 @@ namespace HatsuneMikuMusicShop_MVC.Controllers.API
 
         // 登入api(cookie based驗證)
         [HttpPost("login")]
-        public async Task<ActionResult<User>> Login(LoginDTO input)
+        public async Task<ActionResult<User>> Login(LoginDTO inputLoginInfo)
         {
             // 檢查輸入的信箱是否為使用者輸入的信箱
-            var user = await _context.User.FirstOrDefaultAsync(u => u.Email == input.Email); 
+            var user = await _context.User.FirstOrDefaultAsync(u => u.Email == inputLoginInfo.Email); 
 
             if (user == null)
             {
@@ -84,7 +82,7 @@ namespace HatsuneMikuMusicShop_MVC.Controllers.API
             }
 
             // 檢查輸入的密碼是否為使用者輸入的密碼
-            if (!BCrypt.Net.BCrypt.Verify(input.Password, user.Password))
+            if (!BCrypt.Net.BCrypt.Verify(inputLoginInfo.Password, user.Password))
             {
                 return Unauthorized("電子郵件或密碼不存在"); // 刻意將回傳訊息設定成信箱或密碼錯誤，防止攻擊者針對密碼做攻擊測試
             }
