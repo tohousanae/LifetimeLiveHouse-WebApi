@@ -1,4 +1,4 @@
-﻿namespace am3burger.DTO.User
+﻿namespace HatsuneMikuMusicShop_MVC.DTO.Users
 {
     public class RegisterDTO
     {
@@ -11,7 +11,7 @@
 
         public required string Password { get; set; }
 
-        public required string Sex { get; set; }
+        public required bool Sex { get; set; }
 
         public DateTime Birthday { get; set; }
 

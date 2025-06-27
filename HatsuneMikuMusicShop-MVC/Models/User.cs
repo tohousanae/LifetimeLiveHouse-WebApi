@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 
-namespace am3burger.Models
+namespace HatsuneMikuMusicShop_MVC.Models
 {
     [Index(nameof(Email), IsUnique = true, Name = "IX_User_Email")]
     [Index(nameof(PhoneNumber), IsUnique = true, Name = "IX_User_PhoneNumber")]
@@ -37,9 +37,8 @@ namespace am3burger.Models
         public string Password { get; set; } = null!;
 
         [Display(Name = "性別")]
-        [StringLength(10)]
         // 性別
-        public string Sex { get; set; } = null!;
+        public bool Sex { get; set; }
 
         [Display(Name = "生日")]
         // 生日
@@ -47,21 +46,8 @@ namespace am3burger.Models
         [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd}", ApplyFormatInEditMode = true)]
         public DateTime Birthday { get; set; } = DateTime.Now;
 
-        [Display(Name = "身分")]
-        [StringLength(10)]
-        // 權限
-        public string Identity { get; set; } = null!;
-
-        [Display(Name = "手機驗證狀態")]
-        // 手機號碼
-        public bool PhoneValidation { get; set; } = false;
-
-        [Display(Name = "信箱驗證狀態")]
-        // 手機號碼
-        public bool EmailValidation { get; set; } = false;
-
-        [Display(Name = "miku點數")]
+        [Display(Name = "MikuMiku點數")]
         // 會員Id  
-        public int MikuPoint { get; set; } = 0;
+        public int MikuMikuPoint { get; set; } = 0;
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace am3burger.DTO.Users
+namespace HatsuneMikuMusicShop_MVC.DTO.Users
 {
     public class LoginDTO
     {
