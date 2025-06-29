@@ -56,6 +56,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.MapSwagger().RequireAuthorization();
+
 app.UseStaticFiles();
 
 app.UseRouting();

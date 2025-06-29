@@ -20,6 +20,11 @@ namespace HatsuneMikuMusicShop_MVC.Controllers.API
         [HttpGet("user/{id}")]
         public async Task<ActionResult<UserDto>> GetUserInfo(int inputId)
         {
+            /// <summary>
+            /// 顯示單個會員資料
+            /// </summary>
+            /// <param name="inputId">輸入會員Id</param>
+            /// <returns>取得單個會員的資料</returns>
             var user = await _context.User.FindAsync(inputId);
             if (user == null) 
             {
