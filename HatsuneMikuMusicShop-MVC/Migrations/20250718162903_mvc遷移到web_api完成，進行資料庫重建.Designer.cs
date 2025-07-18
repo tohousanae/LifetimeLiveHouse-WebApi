@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HatsuneMikuMusicShop_MVC.Migrations
 {
     [DbContext(typeof(MikuMusicShopContext))]
-    [Migration("20250617073254_移除商品類別代號的字串長度參數")]
-    partial class 移除商品類別代號的字串長度參數
+    [Migration("20250718162903_mvc遷移到web_api完成，進行資料庫重建")]
+    partial class mvc遷移到web_api完成進行資料庫重建
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -150,15 +150,7 @@ namespace HatsuneMikuMusicShop_MVC.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<bool>("EmailValidation")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Identity")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.Property<int>("MikuPoint")
+                    b.Property<int>("MikuMikuPoint")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -176,13 +168,8 @@ namespace HatsuneMikuMusicShop_MVC.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
-                    b.Property<bool>("PhoneValidation")
+                    b.Property<bool>("Sex")
                         .HasColumnType("bit");
-
-                    b.Property<string>("Sex")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
 
                     b.HasKey("Id");
 

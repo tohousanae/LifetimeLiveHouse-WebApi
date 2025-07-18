@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HatsuneMikuMusicShop_MVC.Migrations
 {
     /// <inheritdoc />
-    public partial class 重建變更 : Migration
+    public partial class mvc遷移到web_api完成進行資料庫重建 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -68,11 +68,11 @@ namespace HatsuneMikuMusicShop_MVC.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    Type = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    Description = table.Column<string>(type: "nvarchar(4000)", maxLength: 4000, nullable: true),
-                    PhotoName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    Price = table.Column<int>(type: "int", nullable: true)
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    TypeId = table.Column<int>(type: "int", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(4000)", maxLength: 4000, nullable: false),
+                    PhotoName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Price = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -101,12 +101,9 @@ namespace HatsuneMikuMusicShop_MVC.Migrations
                     Email = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", maxLength: 2147483647, nullable: false),
-                    Sex = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    Sex = table.Column<bool>(type: "bit", nullable: false),
                     Birthday = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Identity = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-                    PhoneValidation = table.Column<bool>(type: "bit", nullable: false),
-                    EmailValidation = table.Column<bool>(type: "bit", nullable: false),
-                    MikuPoint = table.Column<int>(type: "int", nullable: false)
+                    MikuMikuPoint = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
