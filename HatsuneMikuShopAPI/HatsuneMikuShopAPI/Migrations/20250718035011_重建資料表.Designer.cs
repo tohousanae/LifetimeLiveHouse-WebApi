@@ -12,6 +12,9 @@ namespace HatsuneMikuShopAPI.Migrations
 {
     [DbContext(typeof(MikuMusicShopContext))]
 <<<<<<<< HEAD:HatsuneMikuShopAPI/HatsuneMikuShopAPI/Migrations/20250718035011_重建資料表.Designer.cs
+<<<<<<<< HEAD:HatsuneMikuShopAPI/HatsuneMikuShopAPI/Migrations/20250718035011_重建資料表.Designer.cs
+========
+>>>>>>>> abfe7156f0424137ca89cb0a14e9dcaa344ae50c:HatsuneMikuShopAPI/Migrations/20250718081109_重建資料庫.Designer.cs
 <<<<<<<< Updated upstream:HatsuneMikuShopAPI/HatsuneMikuShopAPI/Migrations/20250718035011_重建資料表.Designer.cs
     [Migration("20250718035011_重建資料表")]
     partial class 重建資料表
@@ -19,9 +22,12 @@ namespace HatsuneMikuShopAPI.Migrations
     [Migration("20250718081109_重建資料庫")]
     partial class 重建資料庫
 >>>>>>>> Stashed changes:HatsuneMikuShopAPI/Migrations/20250718081109_重建資料庫.Designer.cs
+<<<<<<<< HEAD:HatsuneMikuShopAPI/HatsuneMikuShopAPI/Migrations/20250718035011_重建資料表.Designer.cs
 ========
     partial class MikuMusicShopContextModelSnapshot : ModelSnapshot
 >>>>>>>> abfe7156f0424137ca89cb0a14e9dcaa344ae50c:HatsuneMikuShopAPI/Migrations/MikuMusicShopContextModelSnapshot.cs
+========
+>>>>>>>> abfe7156f0424137ca89cb0a14e9dcaa344ae50c:HatsuneMikuShopAPI/Migrations/20250718081109_重建資料庫.Designer.cs
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
