@@ -4,7 +4,6 @@ using HatsuneMikuShopAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -12,16 +11,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HatsuneMikuShopAPI.Migrations
 {
     [DbContext(typeof(MikuMusicShopContext))]
-<<<<<<<< Updated upstream:HatsuneMikuShopAPI/HatsuneMikuShopAPI/Migrations/20250718035011_重建資料表.Designer.cs
-    [Migration("20250718035011_重建資料表")]
-    partial class 重建資料表
-========
-    [Migration("20250718081109_重建資料庫")]
-    partial class 重建資料庫
->>>>>>>> Stashed changes:HatsuneMikuShopAPI/Migrations/20250718081109_重建資料庫.Designer.cs
+    partial class MikuMusicShopContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
