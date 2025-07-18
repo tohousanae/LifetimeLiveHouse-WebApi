@@ -1,7 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+<<<<<<<< HEAD:HatsuneMikuShopWebAPI/Models/OrderForm.cs
 namespace HatsuneMikuShopWebAPI.Models
+========
+namespace HatsuneMikuShopAPI.Models
+<<<<<<<< Updated upstream:HatsuneMikuShopAPI/HatsuneMikuShopAPI/Models/OrderForm.cs
+    // 114514
+========
+>>>>>>>> Stashed changes:HatsuneMikuShopAPI/Models/OrderForm.cs
+>>>>>>>> abfe7156f0424137ca89cb0a14e9dcaa344ae50c:HatsuneMikuShopAPI/HatsuneMikuShopAPI/Models/OrderForm.cs
 {
     public class OrderForm
     {
