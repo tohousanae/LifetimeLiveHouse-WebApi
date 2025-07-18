@@ -3,18 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace HatsuneMikuShopAPI.Migrations
+namespace HatsuneMikuShopWebAPI.Migrations
 {
     /// <inheritdoc />
-<<<<<<<< HEAD:HatsuneMikuShopAPI/HatsuneMikuShopAPI/Migrations/20250718162903_mvc遷移到web_api完成，進行資料庫重建.cs
-    public partial class mvc遷移到web_api完成進行資料庫重建 : Migration
-========
-<<<<<<<< Updated upstream:HatsuneMikuShopAPI/HatsuneMikuShopAPI/Migrations/20250718035011_重建資料表.cs
-    public partial class 重建資料表 : Migration
-========
     public partial class 重建資料庫 : Migration
->>>>>>>> Stashed changes:HatsuneMikuShopAPI/Migrations/20250718081109_重建資料庫.cs
->>>>>>>> abfe7156f0424137ca89cb0a14e9dcaa344ae50c:HatsuneMikuShopAPI/HatsuneMikuShopAPI/Migrations/20250718035011_重建資料表.cs
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

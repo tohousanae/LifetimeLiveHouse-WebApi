@@ -15,15 +15,9 @@
     </PackageReference>
     <PackageReference Include="StackExchange.Redis" Version="2.8.41" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.3" />
-<<<<<<<< HEAD:HatsuneMikuShopWebAPI/HatsuneMikuShopWebAPI.csproj
-========
-<<<<<<<< Updated upstream:HatsuneMikuShopAPI/HatsuneMikuShopAPI/HatsuneMikuShopAPI.csproj
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="9.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="9.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="9.0.3" />
-========
->>>>>>>> Stashed changes:HatsuneMikuShopAPI/HatsuneMikuShopAPI.csproj
->>>>>>>> abfe7156f0424137ca89cb0a14e9dcaa344ae50c:HatsuneMikuShopAPI/HatsuneMikuShopAPI.csproj
   </ItemGroup>
 
   <ItemGroup>

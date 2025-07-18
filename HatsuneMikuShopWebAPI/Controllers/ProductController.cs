@@ -1,15 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using HatsuneMikuShopWebAPI.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
-<<<<<<<< HEAD:HatsuneMikuShopWebAPI/Controllers/ProductController.cs
-using HatsuneMikuShopWebAPI.Models;
 
 namespace HatsuneMikuShopWebAPI.Controllers
-========
-using HatsuneMikuShopAPI.Models;
-
-namespace HatsuneMikuShopAPI.Controllers
->>>>>>>> abfe7156f0424137ca89cb0a14e9dcaa344ae50c:HatsuneMikuShopAPI/Controllers/ProductController.cs
 {
     // 查詢時須限制一次撈出的筆數，避免一次撈出過多資料導致效能問題
     // 快取策略參考：https://www.explainthis.io/zh-hant/swe/cache-mechanism
