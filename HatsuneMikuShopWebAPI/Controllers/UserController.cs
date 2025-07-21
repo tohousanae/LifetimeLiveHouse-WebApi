@@ -52,8 +52,15 @@ namespace HatsuneMikuShopWebAPI.Controllers
             }
             else if (await _context.User.AnyAsync(u => u.PhoneNumber == inputRegisterInfo.PhoneNumber))
             {
-                return Unauthorized("電話已被註冊");
+                return Unauthorized("手機號碼已被註冊");
             }
+            // 檢查註冊的信箱或電話是否為黑名單
+            /*
+            else if {
+                return Unauthorized("信箱為違規帳號信箱，無法註冊");
+                return Unauthorized("手機號碼為違規帳號手機號碼，無法註冊");
+            } 
+             */
             else
             {
                 
