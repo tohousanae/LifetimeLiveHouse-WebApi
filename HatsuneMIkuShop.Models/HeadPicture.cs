@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace HatsuneMikuShopWebAPI.Models
+namespace HatsuneMIkuShop.Models
 {
     [PrimaryKey(nameof(UserId), nameof(headPictureFileName))]
     public class HeadPicture

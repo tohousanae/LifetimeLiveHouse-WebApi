@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StackExchange.Redis;
-using HatsuneMikuShopWebAPI.Models;
+using HatsuneMIkuShop.Models;
 
 namespace HatsuneMikuShopWebAPI.Controllers
 {

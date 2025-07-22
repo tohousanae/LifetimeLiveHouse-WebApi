@@ -1,6 +1,6 @@
-using HatsuneMikuShopWebAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
+using MikuMusicShopContext = HatsuneMIkuShop.Access.Data.MikuMusicShopContext;
 var builder = WebApplication.CreateBuilder(args);
 
 // 注入MikuMusicShopContext的類別

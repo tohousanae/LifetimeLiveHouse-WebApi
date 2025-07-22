@@ -1,7 +1,6 @@
-﻿
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
-namespace HatsuneMikuShopWebAPI.Models
+namespace HatsuneMIkuShop.Models
 {
     public class MikuMusicShopContext(DbContextOptions<MikuMusicShopContext> options) : DbContext(options)
     {

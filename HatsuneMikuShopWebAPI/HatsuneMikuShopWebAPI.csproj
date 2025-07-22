@@ -24,4 +24,8 @@
     <Folder Include="DTO\Products\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\HatsuneMIkuShop_Access\HatsuneMIkuShop.Access.csproj" />
+  </ItemGroup>
+
 </Project>

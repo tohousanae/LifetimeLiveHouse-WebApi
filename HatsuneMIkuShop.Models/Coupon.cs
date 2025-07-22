@@ -1,13 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace HatsuneMikuShopWebAPI.Models
+namespace HatsuneMIkuShop.Models
 {
-    public class Store
+    public class Coupon
     {
         [Key]
-        [Display(Name = "分店Id")]
+        [Display(Name = "優惠券Id")]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Store_Id { get; set; }
+        public int CouponId { get; set; }
     }
 }

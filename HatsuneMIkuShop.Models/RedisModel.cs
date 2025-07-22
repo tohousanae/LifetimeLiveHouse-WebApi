@@ -1,4 +1,4 @@
-﻿namespace HatsuneMikuShopWebAPI.Models
+﻿namespace HatsuneMIkuShop.Models
 {
     public class RedisModel
     {

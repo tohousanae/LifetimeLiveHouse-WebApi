@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using HatsuneMikuShopWebAPI.Models;
 using HatsuneMikuShopWebAPI.DTO.Users;
+using HatsuneMIkuShop.Models;
+using MikuMusicShopContext = HatsuneMIkuShop.Access.Data.MikuMusicShopContext;
 
 namespace HatsuneMikuShopWebAPI.Controllers
 {

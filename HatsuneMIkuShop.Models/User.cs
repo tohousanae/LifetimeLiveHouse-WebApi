@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 
-namespace HatsuneMikuShopWebAPI.Models
+namespace HatsuneMIkuShop.Models
 {
     [Index(nameof(Email), IsUnique = true, Name = "IX_User_Email")]
     [Index(nameof(PhoneNumber), IsUnique = true, Name = "IX_User_PhoneNumber")]
