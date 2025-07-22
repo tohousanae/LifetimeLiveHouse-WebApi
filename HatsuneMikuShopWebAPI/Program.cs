@@ -46,7 +46,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.MapSwagger().RequireAuthorization();
 
-//實務上並不會使用靜態檔案，因為API通常是提供給前端使用的，前端會有自己的靜態檔案處理方式
+//實務上API並不會需要顯示靜態檔案，因為API通常是提供給前端使用的，前端會有自己的靜態檔案處理方式
 //app.UseStaticFiles();
 
 app.UseAuthorization();
