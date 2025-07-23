@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\HatsuneMikuShop.Utilities\HatsuneMikuShop.Utilities.csproj" />
     <ProjectReference Include="..\HatsuneMIkuShop_Access\HatsuneMIkuShop.Access.csproj" />
   </ItemGroup>
 

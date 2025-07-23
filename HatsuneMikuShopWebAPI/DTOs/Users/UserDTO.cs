@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace HatsuneMikuShopWebAPI.DTO.Users
+namespace HatsuneMikuShopWebAPI.DTOs.Users
 // dto，
 {
-    public class UserDto
+    public class UserDTO
     {
         [Display(Name = "會員Id")]
         // 會員Id  

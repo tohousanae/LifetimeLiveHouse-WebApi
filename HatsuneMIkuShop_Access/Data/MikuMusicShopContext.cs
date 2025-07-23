@@ -5,12 +5,12 @@ namespace HatsuneMIkuShop.Access.Data
 {
     public class MikuMusicShopContext(DbContextOptions<MikuMusicShopContext> options) : DbContext(options)
     {
-        public DbSet<Coupon> Coupon {  get; set; }
-        public DbSet<DeliveryBoy> DeliveryBoy { get; set; }
-        public DbSet<OrderForm> OrderForm { get; set; }
-        public DbSet<Product> Product { get; set; }
-        public DbSet<Store> Store { get; set; }
-        public DbSet<User> User { get; set; }
-        public DbSet<HeadPicture> HeadPicture { get; set; }   
+        public virtual DbSet<Coupon> Coupon {  get; set; }
+        public virtual DbSet<DeliveryBoy> DeliveryBoy { get; set; }
+        public virtual DbSet<OrderForm> OrderForm { get; set; }
+        public virtual DbSet<Product> Product { get; set; }
+        public virtual DbSet<Store> Store { get; set; }
+        public virtual DbSet<User> User { get; set; }
+        public virtual DbSet<HeadPicture> HeadPicture { get; set; }   
     }
 }

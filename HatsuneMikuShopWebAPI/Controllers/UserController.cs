@@ -1,50 +1,33 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using HatsuneMikuShopWebAPI.DTO.Users;
 using HatsuneMIkuShop.Models;
 using MikuMusicShopContext = HatsuneMIkuShop.Access.Data.MikuMusicShopContext;
+using HatsuneMikuShopWebAPI.DTOs.Users;
 
 namespace HatsuneMikuShopWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UserController(MikuMusicShopContext context) : ControllerBase
     {
-        private readonly MikuMusicShopContext _context;
+        private readonly MikuMusicShopContext _context = context;
 
-        public UserController(MikuMusicShopContext context)
-        {
-            _context = context;
-        }
-
-        // 會員中心，顯示會員資料
+        // 顯示個別會員資料
         [HttpGet("user/{id}")]
-        public async Task<ActionResult<UserDto>> GetUserInfo(int inputId)
+        public async Task<ActionResult<UserDTO>> GetUserInfo(int id)
         {
-            /// <summary>
-            /// 顯示單個會員資料
-            /// </summary>
-            /// <param name="inputId">輸入會員Id</param>
-            /// <returns>取得單個會員的資料</returns>
-            var user = await _context.User.FindAsync(inputId);
-            if (user == null) 
+            var user = await _context.User.FindAsync(id);
+            if (user == null)
             {
                 return NotFound("找不到此會員");
             }
-            UserDto userManageDto = new UserDto
-            {
-                Name = user.Name,
-                Email = user.Email,
-                PhoneNumber = user.PhoneNumber,
-                Sex = user.Sex,
-                Birthday = user.Birthday,
-                MikuMikuPoint = user.MikuMikuPoint,
-            };
-            return userManageDto;
+
+            // 呼叫 ItemUser 方法並回傳結果
+            return ItemUser(user);
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<User>> Register(RegisterDTO inputRegisterInfo)
+        public async Task<ActionResult<User>> Register(RegisterInfoDTO inputRegisterInfo)
         {
             // 檢查信箱、電話是否已被註冊
             if (await _context.User.AnyAsync(u => u.Email == inputRegisterInfo.Email))
@@ -55,31 +38,16 @@ namespace HatsuneMikuShopWebAPI.Controllers
             {
                 return Unauthorized("手機號碼已被註冊");
             }
-            // 檢查註冊的信箱或電話是否為黑名單
-            /*
-            else if {
-                return Unauthorized("信箱為違規帳號信箱，無法註冊");
-                return Unauthorized("手機號碼為違規帳號手機號碼，無法註冊");
-            } 
-             */
-            else
-            {
-                
-                // 將 RegisterDTO 轉換為 User 模型
-                User user = new()
-                {
-                    Name = inputRegisterInfo.Name,
-                    Email = inputRegisterInfo.Email,
-                    PhoneNumber = inputRegisterInfo.PhoneNumber,
-                    Password = BCrypt.Net.BCrypt.HashPassword(inputRegisterInfo.Password), // 密碼哈希加密與加鹽處理
-                    Sex = inputRegisterInfo.Sex,
-                    Birthday = inputRegisterInfo.Birthday,
-                };
 
-                _context.User.Add(user);
-                await _context.SaveChangesAsync();
-                return Ok("註冊成功");
-            }
+            // 黑名單邏輯略過...
+
+            // 使用轉換函式建立 User 物件
+            var user = ConvertToUser(inputRegisterInfo);
+
+            _context.User.Add(user);
+            await _context.SaveChangesAsync();
+
+            return Ok("註冊成功");
         }
 
         // 登入api(cookie based驗證)
@@ -136,10 +104,12 @@ namespace HatsuneMikuShopWebAPI.Controllers
         public IActionResult Logout()
         {
             // 清除用户的身份验证凭证（例如，清除存储在 cookie 中的身份验证令牌）
-            CookieOptions option = new CookieOptions();
-            option.Expires = DateTime.Now.AddDays(-1);
-            option.HttpOnly = true;
-            option.Secure = true;
+            CookieOptions option = new CookieOptions
+            {
+                Expires = DateTime.Now.AddDays(-1),
+                HttpOnly = true,
+                Secure = true
+            };
             Response.Cookies.Append("UserId", "", option);
             return Ok("登出成功");
             // 返回成功响应
@@ -249,7 +219,7 @@ namespace HatsuneMikuShopWebAPI.Controllers
         }
 
         // 上傳頭像
-        [HttpPost("headPictureUpload")] //紀錄會員id、頭像檔名、頭像圖片檔案，頭像更新時刪除原有檔案
+        [HttpPost("headPictureUpload")]
         public string HeadUpload(IFormFile inputImage)
         {
             if (inputImage == null || inputImage.Length == 0)
@@ -258,27 +228,52 @@ namespace HatsuneMikuShopWebAPI.Controllers
             }
 
             //只允許上傳圖片
-            if (inputImage.ContentType != "image/jpeg" && inputImage.ContentType != "image/png")
+            if (inputImage.ContentType != "image/jpeg" && inputImage.ContentType != "image/png" && inputImage.ContentType != "image/webp")
             {
-                return "僅支援上傳.jpg或.png格式"; ;
+                return "僅支援上傳.jpg、.png或webp格式"; ;
             }
 
 
-            //取得檔案名稱
             string fileName = Path.GetFileName(inputImage.FileName);
+            string accessProjectPath = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).FullName, "Assets", "Images");
+            Directory.CreateDirectory(accessProjectPath); // 若資料夾不存在則建立
 
-            //取得檔案的完整路徑
-            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "images", fileName);
-            // /wwwroot/Photos/xxx.jpg
+            string filePath = Path.Combine(accessProjectPath, fileName);
 
-            //將檔案上傳並儲存於指定的路徑
-
-            using (FileStream fs = new FileStream(filePath, FileMode.Create))
+            using (var stream = new FileStream(filePath, FileMode.Create))
             {
-                inputImage.CopyTo(fs);
+                inputImage.CopyTo(stream);
             }
 
             return "檔案上傳成功!!";
+        }
+
+        private static UserDTO ItemUser(User u)
+        {
+            var returnUser = new UserDTO
+            {
+                Name = u.Name,
+                Email = u.Email,
+                PhoneNumber = u.PhoneNumber,
+                Sex = u.Sex,
+                Birthday = u.Birthday,
+                MikuMikuPoint = u.MikuMikuPoint,
+            };
+
+            return returnUser;
+
+        }
+        private static User ConvertToUser(RegisterInfoDTO u)
+        {
+            return new User
+            {
+                Name = u.Name,
+                Email = u.Email,
+                PhoneNumber = u.PhoneNumber,
+                Password = BCrypt.Net.BCrypt.HashPassword(u.Password),
+                Sex = u.Sex,
+                Birthday = u.Birthday
+            };
         }
     }
 }

@@ -1,6 +1,6 @@
-﻿namespace HatsuneMikuShopWebAPI.DTO.Users
+﻿namespace HatsuneMikuShopWebAPI.DTOs.Users
 {
-    public class RegisterDTO
+    public class RegisterInfoDTO
     {
 
         public required string Name { get; set; }

@@ -1,4 +1,4 @@
-namespace HatsuneMikuShopWebAPI.DTO.Users
+namespace HatsuneMikuShopWebAPI.DTOs.Users
 {
     public class LoginDTO
     {

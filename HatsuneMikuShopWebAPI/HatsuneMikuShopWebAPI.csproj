@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -21,10 +21,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="DTO\Products\" />
+    <Folder Include="DTOs\Products\" />
+    <Folder Include="DTOs\Products\" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\HatsuneMikuShop.Utilities\HatsuneMikuShop.Utilities.csproj" />
     <ProjectReference Include="..\HatsuneMIkuShop_Access\HatsuneMIkuShop.Access.csproj" />
   </ItemGroup>
 
