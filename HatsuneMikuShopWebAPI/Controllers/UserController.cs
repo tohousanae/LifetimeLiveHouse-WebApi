@@ -27,7 +27,7 @@ namespace HatsuneMikuShopWebAPI.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<User>> Register(RegisterInfoDTO inputRegisterInfo)
+        public async Task<ActionResult<User>> PostUserRegister(RegisterInfoDTO inputRegisterInfo)
         {
             // 檢查信箱、電話是否已被註冊
             if (await _context.User.AnyAsync(u => u.Email == inputRegisterInfo.Email))
@@ -52,7 +52,7 @@ namespace HatsuneMikuShopWebAPI.Controllers
 
         // 登入api(cookie based驗證)
         [HttpPost("login")]
-        public async Task<ActionResult<User>> Login(LoginDTO inputLoginInfo)
+        public async Task<ActionResult<User>> PostUserLogin(LoginDTO inputLoginInfo)
         {
             // 檢查輸入的信箱是否為使用者輸入的信箱
             var user = await _context.User.FirstOrDefaultAsync(u => u.Email == inputLoginInfo.Email); 
@@ -81,7 +81,7 @@ namespace HatsuneMikuShopWebAPI.Controllers
 
         // 讀取cookie驗證是否登入
         [HttpPost("loginCkeck")]
-        public IActionResult CheckLoginStatus()
+        public IActionResult PostUserCheckLogin()
         {
             // 获取请求中的 cookie 数据
             string? cookieValue = Request.Cookies["UserId"];
@@ -101,7 +101,7 @@ namespace HatsuneMikuShopWebAPI.Controllers
 
         // 登出，清除cookie
         [HttpPost("logout")]
-        public IActionResult Logout()
+        public IActionResult PostUserLogout()
         {
             // 清除用户的身份验证凭证（例如，清除存储在 cookie 中的身份验证令牌）
             CookieOptions option = new CookieOptions
