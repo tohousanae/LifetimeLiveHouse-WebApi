@@ -1,3 +1,4 @@
+using HatsuneMIkuShop.Access.Data;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
 using MikuMusicShopContext = HatsuneMIkuShop.Access.Data.MikuMusicShopContext;
@@ -6,6 +7,10 @@ var builder = WebApplication.CreateBuilder(args);
 // 注入MikuMusicShopContext的類別
 builder.Services.AddDbContext<MikuMusicShopContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("MikuMusicShopConnection")));
+
+builder.Services.AddDbContext<MikuMusicShopContext2>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("GoodStoreConnection")));
+
 builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
