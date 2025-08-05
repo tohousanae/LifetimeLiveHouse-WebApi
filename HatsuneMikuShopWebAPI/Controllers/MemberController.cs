@@ -8,13 +8,13 @@ namespace HatsuneMikuShopWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController(MikuMusicShopContext context) : ControllerBase
+    public class MemberController(MikuMusicShopContext context) : ControllerBase
     {
         private readonly MikuMusicShopContext _context = context;
 
         // 顯示個別會員資料
-        [HttpGet("user/{id}")]
-        public async Task<ActionResult<UserDTO>> GetUserInfo(int id)
+        [HttpGet("Member/{id}")]
+        public async Task<ActionResult<MemberDTO>> GetUserInfo(int id)
         {
             var user = await _context.User.FindAsync(id);
             if (user == null)
@@ -248,9 +248,9 @@ namespace HatsuneMikuShopWebAPI.Controllers
             return "檔案上傳成功!!";
         }
 
-        private static UserDTO ItemUser(User u)
+        private static MemberDTO ItemUser(User u)
         {
-            var returnUser = new UserDTO
+            var returnUser = new MemberDTO
             {
                 Name = u.Name,
                 Email = u.Email,

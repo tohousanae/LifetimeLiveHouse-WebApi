@@ -3,7 +3,7 @@
 namespace HatsuneMikuShopWebAPI.DTOs.Users
 // dto，
 {
-    public class UserDTO
+    public class MemberDTO
     {
         [Display(Name = "會員Id")]
         // 會員Id  
