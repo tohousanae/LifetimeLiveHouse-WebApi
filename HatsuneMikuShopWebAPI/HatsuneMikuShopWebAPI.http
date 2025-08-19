@@ -1,0 +1,6 @@
+@HatsuneMikuShopWebAPI_HostAddress = http://localhost:5078
+
+GET {{HatsuneMikuShopWebAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
