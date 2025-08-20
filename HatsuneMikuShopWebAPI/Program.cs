@@ -8,9 +8,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<MikuMusicShopContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("MikuMusicShopConnection")));
 
-builder.Services.AddDbContext<MikuMusicShopContext2>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("GoodStoreConnection")));
-
 builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -21,14 +18,14 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDistributedMemoryCache();
 
 // 加入redis分散式快取服務
-builder.Services.AddSingleton<IConnectionMultiplexer>(
-    ConnectionMultiplexer.Connect(
-        new ConfigurationOptions()
-        {
-            EndPoints = { { "localhost", 6379 } }
-        }
-    )
- );
+//builder.Services.AddSingleton<IConnectionMultiplexer>(
+//    ConnectionMultiplexer.Connect(
+//        new ConfigurationOptions()
+//        {
+//            EndPoints = { { "localhost", 6379 } }
+//        }
+//    )
+// );
 
 // CORS跨來源共用設定
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
