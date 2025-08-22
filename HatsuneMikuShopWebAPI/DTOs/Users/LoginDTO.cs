@@ -1,4 +1,4 @@
-namespace HatsuneMikuShopWebAPI.DTOs.Users
+namespace LifetimeLiveHouseWebAPI.DTOs.Users
 {
     public class LoginDTO
     {

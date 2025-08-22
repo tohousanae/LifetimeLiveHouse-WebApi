@@ -1,11 +1,10 @@
-﻿using HatsuneMIkuShop.Access.Data;
-using HatsuneMIkuShop.Models;
+﻿using LifetimeLiveHouse.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
-using MikuMusicShopContext = HatsuneMIkuShop.Access.Data.MikuMusicShopContext;
+using LifetimeLiveHouseContext = LifetimeLiveHouse.Access.Data.LifetimeLiveHouseContext;
 
-namespace HatsuneMikuShopWebAPI.Controllers
+namespace LifetimeLiveHouseWebAPI.Controllers
 {
     // 查詢時須限制一次撈出的筆數，避免一次撈出過多資料導致效能問題
     // 快取策略參考：https://www.explainthis.io/zh-hant/swe/cache-mechanism
@@ -14,10 +13,10 @@ namespace HatsuneMikuShopWebAPI.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IConnectionMultiplexer _redisDb;
-        private readonly MikuMusicShopContext _context;
+        private readonly LifetimeLiveHouseContext _context;
         private readonly IDatabase _cacheDb;
 
-        public ProductController(MikuMusicShopContext context, IConnectionMultiplexer redisService)
+        public ProductController(LifetimeLiveHouseContext context, IConnectionMultiplexer redisService)
         {
             _context = context;
             _redisDb = redisService;

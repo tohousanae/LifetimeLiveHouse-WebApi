@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace HatsuneMikuShopWebAPI.DTOs.Users
+namespace LifetimeLiveHouseWebAPI.DTOs.Users
 // dto，
 {
     public class MemberDTO

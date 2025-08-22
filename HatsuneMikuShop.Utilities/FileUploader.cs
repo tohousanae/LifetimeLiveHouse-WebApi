@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace HatsuneMikuShop.Utilities
+namespace LifetimeLiveHouse.Utilities
 {
     public class FileUploader
     {

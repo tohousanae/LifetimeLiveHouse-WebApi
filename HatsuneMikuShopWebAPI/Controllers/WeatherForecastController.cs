@@ -1,6 +1,7 @@
+using LifetimeLiveHouseWebAPI;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HatsuneMikuShopWebAPI.Controllers
+namespace LifetimeLiveHouseWebAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]

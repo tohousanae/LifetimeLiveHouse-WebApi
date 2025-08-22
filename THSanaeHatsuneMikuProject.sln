@@ -3,15 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.35013.160
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HatsuneMikuShopWebAPI", "HatsuneMikuShopWebAPI\HatsuneMikuShopWebAPI.csproj", "{E679FB1E-E5F2-4668-B34C-C88E9D6B0103}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LifetimeLiveHouseWebAPI", "HatsuneMikuShopWebAPI\LifetimeLiveHouseWebAPI.csproj", "{E679FB1E-E5F2-4668-B34C-C88E9D6B0103}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HatsuneMIkuShop.Access", "HatsuneMIkuShop_Access\HatsuneMIkuShop.Access.csproj", "{0E4DE97F-8CDC-4D1A-A36F-A060C9E583CB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LifetimeLiveHouse.Access", "HatsuneMIkuShop_Access\LifetimeLiveHouse.Access.csproj", "{0E4DE97F-8CDC-4D1A-A36F-A060C9E583CB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HatsuneMIkuShop.Models", "HatsuneMIkuShop.Models\HatsuneMIkuShop.Models.csproj", "{2A760755-7451-4600-A079-2DD3B1212C0D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LifetimeLiveHouse.Models", "HatsuneMIkuShop.Models\LifetimeLiveHouse.Models.csproj", "{2A760755-7451-4600-A079-2DD3B1212C0D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HatsuneMikuShopPOSWinform", "HatsuneMikuShopPOSWinform\HatsuneMikuShopPOSWinform.csproj", "{0CF95857-EE05-4167-9A63-3C0470A82F07}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LifetimeLiveHousePOSWinform", "HatsuneMikuShopPOSWinform\LifetimeLiveHousePOSWinform.csproj", "{0CF95857-EE05-4167-9A63-3C0470A82F07}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HatsuneMikuShop.Utilities", "HatsuneMikuShop.Utilities\HatsuneMikuShop.Utilities.csproj", "{E7C7E3EC-D6CF-FE1A-0FC5-0BD1DA8807F6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LifetimeLiveHouse.Utilities", "HatsuneMikuShop.Utilities\LifetimeLiveHouse.Utilities.csproj", "{E7C7E3EC-D6CF-FE1A-0FC5-0BD1DA8807F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LifetimeLiveHouse", "HatsuneMikuMusicShop\LifetimeLiveHouse.csproj", "{ABFE3409-808C-44DF-8D0D-767844E63BD3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{E7C7E3EC-D6CF-FE1A-0FC5-0BD1DA8807F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E7C7E3EC-D6CF-FE1A-0FC5-0BD1DA8807F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E7C7E3EC-D6CF-FE1A-0FC5-0BD1DA8807F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABFE3409-808C-44DF-8D0D-767844E63BD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABFE3409-808C-44DF-8D0D-767844E63BD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABFE3409-808C-44DF-8D0D-767844E63BD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABFE3409-808C-44DF-8D0D-767844E63BD3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

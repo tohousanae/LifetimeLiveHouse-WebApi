@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StackExchange.Redis;
-using HatsuneMIkuShop.Models;
+using LifetimeLiveHouse.Models;
 
-namespace HatsuneMikuShopWebAPI.Controllers
+namespace LifetimeLiveHouseWebAPI.Controllers
 {
     // https://medium.com/@asdfg55887/use-redis-in-dotnet-core-53b63c28e80f
     [Route("api/[controller]")]

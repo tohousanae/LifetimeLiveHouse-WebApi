@@ -1,4 +1,4 @@
-﻿namespace HatsuneMIkuShop.Models
+﻿namespace LifetimeLiveHouse.Models
 {
     public class RedisModel
     {

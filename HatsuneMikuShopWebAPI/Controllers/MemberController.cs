@@ -1,16 +1,18 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using LifetimeLiveHouse.Models;
+using LifetimeLiveHouseWebAPI.DTOs.Users;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using HatsuneMIkuShop.Models;
-using MikuMusicShopContext = HatsuneMIkuShop.Access.Data.MikuMusicShopContext;
-using HatsuneMikuShopWebAPI.DTOs.Users;
+using System.Security.Claims;
+using LifetimeLiveHouseContext = LifetimeLiveHouse.Access.Data.LifetimeLiveHouseContext;
 
-namespace HatsuneMikuShopWebAPI.Controllers
+namespace LifetimeLiveHouseWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MemberController(MikuMusicShopContext context) : ControllerBase
+    public class MemberController(LifetimeLiveHouseContext context) : ControllerBase
     {
-        private readonly MikuMusicShopContext _context = context;
+        private readonly LifetimeLiveHouseContext _context = context;
 
         // 顯示個別會員資料
         [HttpGet("Member/{id}")]
@@ -27,7 +29,7 @@ namespace HatsuneMikuShopWebAPI.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<User>> PostUserRegister(RegisterInfoDTO inputRegisterInfo)
+        public async Task<ActionResult<Member>> PostUserRegister(RegisterInfoDTO inputRegisterInfo)
         {
             // 檢查信箱、電話是否已被註冊
             if (await _context.User.AnyAsync(u => u.Email == inputRegisterInfo.Email))
@@ -38,21 +40,24 @@ namespace HatsuneMikuShopWebAPI.Controllers
             {
                 return Unauthorized("手機號碼已被註冊");
             }
+            else
+            {
+                // 黑名單邏輯略過...
 
-            // 黑名單邏輯略過...
+                // 使用轉換函式建立 User 物件
+                var user = ConvertToUser(inputRegisterInfo);
 
-            // 使用轉換函式建立 User 物件
-            var user = ConvertToUser(inputRegisterInfo);
+                _context.User.Add(user);
+                await _context.SaveChangesAsync();
 
-            _context.User.Add(user);
-            await _context.SaveChangesAsync();
-
-            return Ok("註冊成功");
+                return Ok("註冊成功"); 
+            }
+                
         }
 
         // 登入api(cookie based驗證)
         [HttpPost("login")]
-        public async Task<ActionResult<User>> PostUserLogin(LoginDTO inputLoginInfo)
+        public async Task<ActionResult<Member>> PostUserLogin(LoginDTO inputLoginInfo)
         {
             // 檢查輸入的信箱是否為使用者輸入的信箱
             var user = await _context.User.FirstOrDefaultAsync(u => u.Email == inputLoginInfo.Email); 
@@ -69,13 +74,25 @@ namespace HatsuneMikuShopWebAPI.Controllers
             }
             else
             {
+                var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Actor, user.Account),
+                        new Claim(ClaimTypes.Role, "Member"),
+                         new Claim(ClaimTypes.Sid, user.MemberID),
+                    };
+
+                var claimsIdentity = new ClaimsIdentity(claims, "MemberLogin");
+
+                var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+
+                await HttpContext.SignInAsync("MemberLogin", claimsPrincipal); //把資料寫入 Cookie 進行登入狀態管理
                 // 将用户的唯一标识符添加到Cookie中
-                CookieOptions option = new CookieOptions();
-                option.Expires = DateTime.Now.AddMonths(6); // cookie過期時間設定
-                option.HttpOnly = true; // 強制使用https存取cookie 
-                option.Secure = true; // 禁用js讀取cookie防止xss攻擊
-                Response.Cookies.Append("UserId", user.Id.ToString(), option);
-                return Ok("登入成功");
+                //CookieOptions option = new CookieOptions();
+                //option.Expires = DateTime.Now.AddMonths(6); // cookie過期時間設定
+                //option.HttpOnly = true; // 強制使用https存取cookie 
+                //option.Secure = true; // 禁用js讀取cookie防止xss攻擊
+                //Response.Cookies.Append("UserId", user.Id.ToString(), option);
+                //return Ok("登入成功");
             }
         }
 
@@ -118,7 +135,7 @@ namespace HatsuneMikuShopWebAPI.Controllers
         // 查詢所有會員
         // GET: api/Users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<Member>>> GetUsers()
         {
             return await _context.User.ToListAsync();
         }
@@ -126,7 +143,7 @@ namespace HatsuneMikuShopWebAPI.Controllers
         // 查詢個別會員
         // GET: api/Users/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(int id)
+        public async Task<ActionResult<Member>> GetUser(int id)
         {
             var user = await _context.User.FindAsync(id);
 
@@ -142,7 +159,7 @@ namespace HatsuneMikuShopWebAPI.Controllers
         // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(int id, User user)
+        public async Task<IActionResult> PutUser(int id, Member user)
         {
             if (id != user.Id)
             {
@@ -174,7 +191,7 @@ namespace HatsuneMikuShopWebAPI.Controllers
         // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
+        public async Task<ActionResult<Member>> PostUser(Member user)
         {
             _context.User.Add(user);
             try
@@ -248,7 +265,7 @@ namespace HatsuneMikuShopWebAPI.Controllers
             return "檔案上傳成功!!";
         }
 
-        private static MemberDTO ItemUser(User u)
+        private static MemberDTO ItemUser(Member u)
         {
             var returnUser = new MemberDTO
             {
@@ -263,14 +280,14 @@ namespace HatsuneMikuShopWebAPI.Controllers
             return returnUser;
 
         }
-        private static User ConvertToUser(RegisterInfoDTO u)
+        private static Member ConvertToUser(RegisterInfoDTO u)
         {
-            return new User
+            return new Member
             {
                 Name = u.Name,
                 Email = u.Email,
                 PhoneNumber = u.PhoneNumber,
-                Password = BCrypt.Net.BCrypt.HashPassword(u.Password),
+                Password = BCrypt.Net.BCrypt.HashPassword(u.Password), // 使用BCrypt為密碼加鹽雜湊
                 Sex = u.Sex,
                 Birthday = u.Birthday
             };

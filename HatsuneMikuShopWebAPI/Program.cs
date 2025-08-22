@@ -1,12 +1,11 @@
-using HatsuneMIkuShop.Access.Data;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
-using MikuMusicShopContext = HatsuneMIkuShop.Access.Data.MikuMusicShopContext;
+using LifetimeLiveHouseContext = LifetimeLiveHouse.Access.Data.LifetimeLiveHouseContext;
 var builder = WebApplication.CreateBuilder(args);
 
 // 注入MikuMusicShopContext的類別
-builder.Services.AddDbContext<MikuMusicShopContext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("MikuMusicShopConnection")));
+builder.Services.AddDbContext<LifetimeLiveHouseContext>(options =>
+options.UseSqlServer(builder.Configuration.GetConnectionString("LifetimeLiveHouseSysDBConnection")));
 
 builder.Services.AddControllers();
 

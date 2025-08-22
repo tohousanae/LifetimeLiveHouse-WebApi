@@ -1,4 +1,4 @@
-namespace HatsuneMikuShopWebAPI
+namespace LifetimeLiveHouseWebAPI
 {
     public class WeatherForecast
     {

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace HatsuneMIkuShop.Models
+namespace LifetimeLiveHouse.Models
 {
     public class DeliveryBoy
     {
