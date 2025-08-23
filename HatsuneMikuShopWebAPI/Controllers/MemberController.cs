@@ -74,25 +74,25 @@ namespace LifetimeLiveHouseWebAPI.Controllers
             }
             else
             {
-                var claims = new List<Claim>
-                    {
-                        new Claim(ClaimTypes.Actor, user.Account),
-                        new Claim(ClaimTypes.Role, "Member"),
-                         new Claim(ClaimTypes.Sid, user.MemberID),
-                    };
+                //var claims = new List<Claim>
+                //    {
+                //        new Claim(ClaimTypes.Actor, user.Account),
+                //        new Claim(ClaimTypes.Role, "Member"),
+                //         new Claim(ClaimTypes.Sid, user.MemberID),
+                //    };
 
-                var claimsIdentity = new ClaimsIdentity(claims, "MemberLogin");
+                //var claimsIdentity = new ClaimsIdentity(claims, "MemberLogin");
 
-                var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+                //var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
-                await HttpContext.SignInAsync("MemberLogin", claimsPrincipal); //把資料寫入 Cookie 進行登入狀態管理
+                //await HttpContext.SignInAsync("MemberLogin", claimsPrincipal); //把資料寫入 Cookie 進行登入狀態管理
                 // 将用户的唯一标识符添加到Cookie中
-                //CookieOptions option = new CookieOptions();
-                //option.Expires = DateTime.Now.AddMonths(6); // cookie過期時間設定
-                //option.HttpOnly = true; // 強制使用https存取cookie 
-                //option.Secure = true; // 禁用js讀取cookie防止xss攻擊
-                //Response.Cookies.Append("UserId", user.Id.ToString(), option);
-                //return Ok("登入成功");
+                CookieOptions option = new CookieOptions();
+                option.Expires = DateTime.Now.AddMonths(6); // cookie過期時間設定
+                option.HttpOnly = true; // 強制使用https存取cookie 
+                option.Secure = true; // 禁用js讀取cookie防止xss攻擊
+                Response.Cookies.Append("UserId", user.Id.ToString(), option);
+                return Ok("登入成功");
             }
         }
 
