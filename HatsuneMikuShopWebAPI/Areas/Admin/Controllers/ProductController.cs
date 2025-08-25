@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
 using LifetimeLiveHouseContext = LifetimeLiveHouse.Access.Data.LifetimeLiveHouseContext;
 
-namespace LifetimeLiveHouseWebAPI.Controllers
+namespace LifetimeLiveHouseWebAPI.Areas.Admin.Controllers
 {
     // 查詢時須限制一次撈出的筆數，避免一次撈出過多資料導致效能問題
     // 快取策略參考：https://www.explainthis.io/zh-hant/swe/cache-mechanism

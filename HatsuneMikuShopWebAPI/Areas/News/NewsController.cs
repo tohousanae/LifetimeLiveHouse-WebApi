@@ -2,11 +2,11 @@
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace LifetimeLiveHouseWebAPI.Controllers
+namespace LifetimeLiveHouseWebAPI.Areas.News
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MikuNewsController : ControllerBase
+    public class NewsController : ControllerBase
     {
         // 串接youtube api找vocaloid的最新歌曲
         // 爬到的新聞由python爬蟲爬取，存放在mongoDB中，再由這裡讀取並存到redis中

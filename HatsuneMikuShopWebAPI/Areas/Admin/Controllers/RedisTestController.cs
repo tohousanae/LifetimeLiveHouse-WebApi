@@ -2,7 +2,7 @@
 using StackExchange.Redis;
 using LifetimeLiveHouse.Models;
 
-namespace LifetimeLiveHouseWebAPI.Controllers
+namespace LifetimeLiveHouseWebAPI.Areas.Admin.Controllers
 {
     // https://medium.com/@asdfg55887/use-redis-in-dotnet-core-53b63c28e80f
     [Route("api/[controller]")]
