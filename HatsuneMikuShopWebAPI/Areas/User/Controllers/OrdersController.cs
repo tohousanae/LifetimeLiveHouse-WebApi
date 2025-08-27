@@ -5,19 +5,19 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using HotelSystem.Access.Data;
 using HotelSystem.Models;
 using Microsoft.AspNetCore.Authorization;
+using LifetimeLiveHouse.Access.Data;
 
-namespace HotelSystem.Areas.User.Controllers
+namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
 {
     [Area("User")]
     [Authorize(Roles = "Member")]
     public class OrdersController : Controller
     {
-        private readonly HotelSysDBContext2 _context;
+        private readonly LifetimeLiveHouseSysDBContext2 _context;
 
-        public OrdersController(HotelSysDBContext2 context)
+        public OrdersController(LifetimeLiveHouseSysDBContext2 context)
         {
             _context = context;
         }

@@ -1,6 +1,7 @@
 ﻿using LifetimeLiveHouse.Access.Data;
 using LifetimeLiveHouse.Models;
 using LifetimeLiveHouseWebAPI.DTOs.Users;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,15 +10,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LifetimeLiveHouseWebAPI.Controllers.User
+namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
 {
+    [Area("User")]
     [Route("api/[controller]")]
     [ApiController]
     public class RegisterController : ControllerBase
     {
-        private readonly LifetimeLiveHouseContext _context;
+        private readonly LifetimeLiveHouseSysDBContext _context;
 
-        public RegisterController(LifetimeLiveHouseContext context)
+        public RegisterController(LifetimeLiveHouseSysDBContext context)
         {
             _context = context;
         }

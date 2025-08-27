@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
-using LifetimeLiveHouseContext = LifetimeLiveHouse.Access.Data.LifetimeLiveHouseContext;
+using LifetimeLiveHouseSysDBContext = LifetimeLiveHouse.Access.Data.LifetimeLiveHouseSysDBContext;
 
 namespace LifetimeLiveHouseWebAPI.Areas.Admin.Controllers
 {
@@ -13,10 +13,10 @@ namespace LifetimeLiveHouseWebAPI.Areas.Admin.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IConnectionMultiplexer _redisDb;
-        private readonly LifetimeLiveHouseContext _context;
+        private readonly LifetimeLiveHouseSysDBContext _context;
         private readonly IDatabase _cacheDb;
 
-        public ProductController(LifetimeLiveHouseContext context, IConnectionMultiplexer redisService)
+        public ProductController(LifetimeLiveHouseSysDBContext context, IConnectionMultiplexer redisService)
         {
             _context = context;
             _redisDb = redisService;

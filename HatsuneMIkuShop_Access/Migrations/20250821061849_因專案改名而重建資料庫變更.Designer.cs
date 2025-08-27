@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace LifetimeLiveHouse.Access.Migrations
 {
-    [DbContext(typeof(LifetimeLiveHouseContext))]
+    [DbContext(typeof(LifetimeLiveHouseSysDBContext))]
     [Migration("20250821061849_因專案改名而重建資料庫變更")]
     partial class 因專案改名而重建資料庫變更
     {

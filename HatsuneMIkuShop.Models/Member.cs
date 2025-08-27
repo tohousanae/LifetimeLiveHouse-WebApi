@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace LifetimeLiveHouse.Models
 {
@@ -14,7 +15,7 @@ namespace LifetimeLiveHouse.Models
         [Display(Name = "會員Id")]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         // 會員Id  
-        public int Id { get; set; }
+        public int MemberId { get; set; }
 
         [Display(Name = "會員名稱")]
         [StringLength(10)]

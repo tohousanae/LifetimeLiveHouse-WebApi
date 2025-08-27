@@ -1,25 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using HotelSystem.Access.Data;
-using HotelSystem.Models;
+﻿using LifetimeLiveHouse.Access.Data;
+using LifetimeLiveHouse.Models;
+using LifetimeLiveHouseWebAPI.DTOs.Users;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
-namespace HotelSystem.Areas.User.Controllers
+namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
 {
     [Area("User")]
     [Authorize(Roles = "Member")]
     public class MembersController : Controller
     {
-        private readonly HotelSysDBContext2 _context;
+        private readonly LifetimeLiveHouseSysDBContext2 _context;
 
-        public MembersController(HotelSysDBContext2 context)
+        public MembersController(LifetimeLiveHouseSysDBContext2 context)
         {
             _context = context;
+        }
+
+        // 顯示個別會員資料
+        [HttpGet("Member/{id}")]
+        public async Task<ActionResult<MemberDTO>> GetUserInfo(int id)
+        {
+            var user = await _context.Member.FindAsync(id);
+            if (user == null)
+            {
+                return NotFound("找不到此會員");
+            }
+            // 呼叫 ItemUser 方法並回傳結果
+            return ItemUser(user);
         }
 
         // GET: User/Members
@@ -155,6 +164,21 @@ namespace HotelSystem.Areas.User.Controllers
         private bool MemberExists(string id)
         {
             return _context.Member.Any(e => e.MemberID == id);
+        }
+        private static MemberDTO ItemUser(Member u)
+        {
+            var returnUser = new MemberDTO
+            {
+                Name = u.Name,
+                Email = u.Email,
+                PhoneNumber = u.PhoneNumber,
+                Sex = u.Sex,
+                Birthday = u.Birthday,
+                MikuMikuPoint = u.MikuMikuPoint,
+            };
+
+            return returnUser;
+
         }
     }
 }

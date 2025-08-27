@@ -1,99 +1,91 @@
-﻿using LifetimeLiveHouse.Models;
+﻿using LifetimeLiveHouse.Access.Data;
+using LifetimeLiveHouse.Models;
 using LifetimeLiveHouseWebAPI.DTOs.Users;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using LifetimeLiveHouseContext = LifetimeLiveHouse.Access.Data.LifetimeLiveHouseContext;
 
-namespace LifetimeLiveHouseWebAPI.Controllers.User
+namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
 {
-    [Authorize(Roles = "Member")]
+    [Area("User")]
     [Route("api/[controller]")]
     [ApiController]
-    public class LoginController(LifetimeLiveHouseContext context) : ControllerBase
+    public class LoginController(LifetimeLiveHouseSysDBContext context) : ControllerBase
     {
-        private readonly LifetimeLiveHouseContext _context = context;
-
-        // 顯示個別會員資料
-        [HttpGet("Member/{id}")]
-        public async Task<ActionResult<MemberDTO>> GetUserInfo(int id)
-        {
-            var user = await _context.User.FindAsync(id);
-            if (user == null)
-            {
-                return NotFound("找不到此會員");
-            }
-            // 呼叫 ItemUser 方法並回傳結果
-            return ItemUser(user);
-        }
+        private readonly LifetimeLiveHouseSysDBContext _context = context;
 
         // 登入api(cookie based驗證)
         [HttpPost("login")]
 
         public async Task<ActionResult<Member>> PostUserLogin(LoginDTO memberAccount)
         {
-            //if (memberAccount == null || string.IsNullOrEmpty(memberAccount.Account) || string.IsNullOrEmpty(memberAccount.Password))
-            //{
-            //    ViewData["Error"] = "請輸入帳號和密碼";
-            //    return View();
-            //}
+            if (memberAccount == null || string.IsNullOrEmpty(memberAccount.Email) || string.IsNullOrEmpty(memberAccount.Password))
+            {
+                return BadRequest(new { error = "請輸入帳號和密碼" });
+            }
 
-            //var user = await _context.MemberAccount.Include(u => u.Member)                                        //密碼必須先經過雜湊處理，再與資料庫中的密碼進行比對
-            //    .FirstOrDefaultAsync(u => u.Account == memberAccount.Account && u.Password == ComputeSha256Hash(memberAccount.Password)); //12345678
-
-
-            //if (user != null)
-            //{
-            //    var claims = new List<Claim>
-            //        {
-            //            new Claim(ClaimTypes.Actor, user.Account),
-            //            new Claim(ClaimTypes.Role, "Member"),
-            //             new Claim(ClaimTypes.Sid, user.MemberID),
-            //              new Claim(ClaimTypes.Name, user.Member.Name)
-
-            //        };
-
-            //    var claimsIdentity = new ClaimsIdentity(claims, "MemberLogin");
-
-            //    var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-
-            //    await HttpContext.SignInAsync("MemberLogin", claimsPrincipal); //把資料寫入 Cookie 進行登入狀態管理
-
-
-
-            //    return RedirectToAction("Index", "Members"); // 登入成功後導向到 BooksManage 的 Index 頁面
-            //}
-
-            //ViewData["Error"] = "帳號或密碼錯誤，請重新輸入";
-
-
-            //return View(memberAccount);
-
-            // 檢查輸入的信箱是否為使用者輸入的信箱
-            var user = await _context.User.FirstOrDefaultAsync(u => u.Email == memberAccount.Email);
+            var user = await _context.MemberAccount.Include(u => u.Member)
+                .FirstOrDefaultAsync(u => u.Account == memberAccount.Account &&
+                                          u.Password == ComputeSha256Hash(memberAccount.Password));
 
             if (user == null)
             {
-                return Unauthorized("電子郵件或密碼不存在");
+                return Unauthorized(new { error = $"帳號或密碼錯誤" });
             }
 
-            // 檢查輸入的密碼是否為使用者輸入的密碼
-            if (!BCrypt.Net.BCrypt.Verify(memberAccount.Password, user.Password))
+            // 建立 claims
+            var claims = new List<Claim>
             {
-                return Unauthorized("電子郵件或密碼不存在"); // 刻意將回傳訊息設定成信箱或密碼錯誤，防止攻擊者針對密碼做攻擊測試
-            }
-            else
+                new Claim(ClaimTypes.Actor, user.Account),
+                new Claim(ClaimTypes.Role, "Member"),
+                new Claim(ClaimTypes.Sid, user.MemberID),
+                new Claim(ClaimTypes.Name, user.Member.Name)
+            };
+
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            var authProperties = new AuthenticationProperties
             {
-                // 将用户的唯一标识符添加到Cookie中
-                CookieOptions option = new CookieOptions();
-                option.Expires = DateTime.Now.AddMonths(6); // cookie過期時間設定
-                option.HttpOnly = true; // 強制使用https存取cookie 
-                option.Secure = true; // 禁用js讀取cookie防止xss攻擊
-                Response.Cookies.Append("UserId", BCrypt.Net.BCrypt.HashPassword(user.Id.ToString()), option);
-                return Ok("登入成功");
-            }
+                IsPersistent = true, // 是否持久化 cookie
+                ExpiresUtc = DateTimeOffset.UtcNow.AddHours(24) // cookie 過期時間
+            };
+            // 防止 Session Fixation：登入時清除舊有cookie防止攻擊者提前取得使用者未登入的 Session Cookie，在登入後直接冒充使用者。
+            await HttpContext.SignOutAsync("MemberLogin");
+
+            // 使用 cookie 認證
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity),
+                authProperties
+            );
+            return Ok(new { message = "登入成功", username = user.Member.Name });
+
+            //// 檢查輸入的信箱是否為使用者輸入的信箱
+            //var user = await _context.Member.FirstOrDefaultAsync(u => u.Email == memberAccount.Email);
+
+            //if (user == null)
+            //{
+            //    return Unauthorized("電子郵件或密碼不存在");
+            //}
+
+            //// 檢查輸入的密碼是否為使用者輸入的密碼
+            //if (!BCrypt.Net.BCrypt.Verify(memberAccount.Password, user.Password))
+            //{
+            //    return Unauthorized("電子郵件或密碼不存在"); // 刻意將回傳訊息設定成信箱或密碼錯誤，防止攻擊者針對密碼做攻擊測試
+            //}
+            //else
+            //{
+            //    // 将用户的唯一标识符添加到Cookie中
+            //    CookieOptions option = new CookieOptions();
+            //    option.Expires = DateTime.Now.AddMonths(6); // cookie過期時間設定
+            //    option.HttpOnly = true; // 強制使用https存取cookie 
+            //    option.Secure = true; // 禁用js讀取cookie防止xss攻擊
+            //    Response.Cookies.Append("UserId", BCrypt.Net.BCrypt.HashPassword(user.Id.ToString()), option);
+            //    return Ok("登入成功");
+            //}
         }
 
         // 讀取cookie驗證是否登入
@@ -137,7 +129,7 @@ namespace LifetimeLiveHouseWebAPI.Controllers.User
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Member>>> GetUsers()
         {
-            return await _context.User.ToListAsync();
+            return await _context.Member.ToListAsync();
         }
 
         // 查詢個別會員
@@ -145,7 +137,7 @@ namespace LifetimeLiveHouseWebAPI.Controllers.User
         [HttpGet("{id}")]
         public async Task<ActionResult<Member>> GetUser(int id)
         {
-            var user = await _context.User.FindAsync(id);
+            var user = await _context.Member.FindAsync(id);
 
             if (user == null)
             {
@@ -193,7 +185,7 @@ namespace LifetimeLiveHouseWebAPI.Controllers.User
         [HttpPost]
         public async Task<ActionResult<Member>> PostUser(Member user)
         {
-            _context.User.Add(user);
+            _context.Member.Add(user);
             try
             {
                 await _context.SaveChangesAsync();
@@ -218,13 +210,13 @@ namespace LifetimeLiveHouseWebAPI.Controllers.User
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
-            var user = await _context.User.FindAsync(id);
+            var user = await _context.Member.FindAsync(id);
             if (user == null)
             {
                 return NotFound();
             }
 
-            _context.User.Remove(user);
+            _context.Member.Remove(user);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -232,7 +224,7 @@ namespace LifetimeLiveHouseWebAPI.Controllers.User
 
         private bool UserExists(int id)
         {
-            return _context.User.Any(e => e.Id == id);
+            return _context.Member.Any(e => e.Id == id);
         }
 
         // 上傳頭像
@@ -265,21 +257,6 @@ namespace LifetimeLiveHouseWebAPI.Controllers.User
             return "檔案上傳成功!!";
         }
 
-        private static MemberDTO ItemUser(Member u)
-        {
-            var returnUser = new MemberDTO
-            {
-                Name = u.Name,
-                Email = u.Email,
-                PhoneNumber = u.PhoneNumber,
-                Sex = u.Sex,
-                Birthday = u.Birthday,
-                MikuMikuPoint = u.MikuMikuPoint,
-            };
-
-            return returnUser;
-
-        }
         private static Member ConvertToUser(RegisterInfoDTO u)
         {
             return new Member

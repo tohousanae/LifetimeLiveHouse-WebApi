@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace LifetimeLiveHouse.Access.Migrations
 {
-    [DbContext(typeof(LifetimeLiveHouseContext))]
+    [DbContext(typeof(LifetimeLiveHouseSysDBContext))]
     partial class LifetimeLiveHouseContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

@@ -1,10 +1,16 @@
+using LifetimeLiveHouse.Access.Data;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
-using LifetimeLiveHouseContext = LifetimeLiveHouse.Access.Data.LifetimeLiveHouseContext;
+using System;
 var builder = WebApplication.CreateBuilder(args);
 
-// 注入MikuMusicShopContext的類別
-builder.Services.AddDbContext<LifetimeLiveHouseContext>(options =>
+// 注入DBContext
+builder.Services.AddDbContext<LifetimeLiveHouseSysDBContext>(options =>
+options.UseSqlServer(builder.Configuration.GetConnectionString("LifetimeLiveHouseSysDBConnection")));
+
+builder.Services.AddDbContext<LifetimeLiveHouseSysDBContext2>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("LifetimeLiveHouseSysDBConnection")));
 
 builder.Services.AddControllers();
@@ -26,6 +32,10 @@ builder.Services.AddDistributedMemoryCache();
 //    )
 // );
 
+//
+builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
+    opt.TokenLifespan = TimeSpan.FromHours(2));
+
 // CORS跨來源共用設定
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddCors(options =>
@@ -35,6 +45,25 @@ builder.Services.AddCors(options =>
         policy.WithOrigins("http://localhost:5173").WithHeaders("*").WithMethods("*").AllowCredentials();
     });
 });
+
+// cookie驗證預設設定
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        //options.LoginPath = "/api/auth/login";
+        //options.LogoutPath = "/api/auth/logout";
+        //以上兩條在web api當中沒用，因為web api不會重新導向
+        options.ExpireTimeSpan = TimeSpan.FromHours(8);
+        options.Cookie.HttpOnly = true; // 禁止 JavaScript 存取 Cookie防XSS攻擊。
+        options.Cookie.SameSite = SameSiteMode.None; // 開放前端跨域存取cookie
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // 強制瀏覽器僅在 HTTPS 連線下傳送該 Cookie。
+        options.SlidingExpiration = true; // 自動延長有效時間
+    });
+
+builder.Services
+    .AddIdentity<AppUser, IdentityRole>()
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddDefaultTokenProviders();
 
 var app = builder.Build();
 
