@@ -2,8 +2,7 @@ using LifetimeLiveHouse.Access.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using StackExchange.Redis;
-using System;
+//using StackExchange.Redis;
 var builder = WebApplication.CreateBuilder(args);
 
 // 注入DBContext
@@ -36,15 +35,16 @@ builder.Services.AddDistributedMemoryCache();
 builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
     opt.TokenLifespan = TimeSpan.FromHours(2));
 
-// CORS跨來源共用設定
-var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+//跨域存取政策
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: MyAllowSpecificOrigins, policy =>
+    options.AddPolicy("MyCorsPolicy", policy =>
     {
+        //policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
         policy.WithOrigins("http://localhost:5173").WithHeaders("*").WithMethods("*").AllowCredentials();
     });
 });
+
 
 // cookie驗證預設設定
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
