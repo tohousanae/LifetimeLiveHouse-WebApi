@@ -28,8 +28,8 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
             }
 
             var user = await _context.MemberAccount.Include(u => u.Member)
-                .FirstOrDefaultAsync(u => u.Account == memberAccount.Account &&
-                                          u.Password == ComputeSha256Hash(memberAccount.Password));
+                .FirstOrDefaultAsync(u => u.Account == memberAccount.Email &&
+                                          u.Password == BCrypt.Net.BCrypt.Verify(user.Password,memberAccount.Password));
 
             if (user == null)
             {

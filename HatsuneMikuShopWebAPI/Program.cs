@@ -1,4 +1,5 @@
 using LifetimeLiveHouse.Access.Data;
+using LifetimeLiveHouse.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -61,9 +62,13 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 
 builder.Services
-    .AddIdentity<AppUser, IdentityRole>()
-    .AddEntityFrameworkStores<AppDbContext>()
+    .AddIdentity<Member, IdentityRole>()
+    .AddEntityFrameworkStores<LifetimeLiveHouseSysDBContext2>()
     .AddDefaultTokenProviders();
+
+// 註冊Token過期時間為2小時
+builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
+    opt.TokenLifespan = TimeSpan.FromHours(2));
 
 var app = builder.Build();
 

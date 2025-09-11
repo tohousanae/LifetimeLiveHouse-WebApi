@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
 {
     [Area("User")]
-    [Route("api/[controller]")]
+    [Route("api/User/[controller]")]
     [ApiController]
     public class ForgotPasswordController : ControllerBase
     {
