@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+[Table("MemberAccount")]
 public partial class MemberAccount
 {
     [Key]
@@ -13,8 +14,4 @@ public partial class MemberAccount
 
     [StringLength(5)]
     public string MemberID { get; set; } = null!;
-
-    [ForeignKey("MemberID")]
-    [InverseProperty("MemberAccount")]
-    public virtual Member Member { get; set; } = null!;
 }

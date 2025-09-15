@@ -1,8 +1,9 @@
 using LifetimeLiveHouse.Access.Data;
-using LifetimeLiveHouse.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+
 //using StackExchange.Redis;
 var builder = WebApplication.CreateBuilder(args);
 
@@ -62,7 +63,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 
 builder.Services
-    .AddIdentity<Member, IdentityRole>()
+    .AddIdentity<MemberAccount, IdentityRole>()
     .AddEntityFrameworkStores<LifetimeLiveHouseSysDBContext2>()
     .AddDefaultTokenProviders();
 

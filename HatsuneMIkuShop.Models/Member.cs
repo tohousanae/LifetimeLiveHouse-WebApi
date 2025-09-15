@@ -5,50 +5,52 @@ using Microsoft.AspNetCore.Identity;
 
 namespace LifetimeLiveHouse.Models
 {
-    [Index(nameof(Email), IsUnique = true, Name = "IX_User_Email")]
-    [Index(nameof(PhoneNumber), IsUnique = true, Name = "IX_User_PhoneNumber")]
-    [Index(nameof(Name), IsUnique = false, Name = "IX_User_Name")]
     // 會員資料表
     public class Member
     {
         [Key]
-        [Display(Name = "會員Id")]
+        public long MemberID { get; set; }   // 主鍵 P.K
+
+        [StringLength(40)]
+        public string? Name { get; set; }    // 暱稱
+
+        [ForeignKey("MemberStatus")]
+        [StringLength(1)]
+        public string? StatusCode { get; set; } // 狀態編號 (FK)
+
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        // 會員Id  
-        public int MemberId { get; set; }
+        public DateTime CreatedDate { get; set; } = DateTime.Now; // 建立日期
 
-        [Display(Name = "會員名稱")]
-        [StringLength(10)]
-        // 姓名
-        public string Name { get; set; } = null!;
+        public DateTime? Birthday { get; set; }   // 生日
 
-        [Display(Name = "信箱")]
-        [StringLength(50)]
-        // 信箱
-        public string Email { get; set; } = null!;
+        [Column(TypeName = "money")]
+        [Range(0, double.MaxValue)]
+        public decimal Cash { get; set; } = 0;   // 儲值金額 (default 0)
 
-        [Display(Name = "手機號碼")]
-        [StringLength(10)]
-        // 手機號碼
-        public string PhoneNumber { get; set; } = null!;
+        [NotMapped]  // 不存入資料庫 (從生日計算)
+        public int Age
+        {
+            get
+            {
+                if (Birthday == null) return 0;
+                var today = DateTime.Today;
+                var age = today.Year - Birthday.Value.Year;
+                if (Birthday.Value.Date > today.AddYears(-age)) age--;
+                return age;
+            }
+        }
 
-        [Display(Name = "密碼")]
-        [StringLength(int.MaxValue)]
-        // 密碼
-        public string Password { get; set; } = null!;
+        [StringLength(20)]
+        public string? CellphoneNumber { get; set; }   // 手機號碼
 
-        [Display(Name = "性別")]
-        // 性別
-        public bool Sex { get; set; }
+        [Range(0, int.MaxValue)]
+        public int MemberPoint { get; set; } = 0;   // 回饋點數
 
-        [Display(Name = "生日")]
-        // 生日
-        [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd}", ApplyFormatInEditMode = true)]
-        public DateTime Birthday { get; set; } = DateTime.Now;
+        [ForeignKey("MemberPicture")]
+        public long? SN { get; set; }   // 頭像圖片編號 (FK)
 
-        [Display(Name = "MikuMiku點數")]
-        // 會員Id  
-        public int MikuMikuPoint { get; set; } = 0;
+        // 導覽屬性
+        public virtual MemberStatus? MemberStatus { get; set; }
+        public virtual MemberPicture? MemberPicture { get; set; }
     }
 }
