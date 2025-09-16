@@ -3,7 +3,6 @@ using LifetimeLiveHouse.Models;
 using LifetimeLiveHouseWebAPI.DTOs.Users;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -257,7 +256,7 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
             return "檔案上傳成功!!";
         }
 
-        private static Member ConvertToUser(RegisterInfoDTO u)
+        private static Member ConvertToUser(RegisterDTO u)
         {
             return new Member
             {

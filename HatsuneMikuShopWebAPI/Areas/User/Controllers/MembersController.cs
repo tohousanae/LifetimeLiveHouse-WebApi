@@ -38,7 +38,7 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
         }
 
         // GET: User/Members/Details/5
-        public async Task<IActionResult> Details(string id)
+        public async Task<IActionResult> Details(long id)
         {
             if (id == null)
             {
@@ -98,7 +98,7 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("MemberID,Name,City,Address,Birthday")] Member member)
+        public async Task<IActionResult> Edit(long id, [Bind("MemberID,Name,City,Address,Birthday")] Member member)
         {
             if (id != member.MemberID)
             {
@@ -129,7 +129,7 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
         }
 
         // GET: User/Members/Delete/5
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> Delete(long id)
         {
             if (id == null)
             {
@@ -149,7 +149,7 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
         // POST: User/Members/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> DeleteConfirmed(long id)
         {
             var member = await _context.Member.FindAsync(id);
             if (member != null)

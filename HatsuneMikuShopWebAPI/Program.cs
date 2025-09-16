@@ -2,7 +2,6 @@ using LifetimeLiveHouse.Access.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 //using StackExchange.Redis;
 var builder = WebApplication.CreateBuilder(args);

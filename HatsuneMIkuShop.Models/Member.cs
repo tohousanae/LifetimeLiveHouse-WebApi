@@ -1,7 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
 
 namespace LifetimeLiveHouse.Models
 {
@@ -16,6 +14,7 @@ namespace LifetimeLiveHouse.Models
 
         [ForeignKey("MemberStatus")]
         [StringLength(1)]
+        [Column(TypeName = "nchar")]
         public string? StatusCode { get; set; } // 狀態編號 (FK)
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
