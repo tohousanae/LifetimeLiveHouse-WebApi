@@ -6,11 +6,11 @@ public partial class MemberAccount
 {
     [Key]
     [StringLength(30)]
-    public string Email { get; set; } = null!;
+    public string Email { get; set; };
 
     [StringLength(200)]
-    public string Password { get; set; } = null!;
+    public string Password { get; set; };
 
     [ForeignKey("Member")]
-    public long MemberID { get; set; }
+    public long MemberID { get; set; };
 }
