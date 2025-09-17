@@ -3,8 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LifetimeLiveHouse.Models
 {
-    // 會員資料表
-    public class Member
+    public class MemberVerificationStatus
     {
         [Key]
         public long MemberID { get; set; }   // 主鍵 P.K
