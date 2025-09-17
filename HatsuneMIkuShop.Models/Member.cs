@@ -17,7 +17,7 @@ namespace LifetimeLiveHouse.Models
         [Column(TypeName = "nchar")]
         public string? StatusCode { get; set; } // 狀態編號 (FK)
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+
         public DateTime CreatedDate { get; set; } = DateTime.Now; // 建立日期
 
         public DateTime? Birthday { get; set; }   // 生日
@@ -49,7 +49,9 @@ namespace LifetimeLiveHouse.Models
         public long? SN { get; set; }   // 頭像圖片編號 (FK)
 
         // 導覽屬性
-        public virtual MemberStatus? MemberStatus { get; set; }
-        public virtual MemberPicture? MemberPicture { get; set; }
+        //public virtual MemberStatus? MemberStatus { get; set; }
+        //public virtual MemberPicture? MemberPicture { get; set; }
+        //public virtual ICollection<ReBook> ReBooks { get; set; } = new List<ReBook>();
+
     }
 }

@@ -12,6 +12,6 @@ public partial class MemberAccount
     [StringLength(200)]
     public string Password { get; set; } = null!;
 
-    [StringLength(5)]
-    public string MemberID { get; set; } = null!;
+    [ForeignKey("Member")]
+    public long MemberID { get; set; }
 }

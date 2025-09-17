@@ -1,6 +1,6 @@
 ﻿namespace LifetimeLiveHouseWebAPI.DTOs.MemberAccount
 {
-    public class RegisterInfoDTO
+    public class RegisterDTO
     {
 
         public required string Name { get; set; }
