@@ -10,17 +10,17 @@ namespace LifetimeLiveHouse.Models
         public long MemberID { get; set; }   // 主鍵 P.K
 
         [StringLength(40)]
-        public string? Name { get; set; }    // 暱稱
+        public string Name { get; set; } = null!;    // 暱稱
 
         [ForeignKey("MemberStatus")]
         [StringLength(1)]
         [Column(TypeName = "nchar")]
-        public string? StatusCode { get; set; } // 狀態編號 (FK)
+        public string StatusCode { get; set; } = null!; // 狀態編號 (FK)
 
 
         public DateTime CreatedDate { get; set; } = DateTime.Now; // 建立日期
 
-        public DateTime? Birthday { get; set; }   // 生日
+        public DateTime? Birthday { get; set; } = null!;   // 生日
 
         [Column(TypeName = "money")]
         [Range(0, double.MaxValue)]
@@ -40,13 +40,13 @@ namespace LifetimeLiveHouse.Models
         }
 
         [StringLength(20)]
-        public string? CellphoneNumber { get; set; }   // 手機號碼
+        public string CellphoneNumber { get; set; } = null!;   // 手機號碼
 
         [Range(0, int.MaxValue)]
         public int MemberPoint { get; set; } = 0;   // 回饋點數
 
         [ForeignKey("MemberPicture")]
-        public long? SN { get; set; }   // 頭像圖片編號 (FK)
+        public string? Picture { get; set; }   // 頭像圖片名稱 (FK)
 
         // 導覽屬性
         //public virtual MemberStatus? MemberStatus { get; set; }
