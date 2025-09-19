@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using LifetimeLiveHouse.Models;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 public partial class MemberAccount
@@ -12,4 +13,6 @@ public partial class MemberAccount
 
     [ForeignKey("Member")]
     public long MemberID { get; set; }
+
+    public virtual Member Member { get; set; } = null!;
 }

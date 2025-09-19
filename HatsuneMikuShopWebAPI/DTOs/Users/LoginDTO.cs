@@ -1,14 +1,14 @@
+using LifetimeLiveHouse.Models;
+using System.Text.Json.Serialization;
+
 namespace LifetimeLiveHouseWebAPI.DTOs.Users
 {
     public class LoginDTO
     {
-        // 使用者id
-        public int Id { get; set; }
-
         // 信箱
-        public string? Email { get; set; }
+        public string Email { get; set; } = null!;
 
         // 密碼
-        public string? Password { get; set; }
+        public string Password { get; set; } = null!;
     }
 }

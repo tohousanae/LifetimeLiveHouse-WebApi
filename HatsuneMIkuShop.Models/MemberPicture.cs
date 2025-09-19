@@ -4,11 +4,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 public partial class MemberPicture
 {
     [Key]
-    [StringLength(30)]
-    public string Picture { get; set; } = null!;
-
-    [StringLength(200)]
-    public string Password { get; set; } = null!;
+    [StringLength(50)]
+    public string Picture { get; set; } = null!; // GUID+.jpg/png/webp/…
 
     [ForeignKey("Member")]
     public long MemberID { get; set; }

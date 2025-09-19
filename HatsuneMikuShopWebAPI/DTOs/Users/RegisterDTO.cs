@@ -1,4 +1,4 @@
-﻿namespace LifetimeLiveHouseWebAPI.DTOs.MemberAccount
+﻿namespace LifetimeLiveHouseWebAPI.DTOs.Users
 {
     public class RegisterDTO
     {

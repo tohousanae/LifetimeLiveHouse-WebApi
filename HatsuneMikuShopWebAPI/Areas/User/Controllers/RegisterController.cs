@@ -1,14 +1,8 @@
 ﻿using LifetimeLiveHouse.Access.Data;
 using LifetimeLiveHouse.Models;
 using LifetimeLiveHouseWebAPI.DTOs.Users;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
 {
@@ -25,14 +19,14 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<Member>> PostUserRegister(RegisterInfoDTO inputRegisterInfo)
+        public async Task<ActionResult<Member>> PostUserRegister(RegisterDTO inputRegisterInfo)
         {
             // 檢查信箱、電話是否已被註冊
-            if (await _context.User.AnyAsync(u => u.Email == inputRegisterInfo.Email))
+            if (await _context.MemberAccount.AnyAsync(u => u.Email == inputRegisterInfo.Email))
             {
                 return Unauthorized("信箱已被註冊");
             }
-            else if (await _context.User.AnyAsync(u => u.PhoneNumber == inputRegisterInfo.PhoneNumber))
+            else if (await _context.Member.AnyAsync(u => u.CellPhoneNumber == inputRegisterInfo.PhoneNumber))
             {
                 return Unauthorized("手機號碼已被註冊");
             }
@@ -133,7 +127,7 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
         {
             return _context.User.Any(e => e.Id == id);
         }
-        private static Member ConvertToUser(RegisterInfoDTO u)
+        private static Member ConvertToUser(RegisterDTO u)
         {
             return new Member
             {

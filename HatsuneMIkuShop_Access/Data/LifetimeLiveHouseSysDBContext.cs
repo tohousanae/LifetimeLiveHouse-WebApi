@@ -10,6 +10,6 @@ namespace LifetimeLiveHouse.Access.Data
         public virtual DbSet<Product> Product { get; set; }
         public virtual DbSet<Store> Store { get; set; }
         public virtual DbSet<Member> Member { get; set; }
-        public virtual DbSet<Member> MemberAccount { get; set; }
+        public virtual DbSet<MemberAccount> MemberAccount { get; set; }
     }
 }
