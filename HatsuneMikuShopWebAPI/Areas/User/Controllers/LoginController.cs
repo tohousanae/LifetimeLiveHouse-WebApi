@@ -60,11 +60,8 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
         [Authorize]
         public async Task<IActionResult> Logout()
         {
-
             await HttpContext.SignOutAsync("MemberLogin");// 清除登入狀態(清除Cookie的MemberLogin紀錄)
-            return Ok("登出成功"); // 登出後導向到 Login 頁面
-
-
+            return Ok("登出成功");
         }
     }
 }

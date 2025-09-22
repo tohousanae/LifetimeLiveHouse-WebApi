@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-public partial class MemberStatus
+public partial class Category
 {
     [Key]
     [StringLength(1)]

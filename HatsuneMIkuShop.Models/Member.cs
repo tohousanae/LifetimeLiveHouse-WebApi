@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc;
 
 namespace LifetimeLiveHouse.Models
 {
@@ -7,6 +8,7 @@ namespace LifetimeLiveHouse.Models
     public class Member
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long MemberID { get; set; }   // 主鍵 P.K
 
         [StringLength(40)]
@@ -17,9 +19,13 @@ namespace LifetimeLiveHouse.Models
         [Column(TypeName = "nchar")]
         public string StatusCode { get; set; } = null!; // 狀態編號 (FK)
 
-
+        [DataType(DataType.DateTime)]
+        [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd hh:mm:ss}")]
+        [HiddenInput]
         public DateTime CreatedDate { get; set; } = DateTime.Now; // 建立日期
 
+        [DataType(DataType.DateTime)]
+        [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd hh:mm:ss}")]
         public DateTime? Birthday { get; set; } = null!;   // 生日
 
         [Column(TypeName = "money")]
