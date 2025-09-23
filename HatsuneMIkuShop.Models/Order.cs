@@ -31,9 +31,4 @@ public partial class Order
     [ForeignKey("OrderStatus")]
     [StringLength(1)]
     public string StatusCode { get; set; } = null!;
-
-    // 導覽屬性
-    //public virtual MemberStatus? MemberStatus { get; set; }
-    //public virtual MemberPicture? MemberPicture { get; set; }
-    //public virtual ICollection<ReBook> ReBooks { get; set; } = new List<ReBook>();
 }

@@ -43,7 +43,7 @@ public partial class Event
     [ForeignKey("Member")]
     public long MemberID { get; set; }
 
-    [ForeignKey("Event")]
+    [ForeignKey("EventStatus")]
     public string StatusCode { get; set; } = null!;
 
 }

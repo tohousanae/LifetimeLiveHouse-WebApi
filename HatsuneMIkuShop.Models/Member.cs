@@ -14,11 +14,6 @@ namespace LifetimeLiveHouse.Models
         [StringLength(40)]
         public string Name { get; set; } = null!;    // 暱稱
 
-        [ForeignKey("MemberStatus")]
-        [StringLength(1)]
-        [Column(TypeName = "nchar")]
-        public string StatusCode { get; set; } = null!; // 狀態編號 (FK)
-
         [DataType(DataType.DateTime)]
         [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd hh:mm:ss}")]
         [HiddenInput]
@@ -54,10 +49,14 @@ namespace LifetimeLiveHouse.Models
         [ForeignKey("MemberPicture")]
         public string? Picture { get; set; }   // 頭像圖片名稱 (FK)
 
-        // 導覽屬性
-        //public virtual MemberStatus? MemberStatus { get; set; }
-        //public virtual MemberPicture? MemberPicture { get; set; }
-        //public virtual ICollection<ReBook> ReBooks { get; set; } = new List<ReBook>();
+        [ForeignKey("MemberStatus")]
+        [StringLength(1)]
+        [Column(TypeName = "nchar")]
+        public string StatusCode { get; set; } = null!; // 狀態編號 (FK)
 
+        // 導覽屬性
+        public virtual MemberStatus? MemberStatus { get; set; }
+
+        public virtual MemberPicture? MemberPicture { get; set; }
     }
 }

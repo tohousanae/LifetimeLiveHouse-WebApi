@@ -10,41 +10,60 @@ public partial class Employee
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public long EmployeeID { get; set; }
+    public long EmployeeID { get; set; } // 員工編號 PK identity
 
-    [StringLength(40)]
-    public string Name { get; set; } = null!;
+    [Required]
+    [MaxLength(40)]
+    public string Name { get; set; } = null!; // 姓名
 
-    [DataType(DataType.DateTime)]
-    [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd hh:mm:ss}")]
-    public DateTime HireDate { get; set; }
+    [Required]
+    public DateTime HireDate { get; set; } // 到職日
 
-    [StringLength(50)]
-    public string Address { get; set; } = null!;
+    [Required]
+    [MaxLength(50)]
+    public string Address { get; set; } = null!; // 地址
 
-    [DataType(DataType.DateTime)]
-    [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd hh:mm:ss}")]
-    public DateTime Birthday { get; set; }
+    [Required]
+    public DateTime Birthday { get; set; } // 生日
 
-    [StringLength(20)]
-    public string Tel { get; set; } = null!;
+    [Required]
+    [MaxLength(20)]
+    public string Tel { get; set; } = null!; // 電話
 
-    [StringLength(30)]
-    public string Account { get; set; } = null!;
+    // 以下兩個是計算欄位 (non-mapped)
+    [NotMapped]
+    public int Seniority // 年資
+    {
+        get
+        {
+            var now = DateTime.Now;
+            int years = now.Year - HireDate.Year;
+            if (now < HireDate.AddYears(years)) years--;
+            return years;
+        }
+    }
 
-    [StringLength(200)]
-    public string Password { get; set; } = null!;
+    [NotMapped]
+    public int Age // 年齡
+    {
+        get
+        {
+            var now = DateTime.Now;
+            int years = now.Year - Birthday.Year;
+            if (now < Birthday.AddYears(years)) years--;
+            return years;
+        }
+    }
 
-    [StringLength(1)]
-    public string RoleCode { get; set; } = null!;
+    [Required]
+    [ForeignKey("EmployeeRole")]
+    public string RoleCode { get; set; } = null!;  // 角色代碼 FK，nchar(1)
 
-    [InverseProperty("Employee")]
-    public virtual ICollection<Order> Order { get; set; } = new List<Order>();
+    [Required]
+    [ForeignKey("Store")]
+    public long StoreID { get; set; }  // 分店編號 FK
 
-    [ForeignKey("RoleCode")]
-    [InverseProperty("Employee")]
-    public virtual EmployeeRole RoleCodeNavigation { get; set; } = null!;
+    public Store Store { get; set; } = null!;
 
-    [InverseProperty("Employee")]
-    public virtual ICollection<RoomService> RoomService { get; set; } = new List<RoomService>();
+    public EmployeeRole Role { get; set; } = null!;
 }

@@ -24,7 +24,7 @@
 
   <ItemGroup>
     <Folder Include="Areas\News\" />
-    <Folder Include="Controllers\" />
+    <Folder Include="Services\" />
     <Folder Include="DTOs\Products\" />
     <Folder Include="DTOs\Products\" />
     <Folder Include="Services\" />
