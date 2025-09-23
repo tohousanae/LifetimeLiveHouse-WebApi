@@ -24,6 +24,8 @@ public partial class Employee
     public string Address { get; set; } = null!; // 地址
 
     [Required]
+    [DataType(DataType.DateTime)]
+    [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd hh:mm:ss}")]
     public DateTime Birthday { get; set; } // 生日
 
     [Required]
@@ -63,7 +65,7 @@ public partial class Employee
     [ForeignKey("Store")]
     public long StoreID { get; set; }  // 分店編號 FK
 
-    public Store Store { get; set; } = null!;
+    public virtual Store? Store { get; set; } = null!;
 
-    public EmployeeRole Role { get; set; } = null!;
+    public virtual EmployeeRole? EmployeeRole { get; set; } = null!;
 }

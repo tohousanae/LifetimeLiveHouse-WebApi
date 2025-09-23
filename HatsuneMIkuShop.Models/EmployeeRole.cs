@@ -16,6 +16,5 @@ public partial class EmployeeRole
     [StringLength(15)]
     public string RoleName { get; set; } = null!;
 
-    [InverseProperty("RoleCodeNavigation")]
     public virtual ICollection<Employee> Employee { get; set; } = new List<Employee>();
 }
