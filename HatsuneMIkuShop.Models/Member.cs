@@ -21,7 +21,7 @@ namespace LifetimeLiveHouse.Models
 
         [DataType(DataType.DateTime)]
         [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd hh:mm:ss}")]
-        public DateTime? Birthday { get; set; } = null!;   // 生日
+        public DateTime? Birthday { get; set; }   // 生日
 
         [Column(TypeName = "money")]
         [Range(0, double.MaxValue)]
@@ -50,8 +50,6 @@ namespace LifetimeLiveHouse.Models
         public string? Picture { get; set; }   // 頭像圖片名稱 (FK)
 
         [ForeignKey("MemberStatus")]
-        [StringLength(1)]
-        [Column(TypeName = "nchar")]
         public string StatusCode { get; set; } = null!; // 狀態編號 (FK)
 
         // 導覽屬性
