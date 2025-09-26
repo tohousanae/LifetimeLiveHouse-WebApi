@@ -1,6 +1,4 @@
 ﻿using HotelSystem.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -68,4 +66,6 @@ public partial class Employee
     public virtual Store? Store { get; set; } = null!;
 
     public virtual EmployeeRole? EmployeeRole { get; set; } = null!;
+
+    public virtual ICollection<AttendanceRecord> AttendanceRecord { get; set; } = new List<AttendanceRecord>();
 }

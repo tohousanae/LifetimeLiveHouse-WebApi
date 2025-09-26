@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace LifetimeLiveHouse.Models
 {
     // 會員資料表
-    public class Member
+    public partial class Member
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
