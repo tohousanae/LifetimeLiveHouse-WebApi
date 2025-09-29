@@ -57,8 +57,30 @@ namespace LifetimeLiveHouse.Models
 
         public virtual MemberStatus? MemberStatus { get; set; }
 
+        public virtual MemberVerificationStatus? MemberVerificationStatus { get; set; }
+        
+        public virtual Seat? Seat { get; set; }
+
+        public virtual ICollection<Coupon>? Coupons { get; set; } = new List<Coupon> ();
+
+        public virtual ICollection<Cart>? Carts { get; set; } = new List<Cart>();
+
+        public virtual ICollection<Order>? Orders { get; set; } = new List<Order>();
+    
+        public virtual ICollection<Instrument>? Favorites { get; set; } = new List<Instrument>();
+
+        public virtual ICollection<RehearsalStudio>? ReBooks { get; set; } = new List<RehearsalStudio>();
+        
+        public virtual ICollection<Event>? Events { get; set; } = new List<Event>();
+
+        public virtual ICollection<LoginRecord>? LoginRecords { get; set; } = new List<LoginRecord>();
+
         public virtual MemberPicture? MemberPicture { get; set; }
 
-        public virtual Seat? Seat { get; set; }
+        public virtual ICollection<MemberPicture>? MemberPictures { get; set; } = new List<MemberPicture>();
+
+        public virtual ICollection<RegisteredEvent>? ForumPosts { get; set; } = new List<RegisteredEvent>();
+
+        
     }
 }

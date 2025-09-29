@@ -1,5 +1,4 @@
-﻿using HotelSystem.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LifetimeLiveHouse.Models;
@@ -14,14 +13,12 @@ public partial class Employee
     [MaxLength(40)]
     public string Name { get; set; } = null!; // 姓名
 
-    [Required]
     public DateTime HireDate { get; set; } // 到職日
 
     [Required]
     [MaxLength(50)]
     public string Address { get; set; } = null!; // 地址
 
-    [Required]
     [DataType(DataType.DateTime)]
     [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd hh:mm:ss}")]
     public DateTime Birthday { get; set; } // 生日
@@ -59,7 +56,6 @@ public partial class Employee
     [ForeignKey("EmployeeRole")]
     public string RoleCode { get; set; } = null!;  // 角色代碼 FK，nchar(1)
 
-    [Required]
     [ForeignKey("Store")]
     public long StoreID { get; set; }  // 分店編號 FK
 

@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 public partial class AttendanceRecord
 {
     [Key]
+    [Required]
     public long AttendanceID { get; set; }
 
     [DataType(DataType.DateTime)]
@@ -16,6 +17,7 @@ public partial class AttendanceRecord
     public DateTime? PunchOutTime { get; set; }
 
     [ForeignKey("Employee")]
+    [Required]
     public long EmployeeID { get; set; }
 
     public virtual Employee Employee { get; set; } = null!;

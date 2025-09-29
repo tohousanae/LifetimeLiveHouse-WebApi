@@ -1,6 +1,4 @@
-﻿using LifetimeLiveHouse.Models;
-using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 public partial class Event
@@ -10,6 +8,7 @@ public partial class Event
     public long EventID { get; set; }
 
     [StringLength(40)]
+    [Required]
     public string EventName { get; set; } = null!;
 
     [DataType(DataType.DateTime)]
@@ -44,6 +43,7 @@ public partial class Event
     public long MemberID { get; set; }
 
     [ForeignKey("EventStatus")]
+    [Required]
     public string StatusCode { get; set; } = null!;
 
 }

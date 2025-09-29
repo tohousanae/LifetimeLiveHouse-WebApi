@@ -1,5 +1,4 @@
-﻿using LifetimeLiveHouse.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 public partial class Instrument
@@ -9,6 +8,7 @@ public partial class Instrument
     public long InstrumentID { get; set; }
 
     [StringLength(40)]
+    [Required]
     public string InstrumentName { get; set; } = null!;
 
     [DataType(DataType.DateTime)]
@@ -32,6 +32,7 @@ public partial class Instrument
 
     [Column(TypeName = "money")]
     [Range(0, double.MaxValue)]
+    [Required]
     public decimal RentFeePerHour { get; set; } = 0;
 
     public string? Discription { get; set; }

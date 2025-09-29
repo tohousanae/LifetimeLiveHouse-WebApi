@@ -1,8 +1,9 @@
-﻿using LifetimeLiveHouse.Models;
+﻿
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
-using LifetimeLiveHouseSysDBContext = LifetimeLiveHouse.Access.Data.LifetimeLiveHouseSysDBContext;
+using LifetimeLiveHouse.Access.Data;
+using LifetimeLiveHouse.Models;
 
 namespace LifetimeLiveHouseWebAPI.Areas.Admin.Controllers
 {
@@ -67,7 +68,7 @@ namespace LifetimeLiveHouseWebAPI.Areas.Admin.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProducts(int id, Product products)
         {
-            if (id != products.Id)
+            if (id != products.ProductID)
             {
                 return BadRequest();
             }
@@ -105,7 +106,7 @@ namespace LifetimeLiveHouseWebAPI.Areas.Admin.Controllers
                 await _context.SaveChangesAsync();
 
             }
-            return CreatedAtAction("GetProducts", new { id = products.Id }, products);
+            return CreatedAtAction("GetProducts", new { id = products.ProductID }, products);
 
         }
 
@@ -127,7 +128,7 @@ namespace LifetimeLiveHouseWebAPI.Areas.Admin.Controllers
 
         private bool ProductsExists(int id)
         {
-            return _context.Product.Any(e => e.Id == id);
+            return _context.Product.Any(e => e.ProductID == id);
         }
     }
 }

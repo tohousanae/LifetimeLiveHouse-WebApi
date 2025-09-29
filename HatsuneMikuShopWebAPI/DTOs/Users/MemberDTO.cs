@@ -29,10 +29,6 @@ namespace LifetimeLiveHouseWebAPI.DTOs.Users
         // 密碼
         public string Password { get; set; } = null!;
 
-        [Display(Name = "性別")]
-        // 性別
-        public bool Sex { get; set; }
-
         [Display(Name = "生日")]
         // 生日
         [DataType(DataType.Date)]
