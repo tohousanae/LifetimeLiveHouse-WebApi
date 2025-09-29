@@ -67,5 +67,5 @@ public partial class Employee
 
     public virtual EmployeeRole? EmployeeRole { get; set; } = null!;
 
-    public virtual ICollection<AttendanceRecord> AttendanceRecord { get; set; } = new List<AttendanceRecord>();
+    public virtual ICollection<AttendanceRecord> AttendanceRecords { get; set; } = new List<AttendanceRecord>();
 }

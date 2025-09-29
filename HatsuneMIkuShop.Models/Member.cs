@@ -53,8 +53,12 @@ namespace LifetimeLiveHouse.Models
         public string StatusCode { get; set; } = null!; // 狀態編號 (FK)
 
         // 導覽屬性
+        public virtual ICollection<Notification>? Notifications { get; set; } = new List<Notification>();
+
         public virtual MemberStatus? MemberStatus { get; set; }
 
         public virtual MemberPicture? MemberPicture { get; set; }
+
+        public virtual Seat? Seat { get; set; }
     }
 }
