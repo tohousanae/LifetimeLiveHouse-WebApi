@@ -34,10 +34,10 @@ https://github.com/tohousanae/am3buger-vue
 ![image](https://github.com/user-attachments/assets/11e78c58-7947-4181-aa03-d0637036e286)
 
 ## 基本技術
-1. .net core 9(Web Api)
+1. .net core 8
 2. c#
 3. SQL Server(code-first建立)
-4. 
+4. Web Api
 
 ## 進階技術
 1. redis快取
