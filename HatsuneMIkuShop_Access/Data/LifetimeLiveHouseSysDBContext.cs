@@ -29,10 +29,6 @@ namespace LifetimeLiveHouse.Access.Data
         
         public virtual DbSet<MemberAccount> MemberAccount { get; set; }
 
-        public virtual DbSet<Coupon> Coupon { get; set; }
-        
-        public virtual DbSet<Cart> Cart { get; set; }
-        
         public virtual DbSet<Seat> Seat { get; set; }
         
         public virtual DbSet<Product> Product { get; set; }
