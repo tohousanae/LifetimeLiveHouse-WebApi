@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using LifetimeLiveHouse.Models;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 public partial class Cart
@@ -16,6 +17,8 @@ public partial class Cart
     [Range(1, int.MaxValue)]
     public int Count { get; set; } = 0;
 
-    public virtual ICollection<Live>? Lives { get; set; } = new List<Live>();
+    public virtual Product Product { get; set; } = null!;
+
+    public virtual Member Member { get; set; } = null!;
 
 }

@@ -14,5 +14,5 @@ public partial class BandRole
     [Required]
     public string Role { get; set; } = null!;
 
-    public virtual ICollection<Live>? Lives { get; set; } = new List<Live>();
+    public virtual ICollection<Live> Lives { get; set; } = new List<Live>();
 }

@@ -4,12 +4,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 public partial class Category
 {
     [Key]
-    [StringLength(1)]
+    [StringLength(5)]
     [Column(TypeName = "nchar")]
     [Required]
-    public string StatusCode { get; set; } = null!;
+    public string CateID { get; set; } = null!;
 
-    [StringLength(10)]
+    [StringLength(20)]
     [Required]
-    public string Status { get; set; } = null!;
+    public string CateName { get; set; } = null!;
+
+    public virtual ICollection<Product> Products { get; set; } = new List<Product>();
 }
