@@ -1,4 +1,6 @@
-namespace HatsuneMikuShopPOSWinform
+using HatsuneMikuShopPOSWinform;
+
+namespace LifetimeLiveHousePOSWinform
 {
     internal static class Program
     {

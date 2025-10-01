@@ -1,0 +1,6 @@
+@LifetimeLiveHouseWebAPI_HostAddress = http://localhost:5078
+
+GET {{LifetimeLiveHouseWebAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

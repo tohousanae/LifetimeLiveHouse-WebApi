@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace HatsuneMikuShopWebAPI.DTOs.Users
+namespace LifetimeLiveHouseWebAPI.DTOs.Users
 // dto，
 {
     public class MemberDTO
@@ -28,10 +28,6 @@ namespace HatsuneMikuShopWebAPI.DTOs.Users
         [StringLength(int.MaxValue)]
         // 密碼
         public string Password { get; set; } = null!;
-
-        [Display(Name = "性別")]
-        // 性別
-        public bool Sex { get; set; }
 
         [Display(Name = "生日")]
         // 生日
