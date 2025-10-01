@@ -6,12 +6,18 @@ using Microsoft.EntityFrameworkCore;
 //using StackExchange.Redis;
 var builder = WebApplication.CreateBuilder(args);
 
+//// 呼叫 AddAuthorization 以將服務新增至相依性插入 (DI) 容器
+//builder.Services.AddAuthorization();
+
 // 注入DBContext
 builder.Services.AddDbContext<LifetimeLiveHouseSysDBContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("LifetimeLiveHouseSysDBConnection")));
 
 builder.Services.AddDbContext<LifetimeLiveHouseSysDBContext2>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("LifetimeLiveHouseSysDBConnection")));
+
+//builder.Services.AddDbContext<IdentityDbContext>(options =>
+//options.UseSqlServer(builder.Configuration.GetConnectionString("LifetimeLiveHouseSysDBConnection")));
 
 builder.Services.AddControllers();
 
@@ -61,14 +67,14 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.SlidingExpiration = true; // 自動延長有效時間
     });
 
-builder.Services
-    .AddIdentity<MemberAccount, IdentityRole>()
-    .AddEntityFrameworkStores<LifetimeLiveHouseSysDBContext2>()
-    .AddDefaultTokenProviders();
+////builder.Services
+//    .AddIdentity<MemberAccount, IdentityRole>()
+//    .AddEntityFrameworkStores<IdentityDbContext>()
+//    .AddDefaultTokenProviders();
 
-// 註冊Token過期時間為2小時
-builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
-    opt.TokenLifespan = TimeSpan.FromHours(2));
+//// 註冊Token過期時間為2小時
+//builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
+//    opt.TokenLifespan = TimeSpan.FromHours(2));
 
 var app = builder.Build();
 

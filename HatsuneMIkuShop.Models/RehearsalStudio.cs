@@ -35,6 +35,9 @@ public partial class RehearsalStudio
 
     public string? Discription { get; set; }
 
+    [StringLength(50)]
+    public string RehearsalStudioPhoto { get; set; } = null!;
+
     [ForeignKey("Store")]
     public long StoreID { get; set; }
 

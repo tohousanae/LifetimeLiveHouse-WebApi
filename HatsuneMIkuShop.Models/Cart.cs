@@ -15,8 +15,7 @@ public partial class Cart
 
     [Range(1, int.MaxValue)]
     public int Count { get; set; } = 0;
-    // 導覽屬性
-    //public virtual MemberStatus? MemberStatus { get; set; }
-    //public virtual MemberPicture? MemberPicture { get; set; }
-    //public virtual ICollection<ReBook> ReBooks { get; set; } = new List<ReBook>();
+
+    public virtual ICollection<Live>? Lives { get; set; } = new List<Live>();
+
 }

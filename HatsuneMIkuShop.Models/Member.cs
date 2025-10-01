@@ -1,6 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LifetimeLiveHouse.Models
 {
@@ -21,21 +22,26 @@ namespace LifetimeLiveHouse.Models
 
         [DataType(DataType.DateTime)]
         [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd hh:mm:ss}")]
-        public DateTime? Birthday { get; set; }   // 生日
+        public DateTime Birthday { get; set; }   // 生日
 
         [Column(TypeName = "money")]
         [Range(0, double.MaxValue)]
         public decimal Cash { get; set; } = 0;   // 儲值金額 (default 0)
 
-        [NotMapped]  // 不存入資料庫 (從生日計算)
+        [NotMapped] // 年齡計算屬性，不會在資料庫建立欄位
         public int Age
         {
             get
             {
-                if (Birthday == null) return 0;
                 var today = DateTime.Today;
-                var age = today.Year - Birthday.Value.Year;
-                if (Birthday.Value.Date > today.AddYears(-age)) age--;
+                var age = today.Year - Birthday.Year;
+
+                // 若今年生日還沒到，年齡要 -1
+                if (Birthday.Date > today.AddYears(-age))
+                {
+                    age--;
+                }
+
                 return age;
             }
         }
@@ -55,7 +61,7 @@ namespace LifetimeLiveHouse.Models
         // 導覽屬性
         public virtual ICollection<Notification>? Notifications { get; set; } = new List<Notification>();
 
-        public virtual MemberStatus? MemberStatus { get; set; }
+        public virtual MemberStatus MemberStatus { get; set; } = null!;
 
         public virtual MemberVerificationStatus? MemberVerificationStatus { get; set; }
         
@@ -81,6 +87,5 @@ namespace LifetimeLiveHouse.Models
 
         public virtual ICollection<RegisteredEvent>? ForumPosts { get; set; } = new List<RegisteredEvent>();
 
-        
     }
 }

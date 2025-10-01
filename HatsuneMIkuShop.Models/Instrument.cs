@@ -37,6 +37,9 @@ public partial class Instrument
 
     public string? Discription { get; set; }
 
+    [StringLength(50)]
+    public string InstrumentPhoto { get; set; } = null!;
+
     [ForeignKey("Store")]
     public long StoreID { get; set; }
 

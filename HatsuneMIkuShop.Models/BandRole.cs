@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using LifetimeLiveHouse.Models;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 public partial class BandRole
@@ -12,4 +13,6 @@ public partial class BandRole
     [StringLength(20)]
     [Required]
     public string Role { get; set; } = null!;
+
+    public virtual ICollection<Live>? Lives { get; set; } = new List<Live>();
 }

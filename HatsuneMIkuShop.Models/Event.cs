@@ -36,6 +36,9 @@ public partial class Event
 
     public string? Discription { get; set; }
 
+    [StringLength(50)]
+    public string EventPicture { get; set; } = null!;
+
     [ForeignKey("Store")]
     public long StoreID { get; set; }
 

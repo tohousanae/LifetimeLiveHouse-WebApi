@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LifetimeLiveHouse.Models
 {
-    // 會員資料表
     public class News
     {
         [Key]
