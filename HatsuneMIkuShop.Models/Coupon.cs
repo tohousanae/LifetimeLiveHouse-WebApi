@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using LifetimeLiveHouse.Models;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 public partial class Coupon
@@ -19,7 +20,10 @@ public partial class Coupon
 
     [ForeignKey("Member")]
     public long MemberID { get; set; }
-    // 導覽屬性
+
+    public virtual Member Member { get; set; } = null!;
+
+    public virtual Product Product { get; set; } = null!;
     //public virtual MemberStatus? MemberStatus { get; set; }
     //public virtual MemberPicture? MemberPicture { get; set; }
     //public virtual ICollection<ReBook> ReBooks { get; set; } = new List<ReBook>();

@@ -83,21 +83,23 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     b.HasIndex("MemberID");
 
+                    b.HasIndex("ProductID");
+
                     b.ToTable("Cart");
                 });
 
             modelBuilder.Entity("Category", b =>
                 {
-                    b.Property<string>("StatusCode")
-                        .HasMaxLength(1)
+                    b.Property<string>("CateID")
+                        .HasMaxLength(5)
                         .HasColumnType("nchar");
 
-                    b.Property<string>("Status")
+                    b.Property<string>("CateName")
                         .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
-                    b.HasKey("StatusCode");
+                    b.HasKey("CateID");
 
                     b.ToTable("Category");
                 });
@@ -127,6 +129,8 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     b.HasIndex("MemberID");
 
+                    b.HasIndex("ProductID");
+
                     b.ToTable("Coupon");
                 });
 
@@ -146,7 +150,8 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     b.HasKey("Email");
 
-                    b.HasIndex("EmployeeID");
+                    b.HasIndex("EmployeeID")
+                        .IsUnique();
 
                     b.ToTable("EmployeeAccount");
                 });
@@ -235,7 +240,7 @@ namespace LifetimeLiveHouse.Access.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<long>("MemberID")
+                    b.Property<long?>("MemberID")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("OutRentTime")
@@ -326,7 +331,7 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("MemberID"));
 
-                    b.Property<DateTime?>("Birthday")
+                    b.Property<DateTime>("Birthday")
                         .HasColumnType("datetime2");
 
                     b.Property<decimal>("Cash")
@@ -411,6 +416,40 @@ namespace LifetimeLiveHouse.Access.Migrations
                     b.HasKey("NewsID");
 
                     b.ToTable("News");
+                });
+
+            modelBuilder.Entity("LifetimeLiveHouse.Models.PasswordResetToken", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("MemberID")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("TokenHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Used")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("UsedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MemberID");
+
+                    b.ToTable("PasswordResetToken");
                 });
 
             modelBuilder.Entity("LifetimeLiveHouse.Models.ProductStatus", b =>
@@ -506,9 +545,6 @@ namespace LifetimeLiveHouse.Access.Migrations
                         .IsRequired()
                         .HasColumnType("nchar(1)");
 
-                    b.Property<long?>("CartID")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("Discription")
                         .HasColumnType("nvarchar(max)");
 
@@ -541,8 +577,6 @@ namespace LifetimeLiveHouse.Access.Migrations
                     b.HasKey("LiveID");
 
                     b.HasIndex("BandRoleID");
-
-                    b.HasIndex("CartID");
 
                     b.ToTable("Live");
                 });
@@ -690,6 +724,8 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     b.HasKey("OrderID");
 
+                    b.HasIndex("EmployeeID");
+
                     b.HasIndex("MemberID");
 
                     b.ToTable("Order");
@@ -752,6 +788,9 @@ namespace LifetimeLiveHouse.Access.Migrations
                         .HasMaxLength(5)
                         .HasColumnType("nchar");
 
+                    b.Property<string>("CategoryCateID")
+                        .HasColumnType("nchar(5)");
+
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
@@ -785,6 +824,8 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     b.HasKey("ProductID");
 
+                    b.HasIndex("CategoryCateID");
+
                     b.ToTable("Product");
                 });
 
@@ -799,7 +840,7 @@ namespace LifetimeLiveHouse.Access.Migrations
                     b.Property<string>("Discription")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("MemberID")
+                    b.Property<long?>("MemberID")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("OutRentTime")
@@ -866,27 +907,47 @@ namespace LifetimeLiveHouse.Access.Migrations
 
             modelBuilder.Entity("Cart", b =>
                 {
-                    b.HasOne("LifetimeLiveHouse.Models.Member", null)
+                    b.HasOne("LifetimeLiveHouse.Models.Member", "Member")
                         .WithMany("Carts")
                         .HasForeignKey("MemberID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Member");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Coupon", b =>
                 {
-                    b.HasOne("LifetimeLiveHouse.Models.Member", null)
+                    b.HasOne("LifetimeLiveHouse.Models.Member", "Member")
                         .WithMany("Coupons")
                         .HasForeignKey("MemberID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Product", "Product")
+                        .WithMany("Coupons")
+                        .HasForeignKey("ProductID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Member");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("EmployeeAccount", b =>
                 {
                     b.HasOne("LifetimeLiveHouse.Models.Employee", "Employee")
-                        .WithMany()
-                        .HasForeignKey("EmployeeID")
+                        .WithOne("EmployeeAccount")
+                        .HasForeignKey("EmployeeAccount", "EmployeeID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -905,10 +966,8 @@ namespace LifetimeLiveHouse.Access.Migrations
             modelBuilder.Entity("Instrument", b =>
                 {
                     b.HasOne("LifetimeLiveHouse.Models.Member", null)
-                        .WithMany("Favorites")
-                        .HasForeignKey("MemberID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("Instruments")
+                        .HasForeignKey("MemberID");
                 });
 
             modelBuilder.Entity("LifetimeLiveHouse.Models.Employee", b =>
@@ -956,6 +1015,17 @@ namespace LifetimeLiveHouse.Access.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("LifetimeLiveHouse.Models.PasswordResetToken", b =>
+                {
+                    b.HasOne("LifetimeLiveHouse.Models.Member", "Member")
+                        .WithMany("PasswordResetTokens")
+                        .HasForeignKey("MemberID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Member");
+                });
+
             modelBuilder.Entity("LifetimeLiveHouse.Models.RegisteredEvent", b =>
                 {
                     b.HasOne("LifetimeLiveHouse.Models.Member", null)
@@ -972,10 +1042,6 @@ namespace LifetimeLiveHouse.Access.Migrations
                         .HasForeignKey("BandRoleID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Cart", null)
-                        .WithMany("Lives")
-                        .HasForeignKey("CartID");
                 });
 
             modelBuilder.Entity("LoginRecord", b =>
@@ -1020,6 +1086,10 @@ namespace LifetimeLiveHouse.Access.Migrations
 
             modelBuilder.Entity("Order", b =>
                 {
+                    b.HasOne("LifetimeLiveHouse.Models.Employee", null)
+                        .WithMany("Orders")
+                        .HasForeignKey("EmployeeID");
+
                     b.HasOne("LifetimeLiveHouse.Models.Member", null)
                         .WithMany("Orders")
                         .HasForeignKey("MemberID")
@@ -1027,13 +1097,18 @@ namespace LifetimeLiveHouse.Access.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Product", b =>
+                {
+                    b.HasOne("Category", null)
+                        .WithMany("Products")
+                        .HasForeignKey("CategoryCateID");
+                });
+
             modelBuilder.Entity("RehearsalStudio", b =>
                 {
                     b.HasOne("LifetimeLiveHouse.Models.Member", null)
                         .WithMany("ReBooks")
-                        .HasForeignKey("MemberID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("MemberID");
                 });
 
             modelBuilder.Entity("Seat", b =>
@@ -1050,14 +1125,19 @@ namespace LifetimeLiveHouse.Access.Migrations
                     b.Navigation("Lives");
                 });
 
-            modelBuilder.Entity("Cart", b =>
+            modelBuilder.Entity("Category", b =>
                 {
-                    b.Navigation("Lives");
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("LifetimeLiveHouse.Models.Employee", b =>
                 {
                     b.Navigation("AttendanceRecords");
+
+                    b.Navigation("EmployeeAccount")
+                        .IsRequired();
+
+                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("LifetimeLiveHouse.Models.EmployeeRole", b =>
@@ -1073,23 +1153,31 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     b.Navigation("Events");
 
-                    b.Navigation("Favorites");
-
                     b.Navigation("ForumPosts");
+
+                    b.Navigation("Instruments");
 
                     b.Navigation("LoginRecords");
 
                     b.Navigation("MemberPictures");
 
-                    b.Navigation("MemberVerificationStatus");
+                    b.Navigation("MemberVerificationStatus")
+                        .IsRequired();
 
                     b.Navigation("Notifications");
 
                     b.Navigation("Orders");
 
+                    b.Navigation("PasswordResetTokens");
+
                     b.Navigation("ReBooks");
 
                     b.Navigation("Seat");
+                });
+
+            modelBuilder.Entity("Product", b =>
+                {
+                    b.Navigation("Coupons");
                 });
 #pragma warning restore 612, 618
         }

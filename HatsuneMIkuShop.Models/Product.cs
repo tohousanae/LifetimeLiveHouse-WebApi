@@ -41,4 +41,6 @@ public class Product
     [Column(TypeName = "nchar")]
     [ForeignKey("Category")]
     public string CateID { get; set; } = null!;
+
+    public virtual ICollection<Coupon> Coupons { get; set; } = null!;
 }

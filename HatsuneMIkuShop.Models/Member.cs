@@ -59,21 +59,21 @@ namespace LifetimeLiveHouse.Models
         public string StatusCode { get; set; } = null!; // 狀態編號 (FK)
 
         // 導覽屬性
-        public virtual ICollection<Notification>? Notifications { get; set; } = new List<Notification>();
+        public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
 
         public virtual MemberStatus MemberStatus { get; set; } = null!;
 
-        public virtual MemberVerificationStatus? MemberVerificationStatus { get; set; }
-        
+        public virtual MemberVerificationStatus MemberVerificationStatus { get; set; } = null!;
+
         public virtual Seat? Seat { get; set; }
 
-        public virtual ICollection<Coupon>? Coupons { get; set; } = new List<Coupon> ();
+        public virtual ICollection<Coupon> Coupons { get; set; } = new List<Coupon> ();
 
-        public virtual ICollection<Cart>? Carts { get; set; } = new List<Cart>();
+        public virtual ICollection<Cart> Carts { get; set; } = new List<Cart>();
 
-        public virtual ICollection<Order>? Orders { get; set; } = new List<Order>();
+        public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
     
-        public virtual ICollection<Instrument>? Favorites { get; set; } = new List<Instrument>();
+        public virtual ICollection<Instrument>? Instruments { get; set; } = new List<Instrument>();
 
         public virtual ICollection<RehearsalStudio>? ReBooks { get; set; } = new List<RehearsalStudio>();
         
@@ -86,6 +86,8 @@ namespace LifetimeLiveHouse.Models
         public virtual ICollection<MemberPicture>? MemberPictures { get; set; } = new List<MemberPicture>();
 
         public virtual ICollection<RegisteredEvent>? ForumPosts { get; set; } = new List<RegisteredEvent>();
+
+        public virtual ICollection<PasswordResetToken> PasswordResetTokens { get; set; } = new List<PasswordResetToken>();
 
     }
 }

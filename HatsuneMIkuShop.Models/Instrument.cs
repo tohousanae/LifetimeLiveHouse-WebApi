@@ -44,6 +44,6 @@ public partial class Instrument
     public long StoreID { get; set; }
 
     [ForeignKey("Member")]
-    public long MemberID { get; set; }
+    public long? MemberID { get; set; }
 
 }

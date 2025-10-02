@@ -59,9 +59,13 @@ public partial class Employee
     [ForeignKey("Store")]
     public long StoreID { get; set; }  // 分店編號 FK
 
-    public virtual Store? Store { get; set; } = null!;
-
-    public virtual EmployeeRole? EmployeeRole { get; set; } = null!;
+    public virtual EmployeeRole EmployeeRole { get; set; } = null!;
 
     public virtual ICollection<AttendanceRecord> AttendanceRecords { get; set; } = new List<AttendanceRecord>();
+
+    public virtual EmployeeAccount EmployeeAccount { get; set; } = null!;
+    
+    public virtual ICollection<Order>? Orders { get; set; } = new List<Order>();
+
+    public virtual Store Store { get; set; } = null!;
 }

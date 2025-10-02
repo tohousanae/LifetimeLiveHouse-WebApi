@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace LifetimeLiveHouse.Access.Migrations
 {
     /// <inheritdoc />
-    public partial class IntinalCreate : Migration
+    public partial class IntitalCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -27,12 +27,12 @@ namespace LifetimeLiveHouse.Access.Migrations
                 name: "Category",
                 columns: table => new
                 {
-                    StatusCode = table.Column<string>(type: "nchar(1)", maxLength: 1, nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false)
+                    CateID = table.Column<string>(type: "nchar(5)", maxLength: 5, nullable: false),
+                    CateName = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Category", x => x.StatusCode);
+                    table.PrimaryKey("PK_Category", x => x.CateID);
                 });
 
             migrationBuilder.CreateTable(
@@ -117,27 +117,6 @@ namespace LifetimeLiveHouse.Access.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Product",
-                columns: table => new
-                {
-                    ProductID = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    StatusCode = table.Column<string>(type: "nchar(1)", maxLength: 1, nullable: false),
-                    ProductName = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
-                    ProductNum = table.Column<long>(type: "bigint", nullable: false),
-                    Pricing = table.Column<decimal>(type: "money", nullable: false),
-                    RetailPrice = table.Column<decimal>(type: "money", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
-                    Photo = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CateID = table.Column<string>(type: "nchar(5)", maxLength: 5, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Product", x => x.ProductID);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "ProductStatus",
                 columns: table => new
                 {
@@ -166,6 +145,61 @@ namespace LifetimeLiveHouse.Access.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Store", x => x.StoreID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Live",
+                columns: table => new
+                {
+                    LiveID = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    LiveName = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
+                    StartTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Admission = table.Column<decimal>(type: "money", nullable: false),
+                    Discription = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LiveSong = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
+                    BandRoleID = table.Column<string>(type: "nchar(1)", nullable: false),
+                    StoreID = table.Column<long>(type: "bigint", nullable: false),
+                    MemberID = table.Column<long>(type: "bigint", nullable: false),
+                    StatusCode = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Live", x => x.LiveID);
+                    table.ForeignKey(
+                        name: "FK_Live_BandRole_BandRoleID",
+                        column: x => x.BandRoleID,
+                        principalTable: "BandRole",
+                        principalColumn: "BandRoleID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Product",
+                columns: table => new
+                {
+                    ProductID = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StatusCode = table.Column<string>(type: "nchar(1)", maxLength: 1, nullable: false),
+                    ProductName = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
+                    ProductNum = table.Column<long>(type: "bigint", nullable: false),
+                    Pricing = table.Column<decimal>(type: "money", nullable: false),
+                    RetailPrice = table.Column<decimal>(type: "money", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    Photo = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CateID = table.Column<string>(type: "nchar(5)", maxLength: 5, nullable: false),
+                    CategoryCateID = table.Column<string>(type: "nchar(5)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Product", x => x.ProductID);
+                    table.ForeignKey(
+                        name: "FK_Product_Category_CategoryCateID",
+                        column: x => x.CategoryCateID,
+                        principalTable: "Category",
+                        principalColumn: "CateID");
                 });
 
             migrationBuilder.CreateTable(
@@ -252,40 +286,12 @@ namespace LifetimeLiveHouse.Access.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Cart", x => x.CartID);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Live",
-                columns: table => new
-                {
-                    LiveID = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    LiveName = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
-                    StartTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EndTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Admission = table.Column<decimal>(type: "money", nullable: false),
-                    Discription = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LiveSong = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
-                    BandRoleID = table.Column<string>(type: "nchar(1)", nullable: false),
-                    StoreID = table.Column<long>(type: "bigint", nullable: false),
-                    MemberID = table.Column<long>(type: "bigint", nullable: false),
-                    StatusCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CartID = table.Column<long>(type: "bigint", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Live", x => x.LiveID);
                     table.ForeignKey(
-                        name: "FK_Live_BandRole_BandRoleID",
-                        column: x => x.BandRoleID,
-                        principalTable: "BandRole",
-                        principalColumn: "BandRoleID",
+                        name: "FK_Cart_Product_ProductID",
+                        column: x => x.ProductID,
+                        principalTable: "Product",
+                        principalColumn: "ProductID",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Live_Cart_CartID",
-                        column: x => x.CartID,
-                        principalTable: "Cart",
-                        principalColumn: "CartID");
                 });
 
             migrationBuilder.CreateTable(
@@ -302,6 +308,12 @@ namespace LifetimeLiveHouse.Access.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Coupon", x => x.cNo);
+                    table.ForeignKey(
+                        name: "FK_Coupon_Product_ProductID",
+                        column: x => x.ProductID,
+                        principalTable: "Product",
+                        principalColumn: "ProductID",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -338,7 +350,7 @@ namespace LifetimeLiveHouse.Access.Migrations
                     Discription = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     InstrumentPhoto = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     StoreID = table.Column<long>(type: "bigint", nullable: false),
-                    MemberID = table.Column<long>(type: "bigint", nullable: false)
+                    MemberID = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -369,7 +381,7 @@ namespace LifetimeLiveHouse.Access.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Birthday = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Birthday = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Cash = table.Column<decimal>(type: "money", nullable: false),
                     CellphoneNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     MemberPoint = table.Column<int>(type: "int", nullable: false),
@@ -482,7 +494,36 @@ namespace LifetimeLiveHouse.Access.Migrations
                 {
                     table.PrimaryKey("PK_Order", x => x.OrderID);
                     table.ForeignKey(
+                        name: "FK_Order_Employee_EmployeeID",
+                        column: x => x.EmployeeID,
+                        principalTable: "Employee",
+                        principalColumn: "EmployeeID");
+                    table.ForeignKey(
                         name: "FK_Order_Member_MemberID",
+                        column: x => x.MemberID,
+                        principalTable: "Member",
+                        principalColumn: "MemberID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PasswordResetToken",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MemberID = table.Column<long>(type: "bigint", nullable: false),
+                    TokenHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ExpiresAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Used = table.Column<bool>(type: "bit", nullable: false),
+                    UsedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PasswordResetToken", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PasswordResetToken_Member_MemberID",
                         column: x => x.MemberID,
                         principalTable: "Member",
                         principalColumn: "MemberID",
@@ -522,7 +563,7 @@ namespace LifetimeLiveHouse.Access.Migrations
                     Discription = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     RehearsalStudioPhoto = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     StoreID = table.Column<long>(type: "bigint", nullable: false),
-                    MemberID = table.Column<long>(type: "bigint", nullable: false)
+                    MemberID = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -531,8 +572,7 @@ namespace LifetimeLiveHouse.Access.Migrations
                         name: "FK_RehearsalStudio_Member_MemberID",
                         column: x => x.MemberID,
                         principalTable: "Member",
-                        principalColumn: "MemberID",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "MemberID");
                 });
 
             migrationBuilder.CreateTable(
@@ -566,9 +606,19 @@ namespace LifetimeLiveHouse.Access.Migrations
                 column: "MemberID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Cart_ProductID",
+                table: "Cart",
+                column: "ProductID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Coupon_MemberID",
                 table: "Coupon",
                 column: "MemberID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Coupon_ProductID",
+                table: "Coupon",
+                column: "ProductID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Employee_RoleCode",
@@ -583,7 +633,8 @@ namespace LifetimeLiveHouse.Access.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_EmployeeAccount_EmployeeID",
                 table: "EmployeeAccount",
-                column: "EmployeeID");
+                column: "EmployeeID",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Event_MemberID",
@@ -599,11 +650,6 @@ namespace LifetimeLiveHouse.Access.Migrations
                 name: "IX_Live_BandRoleID",
                 table: "Live",
                 column: "BandRoleID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Live_CartID",
-                table: "Live",
-                column: "CartID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_LoginRecord_MemberID",
@@ -636,9 +682,24 @@ namespace LifetimeLiveHouse.Access.Migrations
                 column: "MemberID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Order_EmployeeID",
+                table: "Order",
+                column: "EmployeeID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Order_MemberID",
                 table: "Order",
                 column: "MemberID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PasswordResetToken_MemberID",
+                table: "PasswordResetToken",
+                column: "MemberID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Product_CategoryCateID",
+                table: "Product",
+                column: "CategoryCateID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RegisteredEvent_MemberID",
@@ -685,8 +746,7 @@ namespace LifetimeLiveHouse.Access.Migrations
                 table: "Instrument",
                 column: "MemberID",
                 principalTable: "Member",
-                principalColumn: "MemberID",
-                onDelete: ReferentialAction.Cascade);
+                principalColumn: "MemberID");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_LoginRecord_Member_MemberID",
@@ -715,7 +775,7 @@ namespace LifetimeLiveHouse.Access.Migrations
                 name: "AttendanceRecord");
 
             migrationBuilder.DropTable(
-                name: "Category");
+                name: "Cart");
 
             migrationBuilder.DropTable(
                 name: "Coupon");
@@ -757,10 +817,10 @@ namespace LifetimeLiveHouse.Access.Migrations
                 name: "OrderDetail");
 
             migrationBuilder.DropTable(
-                name: "PayType");
+                name: "PasswordResetToken");
 
             migrationBuilder.DropTable(
-                name: "Product");
+                name: "PayType");
 
             migrationBuilder.DropTable(
                 name: "ProductStatus");
@@ -775,13 +835,16 @@ namespace LifetimeLiveHouse.Access.Migrations
                 name: "Seat");
 
             migrationBuilder.DropTable(
-                name: "Employee");
+                name: "Product");
 
             migrationBuilder.DropTable(
                 name: "BandRole");
 
             migrationBuilder.DropTable(
-                name: "Cart");
+                name: "Employee");
+
+            migrationBuilder.DropTable(
+                name: "Category");
 
             migrationBuilder.DropTable(
                 name: "EmployeeRole");
