@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using LifetimeLiveHouse.Models;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 public partial class Event
@@ -49,4 +50,11 @@ public partial class Event
     [Required]
     public string StatusCode { get; set; } = null!;
 
+    public virtual ICollection<RegisteredEvent> RegisteredEvents { get; set; } = new List<RegisteredEvent>();
+
+    public virtual Member Member { get; set; } = null!;
+
+    public virtual Store Store { get; set; } = null!;
+
+    public virtual MemberStatus MemberStatus { get; set;} = null!;
 }
