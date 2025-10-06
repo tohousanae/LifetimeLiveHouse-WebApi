@@ -1,7 +1,8 @@
 ﻿
+using LifetimeLiveHouse.Models;
+using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.AspNetCore.Mvc;
 
 public class LoginRecord
 {
@@ -21,4 +22,6 @@ public class LoginRecord
 
     [ForeignKey("Member")]
     public long MemberID { get; set; }
+
+    public virtual Member Member { get; set; } = null!;
 }

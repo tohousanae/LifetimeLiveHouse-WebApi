@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using LifetimeLiveHouse.Models;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 public partial class Seat
@@ -12,6 +13,10 @@ public partial class Seat
 
     [ForeignKey("Store")]
     public long StoreID { get; set; }
+
+    public virtual Member? Member { get; set; }
+
+    public virtual Store Store { get; set; } = null!;
     // 導覽屬性
     //public virtual MemberStatus? MemberStatus { get; set; }
     //public virtual MemberPicture? MemberPicture { get; set; }
