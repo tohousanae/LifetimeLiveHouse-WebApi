@@ -51,4 +51,5 @@ public partial class Live
     [ForeignKey("Event")]
     public string StatusCode { get; set; } = null!;
 
+
 }
