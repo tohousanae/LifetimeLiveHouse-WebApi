@@ -75,17 +75,19 @@ namespace LifetimeLiveHouse.Models
     
         public virtual ICollection<Instrument>? Instruments { get; set; } = new List<Instrument>();
 
-        public virtual ICollection<RehearsalStudio> RehearsalStudioes { get; set; } = new List<RehearsalStudio>();
+        public virtual ICollection<RehearsalStudio>? RehearsalStudios { get; set; } = new List<RehearsalStudio>();
         
-        public virtual ICollection<Event> Events { get; set; } = new List<Event>();
+        public virtual ICollection<Live>? Lives { get; set; } = new List<Live>();
+        
+        public virtual ICollection<Event>? Events { get; set; } = new List<Event>();
 
         public virtual ICollection<LoginRecord> LoginRecords { get; set; } = new List<LoginRecord>();
 
         public virtual MemberPicture? MemberPicture { get; set; }
 
-        public virtual ICollection<MemberPicture>? MemberPictures { get; set; } = new List<MemberPicture>();
+        public virtual ICollection<MemberPicture> MemberPictures { get; set; } = new List<MemberPicture>();
 
-        public virtual ICollection<RegisteredEvent>? ForumPosts { get; set; } = new List<RegisteredEvent>();
+        public virtual ICollection<RegisteredEvent> RegisteredEvents { get; set; } = new List<RegisteredEvent>();
 
         public virtual ICollection<PasswordResetToken> PasswordResetTokens { get; set; } = new List<PasswordResetToken>();
 

@@ -9,8 +9,5 @@ public partial class OrderStatus
     [StringLength(10)]
     public string Status { get; set; } = null!;
 
-    // 導覽屬性
-    //public virtual MemberStatus? MemberStatus { get; set; }
-    //public virtual MemberPicture? MemberPicture { get; set; }
-    //public virtual ICollection<ReBook> ReBooks { get; set; } = new List<ReBook>();
+    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 }

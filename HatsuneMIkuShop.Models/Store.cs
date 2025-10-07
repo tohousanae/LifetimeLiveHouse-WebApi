@@ -35,5 +35,17 @@ public partial class Store
     public DateTime CreatedDate { get; set; } = DateTime.Now;
 
     [Required]
-    public string Region { get; set; } = null!;  
+    public string Region { get; set; } = null!;
+
+    public virtual ICollection<Employee> Employees { get; set; } = new List<Employee>();
+
+    public virtual ICollection<Seat> Seats { get; set; } = new List<Seat>();
+
+    public virtual ICollection<RehearsalStudio> RehearsalStudios { get; set; } = new List<RehearsalStudio>();
+
+    public virtual ICollection<Live> Lives { get; set; } = new List<Live>();
+
+    public virtual ICollection<Event> Events { get; set; } = new List<Event>();
+
+    public virtual ICollection<Instrument> Instruments { get; set; } = new List<Instrument>();
 }

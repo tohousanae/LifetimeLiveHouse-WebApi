@@ -13,8 +13,8 @@ public partial class Notification
 
     public bool Readed { get; set; }
 
-    public virtual Member Member { get; set; } = null!;
-
     [ForeignKey("Member")]
     public long MemberID { get; set; }
+
+    public virtual Member Member { get; set; } = null!;
 }

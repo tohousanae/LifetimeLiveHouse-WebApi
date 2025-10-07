@@ -12,8 +12,9 @@ public partial class PayType
     [StringLength(10)]
     public string Type { get; set; } = null!;
 
-    // 導覽屬性
-    //public virtual MemberStatus? MemberStatus { get; set; }
-    //public virtual MemberPicture? MemberPicture { get; set; }
-    //public virtual ICollection<ReBook> ReBooks { get; set; } = new List<ReBook>();
+    [Column(TypeName = "money")]
+    [Range(0, double.MaxValue)]
+    public decimal ShippingFee { get; set; }
+
+    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 }

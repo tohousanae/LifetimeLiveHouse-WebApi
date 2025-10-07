@@ -1,4 +1,5 @@
 ﻿
+using LifetimeLiveHouse.Models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -31,4 +32,14 @@ public partial class Order
     [ForeignKey("OrderStatus")]
     [StringLength(1)]
     public string StatusCode { get; set; } = null!;
+
+    public virtual Member Member { get; set; } = null!;
+
+    public virtual Employee? Employee { get; set; }
+
+    public virtual ICollection<OrderDetail> OrderDetail { get; set; } = new List<OrderDetail>();
+
+    public virtual OrderStatus OrderStatus { get; set; } = null!;
+
+    public virtual PayType PayType { get; set; } = null!;
 }

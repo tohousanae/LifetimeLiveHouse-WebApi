@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using LifetimeLiveHouse.Models;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 public partial class MemberStatus
@@ -10,4 +11,6 @@ public partial class MemberStatus
 
     [StringLength(10)]
     public string Status { get; set; } = null!;
+
+    public virtual ICollection<Member> Members { get; set; } = new List<Member>();
 }

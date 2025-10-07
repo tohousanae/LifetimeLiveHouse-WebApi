@@ -12,5 +12,7 @@ namespace LifetimeLiveHouse.Models
 
         [StringLength(10)]
         public string Status { get; set; } = null!;
+
+        public virtual ICollection<Product> Products { get; set; } = new List<Product>();
     }
 }

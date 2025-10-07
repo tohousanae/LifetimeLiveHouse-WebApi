@@ -13,10 +13,7 @@ namespace LifetimeLiveHouse.Models
 
         public bool EmailVerificationStatus { get; set; } = false;
 
-        // 導覽屬性
-        //public virtual MemberStatus? MemberStatus { get; set; }
-        //public virtual MemberPicture? MemberPicture { get; set; }
-        //public virtual ICollection<ReBook> ReBooks { get; set; } = new List<ReBook>();
+        public virtual Member Member { get; set; } = null!;
 
     }
 }

@@ -10,4 +10,6 @@ public class ShippingMethod
     
     [StringLength(10)]
     public string Method { get; set; } = null!;
+
+    public virtual ICollection<ShippingMethod> ShippingMethods { get; set; } = new List<ShippingMethod>();
 }

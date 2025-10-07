@@ -1,6 +1,7 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using LifetimeLiveHouse.Models;
 using Microsoft.AspNetCore.Mvc;
 
 public class Product
@@ -43,4 +44,10 @@ public class Product
     public string CateID { get; set; } = null!;
 
     public virtual ICollection<Coupon> Coupons { get; set; } = null!;
+
+    public virtual Category Category { get; set; } = null!;
+
+    public virtual ProductStatus ProductStatus { get; set; } = null!;
+
+    public virtual ICollection<OrderDetail> OrderDetail { get; set; } = new List<OrderDetail>();
 }
