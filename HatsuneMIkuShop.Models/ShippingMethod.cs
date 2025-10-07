@@ -11,5 +11,5 @@ public class ShippingMethod
     [StringLength(10)]
     public string Method { get; set; } = null!;
 
-    public virtual ICollection<ShippingMethod> ShippingMethods { get; set; } = new List<ShippingMethod>();
+    public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
 }

@@ -28,7 +28,7 @@ namespace LifetimeLiveHouse.Access.Data
 
         public virtual DbSet<Event> Event { get; set; }
 
-        public virtual DbSet<EventStatus> InstrumentCategory { get; set; }
+        public virtual DbSet<EventStatus> EventStatus { get; set; }
 
         public virtual DbSet<Instrument> Instrument { get; set; }
 
@@ -56,6 +56,8 @@ namespace LifetimeLiveHouse.Access.Data
 
         public virtual DbSet<OrderDetail> OrderStatus { get; set; }
 
+        public virtual DbSet<PasswordResetToken> PasswordResetToken { get; set; }
+
         public virtual DbSet<PayType> PayType { get; set; }
 
         public virtual DbSet<Product> Product { get; set; }
@@ -66,9 +68,27 @@ namespace LifetimeLiveHouse.Access.Data
 
         public virtual DbSet<RehearsalStudio> RehearsalStudio { get; set; }
 
+        public virtual DbSet<Seat> Seat { get; set; }
+
+        public virtual DbSet<ShippingMethod> ShippingMethod { get; set; }
+
         public virtual DbSet<Store> Store { get; set; }
 
-        public virtual DbSet<Seat> Seat { get; set; }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Member>()
+                .HasOne(m => m.MemberPicture)
+                .WithOne()
+                .HasForeignKey<Member>(m => m.Picture)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Member>()
+                .HasMany(m => m.MemberPictures)
+                .WithOne(p => p.Member)
+                .HasForeignKey(p => p.MemberID)
+                .OnDelete(DeleteBehavior.Cascade);
+
+        }
     }
     
 }
