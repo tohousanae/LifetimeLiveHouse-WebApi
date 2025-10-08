@@ -19,7 +19,7 @@
 //        }
 
 //        [HttpPost("register")]
-//        public async Task<ActionResult<Member>> PostUserRegister(RegisterDTO inputRegisterInfo)
+//        public async Task<ActionResult<Member>> PostUserRegister(MemberRegisterDTO inputRegisterInfo)
 //        {
 //            // 檢查信箱、電話是否已被註冊
 //            if (await _context.MemberAccount.AnyAsync(u => u.Email == inputRegisterInfo.Email))

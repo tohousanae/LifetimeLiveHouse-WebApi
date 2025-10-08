@@ -1,6 +1,3 @@
-using LifetimeLiveHouse.Models;
-using System.Text.Json.Serialization;
-
 namespace LifetimeLiveHouseWebAPI.DTOs.Users
 {
     public class LoginDTO
