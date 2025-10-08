@@ -47,6 +47,8 @@ public partial class Event
     public long MemberID { get; set; }
 
     [ForeignKey("EventStatus")]
+    [StringLength(1)]
+    [Column(TypeName = "nchar")]
     [Required]
     public string StatusCode { get; set; } = null!;
 
@@ -56,5 +58,5 @@ public partial class Event
 
     public virtual Store Store { get; set; } = null!;
 
-    public virtual MemberStatus MemberStatus { get; set;} = null!;
+    public virtual EventStatus EventStatus { get; set;} = null!;
 }

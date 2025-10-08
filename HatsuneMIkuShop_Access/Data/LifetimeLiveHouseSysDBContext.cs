@@ -54,7 +54,7 @@ namespace LifetimeLiveHouse.Access.Data
 
         public virtual DbSet<OrderDetail> OrderDetail { get; set; }
 
-        public virtual DbSet<OrderDetail> OrderStatus { get; set; }
+        public virtual DbSet<OrderStatus> OrderStatus { get; set; }
 
         public virtual DbSet<PasswordResetToken> PasswordResetToken { get; set; }
 
@@ -76,19 +76,30 @@ namespace LifetimeLiveHouse.Access.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Member>()
-                .HasOne(m => m.MemberPicture)
-                .WithOne()
-                .HasForeignKey<Member>(m => m.Picture)
-                .OnDelete(DeleteBehavior.SetNull);
+            base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Member>()
-                .HasMany(m => m.MemberPictures)
-                .WithOne(p => p.Member)
-                .HasForeignKey(p => p.MemberID)
+            // Member → Event
+            modelBuilder.Entity<Event>()
+                .HasOne(e => e.Member)
+                .WithMany(m => m.Events)
+                .HasForeignKey(e => e.MemberID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Event → RegisteredEvent
+            modelBuilder.Entity<RegisteredEvent>()
+                .HasOne(re => re.Event)
+                .WithMany(e => e.RegisteredEvents)
+                .HasForeignKey(re => re.EventID)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // Member → RegisteredEvent
+            modelBuilder.Entity<RegisteredEvent>()
+                .HasOne(re => re.Member)
+                .WithMany(m => m.RegisteredEvents)
+                .HasForeignKey(re => re.MemberID)
+                .OnDelete(DeleteBehavior.NoAction);
         }
+
     }
-    
+
 }

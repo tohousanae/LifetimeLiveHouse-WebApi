@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LifetimeLiveHouse.Access.Migrations
 {
     [DbContext(typeof(LifetimeLiveHouseSysDBContext))]
-    [Migration("20251007185122_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20251008093646_IntitalCreate")]
+    partial class IntitalCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -183,15 +183,8 @@ namespace LifetimeLiveHouse.Access.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("EventStatusStatusCode")
-                        .HasColumnType("nchar(1)");
-
                     b.Property<long>("MemberID")
                         .HasColumnType("bigint");
-
-                    b.Property<string>("MemberStatusStatusCode")
-                        .IsRequired()
-                        .HasColumnType("nchar(1)");
 
                     b.Property<decimal>("RegistrationFee")
                         .HasColumnType("money");
@@ -201,18 +194,17 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     b.Property<string>("StatusCode")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1)
+                        .HasColumnType("nchar");
 
                     b.Property<long>("StoreID")
                         .HasColumnType("bigint");
 
                     b.HasKey("EventID");
 
-                    b.HasIndex("EventStatusStatusCode");
-
                     b.HasIndex("MemberID");
 
-                    b.HasIndex("MemberStatusStatusCode");
+                    b.HasIndex("StatusCode");
 
                     b.HasIndex("StoreID");
 
@@ -339,54 +331,6 @@ namespace LifetimeLiveHouse.Access.Migrations
                     b.HasKey("RoleCode");
 
                     b.ToTable("EmployeeRole");
-                });
-
-            modelBuilder.Entity("LifetimeLiveHouse.Models.Member", b =>
-                {
-                    b.Property<long>("MemberID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("MemberID"));
-
-                    b.Property<DateTime>("Birthday")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("Cash")
-                        .HasColumnType("money");
-
-                    b.Property<string>("CellphoneNumber")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("MemberPoint")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(40)
-                        .HasColumnType("nvarchar(40)");
-
-                    b.Property<string>("Picture")
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("StatusCode")
-                        .IsRequired()
-                        .HasColumnType("nchar(1)");
-
-                    b.HasKey("MemberID");
-
-                    b.HasIndex("Picture")
-                        .IsUnique()
-                        .HasFilter("[Picture] IS NOT NULL");
-
-                    b.HasIndex("StatusCode");
-
-                    b.ToTable("Member");
                 });
 
             modelBuilder.Entity("LifetimeLiveHouse.Models.MemberVerificationStatus", b =>
@@ -640,6 +584,48 @@ namespace LifetimeLiveHouse.Access.Migrations
                     b.ToTable("LoginRecord");
                 });
 
+            modelBuilder.Entity("Member", b =>
+                {
+                    b.Property<long>("MemberID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("MemberID"));
+
+                    b.Property<DateTime>("Birthday")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Cash")
+                        .HasColumnType("money");
+
+                    b.Property<string>("CellphoneNumber")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("MemberPoint")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<string>("StatusCode")
+                        .IsRequired()
+                        .HasMaxLength(1)
+                        .HasColumnType("nchar");
+
+                    b.HasKey("MemberID");
+
+                    b.HasIndex("StatusCode");
+
+                    b.ToTable("Member");
+                });
+
             modelBuilder.Entity("MemberAccount", b =>
                 {
                     b.Property<string>("Email")
@@ -659,6 +645,23 @@ namespace LifetimeLiveHouse.Access.Migrations
                     b.HasIndex("MemberID");
 
                     b.ToTable("MemberAccount");
+                });
+
+            modelBuilder.Entity("MemberHeadPicture", b =>
+                {
+                    b.Property<string>("Picture")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<long>("MemberID")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Picture");
+
+                    b.HasIndex("MemberID")
+                        .IsUnique();
+
+                    b.ToTable("MemberHeadPicture");
                 });
 
             modelBuilder.Entity("MemberPicture", b =>
@@ -1018,7 +1021,7 @@ namespace LifetimeLiveHouse.Access.Migrations
 
             modelBuilder.Entity("Cart", b =>
                 {
-                    b.HasOne("LifetimeLiveHouse.Models.Member", "Member")
+                    b.HasOne("Member", "Member")
                         .WithMany("Carts")
                         .HasForeignKey("MemberID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1037,7 +1040,7 @@ namespace LifetimeLiveHouse.Access.Migrations
 
             modelBuilder.Entity("Coupon", b =>
                 {
-                    b.HasOne("LifetimeLiveHouse.Models.Member", "Member")
+                    b.HasOne("Member", "Member")
                         .WithMany("Coupons")
                         .HasForeignKey("MemberID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1067,19 +1070,15 @@ namespace LifetimeLiveHouse.Access.Migrations
 
             modelBuilder.Entity("Event", b =>
                 {
-                    b.HasOne("EventStatus", null)
-                        .WithMany("Events")
-                        .HasForeignKey("EventStatusStatusCode");
-
-                    b.HasOne("LifetimeLiveHouse.Models.Member", "Member")
+                    b.HasOne("Member", "Member")
                         .WithMany("Events")
                         .HasForeignKey("MemberID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("MemberStatus", "MemberStatus")
-                        .WithMany()
-                        .HasForeignKey("MemberStatusStatusCode")
+                    b.HasOne("EventStatus", "EventStatus")
+                        .WithMany("Events")
+                        .HasForeignKey("StatusCode")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1089,16 +1088,16 @@ namespace LifetimeLiveHouse.Access.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Member");
+                    b.Navigation("EventStatus");
 
-                    b.Navigation("MemberStatus");
+                    b.Navigation("Member");
 
                     b.Navigation("Store");
                 });
 
             modelBuilder.Entity("Instrument", b =>
                 {
-                    b.HasOne("LifetimeLiveHouse.Models.Member", "Member")
+                    b.HasOne("Member", "Member")
                         .WithMany("Instruments")
                         .HasForeignKey("MemberID");
 
@@ -1132,27 +1131,9 @@ namespace LifetimeLiveHouse.Access.Migrations
                     b.Navigation("Store");
                 });
 
-            modelBuilder.Entity("LifetimeLiveHouse.Models.Member", b =>
-                {
-                    b.HasOne("MemberPicture", "MemberPicture")
-                        .WithOne()
-                        .HasForeignKey("LifetimeLiveHouse.Models.Member", "Picture")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("MemberStatus", "MemberStatus")
-                        .WithMany("Members")
-                        .HasForeignKey("StatusCode")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("MemberPicture");
-
-                    b.Navigation("MemberStatus");
-                });
-
             modelBuilder.Entity("LifetimeLiveHouse.Models.MemberVerificationStatus", b =>
                 {
-                    b.HasOne("LifetimeLiveHouse.Models.Member", "Member")
+                    b.HasOne("Member", "Member")
                         .WithOne("MemberVerificationStatus")
                         .HasForeignKey("LifetimeLiveHouse.Models.MemberVerificationStatus", "MemberID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1163,7 +1144,7 @@ namespace LifetimeLiveHouse.Access.Migrations
 
             modelBuilder.Entity("LifetimeLiveHouse.Models.PasswordResetToken", b =>
                 {
-                    b.HasOne("LifetimeLiveHouse.Models.Member", "Member")
+                    b.HasOne("Member", "Member")
                         .WithMany("PasswordResetTokens")
                         .HasForeignKey("MemberID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1180,10 +1161,10 @@ namespace LifetimeLiveHouse.Access.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("LifetimeLiveHouse.Models.Member", "Member")
+                    b.HasOne("Member", "Member")
                         .WithMany("RegisteredEvents")
                         .HasForeignKey("MemberID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Event");
@@ -1203,7 +1184,7 @@ namespace LifetimeLiveHouse.Access.Migrations
                         .WithMany()
                         .HasForeignKey("EventStatusStatusCode");
 
-                    b.HasOne("LifetimeLiveHouse.Models.Member", "Member")
+                    b.HasOne("Member", "Member")
                         .WithMany("Lives")
                         .HasForeignKey("MemberID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1226,7 +1207,7 @@ namespace LifetimeLiveHouse.Access.Migrations
 
             modelBuilder.Entity("LoginRecord", b =>
                 {
-                    b.HasOne("LifetimeLiveHouse.Models.Member", "Member")
+                    b.HasOne("Member", "Member")
                         .WithMany("LoginRecords")
                         .HasForeignKey("MemberID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1235,9 +1216,20 @@ namespace LifetimeLiveHouse.Access.Migrations
                     b.Navigation("Member");
                 });
 
+            modelBuilder.Entity("Member", b =>
+                {
+                    b.HasOne("MemberStatus", "MemberStatus")
+                        .WithMany("Members")
+                        .HasForeignKey("StatusCode")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MemberStatus");
+                });
+
             modelBuilder.Entity("MemberAccount", b =>
                 {
-                    b.HasOne("LifetimeLiveHouse.Models.Member", "Member")
+                    b.HasOne("Member", "Member")
                         .WithMany()
                         .HasForeignKey("MemberID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1246,9 +1238,20 @@ namespace LifetimeLiveHouse.Access.Migrations
                     b.Navigation("Member");
                 });
 
+            modelBuilder.Entity("MemberHeadPicture", b =>
+                {
+                    b.HasOne("Member", "Member")
+                        .WithOne("MemberHeadPicture")
+                        .HasForeignKey("MemberHeadPicture", "MemberID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Member");
+                });
+
             modelBuilder.Entity("MemberPicture", b =>
                 {
-                    b.HasOne("LifetimeLiveHouse.Models.Member", "Member")
+                    b.HasOne("Member", "Member")
                         .WithMany("MemberPictures")
                         .HasForeignKey("MemberID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1259,7 +1262,7 @@ namespace LifetimeLiveHouse.Access.Migrations
 
             modelBuilder.Entity("Notification", b =>
                 {
-                    b.HasOne("LifetimeLiveHouse.Models.Member", "Member")
+                    b.HasOne("Member", "Member")
                         .WithMany("Notifications")
                         .HasForeignKey("MemberID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1274,7 +1277,7 @@ namespace LifetimeLiveHouse.Access.Migrations
                         .WithMany("Orders")
                         .HasForeignKey("EmployeeID");
 
-                    b.HasOne("LifetimeLiveHouse.Models.Member", "Member")
+                    b.HasOne("Member", "Member")
                         .WithMany("Orders")
                         .HasForeignKey("MemberID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1361,7 +1364,7 @@ namespace LifetimeLiveHouse.Access.Migrations
 
             modelBuilder.Entity("RehearsalStudio", b =>
                 {
-                    b.HasOne("LifetimeLiveHouse.Models.Member", "Member")
+                    b.HasOne("Member", "Member")
                         .WithMany("RehearsalStudios")
                         .HasForeignKey("MemberID");
 
@@ -1378,7 +1381,7 @@ namespace LifetimeLiveHouse.Access.Migrations
 
             modelBuilder.Entity("Seat", b =>
                 {
-                    b.HasOne("LifetimeLiveHouse.Models.Member", "Member")
+                    b.HasOne("Member", "Member")
                         .WithOne("Seat")
                         .HasForeignKey("Seat", "MemberID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1430,38 +1433,6 @@ namespace LifetimeLiveHouse.Access.Migrations
                     b.Navigation("Employees");
                 });
 
-            modelBuilder.Entity("LifetimeLiveHouse.Models.Member", b =>
-                {
-                    b.Navigation("Carts");
-
-                    b.Navigation("Coupons");
-
-                    b.Navigation("Events");
-
-                    b.Navigation("Instruments");
-
-                    b.Navigation("Lives");
-
-                    b.Navigation("LoginRecords");
-
-                    b.Navigation("MemberPictures");
-
-                    b.Navigation("MemberVerificationStatus")
-                        .IsRequired();
-
-                    b.Navigation("Notifications");
-
-                    b.Navigation("Orders");
-
-                    b.Navigation("PasswordResetTokens");
-
-                    b.Navigation("RegisteredEvents");
-
-                    b.Navigation("RehearsalStudios");
-
-                    b.Navigation("Seat");
-                });
-
             modelBuilder.Entity("LifetimeLiveHouse.Models.ProductStatus", b =>
                 {
                     b.Navigation("Products");
@@ -1480,6 +1451,40 @@ namespace LifetimeLiveHouse.Access.Migrations
                     b.Navigation("RehearsalStudios");
 
                     b.Navigation("Seats");
+                });
+
+            modelBuilder.Entity("Member", b =>
+                {
+                    b.Navigation("Carts");
+
+                    b.Navigation("Coupons");
+
+                    b.Navigation("Events");
+
+                    b.Navigation("Instruments");
+
+                    b.Navigation("Lives");
+
+                    b.Navigation("LoginRecords");
+
+                    b.Navigation("MemberHeadPicture");
+
+                    b.Navigation("MemberPictures");
+
+                    b.Navigation("MemberVerificationStatus")
+                        .IsRequired();
+
+                    b.Navigation("Notifications");
+
+                    b.Navigation("Orders");
+
+                    b.Navigation("PasswordResetTokens");
+
+                    b.Navigation("RegisteredEvents");
+
+                    b.Navigation("RehearsalStudios");
+
+                    b.Navigation("Seat");
                 });
 
             modelBuilder.Entity("MemberStatus", b =>

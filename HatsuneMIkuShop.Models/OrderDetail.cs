@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-[PrimaryKey(nameof(OrderID), nameof(ProductID))]
+[PrimaryKey("OrderID", "ProductID")]
 public class OrderDetail
 {
     [ForeignKey("Order")]

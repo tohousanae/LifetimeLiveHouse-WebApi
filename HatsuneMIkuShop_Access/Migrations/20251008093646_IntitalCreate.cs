@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace LifetimeLiveHouse.Access.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class IntitalCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -157,6 +157,31 @@ namespace LifetimeLiveHouse.Access.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Member",
+                columns: table => new
+                {
+                    MemberID = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Birthday = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Cash = table.Column<decimal>(type: "money", nullable: false),
+                    CellphoneNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    MemberPoint = table.Column<int>(type: "int", nullable: false),
+                    StatusCode = table.Column<string>(type: "nchar(1)", maxLength: 1, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Member", x => x.MemberID);
+                    table.ForeignKey(
+                        name: "FK_Member_MemberStatus_StatusCode",
+                        column: x => x.StatusCode,
+                        principalTable: "MemberStatus",
+                        principalColumn: "StatusCode",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Product",
                 columns: table => new
                 {
@@ -243,114 +268,6 @@ namespace LifetimeLiveHouse.Access.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "OrderDetailProduct",
-                columns: table => new
-                {
-                    ProductsProductID = table.Column<long>(type: "bigint", nullable: false),
-                    OrderDetailOrderID = table.Column<long>(type: "bigint", nullable: false),
-                    OrderDetailProductID = table.Column<long>(type: "bigint", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_OrderDetailProduct", x => new { x.ProductsProductID, x.OrderDetailOrderID, x.OrderDetailProductID });
-                    table.ForeignKey(
-                        name: "FK_OrderDetailProduct_OrderDetail_OrderDetailOrderID_OrderDetailProductID",
-                        columns: x => new { x.OrderDetailOrderID, x.OrderDetailProductID },
-                        principalTable: "OrderDetail",
-                        principalColumns: new[] { "OrderID", "ProductID" },
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_OrderDetailProduct_Product_ProductsProductID",
-                        column: x => x.ProductsProductID,
-                        principalTable: "Product",
-                        principalColumn: "ProductID",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AttendanceRecord",
-                columns: table => new
-                {
-                    AttendanceID = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    PunchInTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    PunchOutTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    EmployeeID = table.Column<long>(type: "bigint", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AttendanceRecord", x => x.AttendanceID);
-                    table.ForeignKey(
-                        name: "FK_AttendanceRecord_Employee_EmployeeID",
-                        column: x => x.EmployeeID,
-                        principalTable: "Employee",
-                        principalColumn: "EmployeeID",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "EmployeeAccount",
-                columns: table => new
-                {
-                    Email = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    EmployeeID = table.Column<long>(type: "bigint", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EmployeeAccount", x => x.Email);
-                    table.ForeignKey(
-                        name: "FK_EmployeeAccount_Employee_EmployeeID",
-                        column: x => x.EmployeeID,
-                        principalTable: "Employee",
-                        principalColumn: "EmployeeID",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Cart",
-                columns: table => new
-                {
-                    CartID = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ProductID = table.Column<long>(type: "bigint", nullable: false),
-                    MemberID = table.Column<long>(type: "bigint", nullable: false),
-                    Count = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Cart", x => x.CartID);
-                    table.ForeignKey(
-                        name: "FK_Cart_Product_ProductID",
-                        column: x => x.ProductID,
-                        principalTable: "Product",
-                        principalColumn: "ProductID",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Coupon",
-                columns: table => new
-                {
-                    cNo = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    cDesc = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
-                    Discount = table.Column<decimal>(type: "money", nullable: false),
-                    ProductID = table.Column<long>(type: "bigint", nullable: false),
-                    MemberID = table.Column<long>(type: "bigint", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Coupon", x => x.cNo);
-                    table.ForeignKey(
-                        name: "FK_Coupon_Product_ProductID",
-                        column: x => x.ProductID,
-                        principalTable: "Product",
-                        principalColumn: "ProductID",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Event",
                 columns: table => new
                 {
@@ -364,24 +281,23 @@ namespace LifetimeLiveHouse.Access.Migrations
                     EventPicture = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     StoreID = table.Column<long>(type: "bigint", nullable: false),
                     MemberID = table.Column<long>(type: "bigint", nullable: false),
-                    StatusCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MemberStatusStatusCode = table.Column<string>(type: "nchar(1)", nullable: false),
-                    EventStatusStatusCode = table.Column<string>(type: "nchar(1)", nullable: true)
+                    StatusCode = table.Column<string>(type: "nchar(1)", maxLength: 1, nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Event", x => x.EventID);
                     table.ForeignKey(
-                        name: "FK_Event_EventStatus_EventStatusStatusCode",
-                        column: x => x.EventStatusStatusCode,
+                        name: "FK_Event_EventStatus_StatusCode",
+                        column: x => x.StatusCode,
                         principalTable: "EventStatus",
-                        principalColumn: "StatusCode");
-                    table.ForeignKey(
-                        name: "FK_Event_MemberStatus_MemberStatusStatusCode",
-                        column: x => x.MemberStatusStatusCode,
-                        principalTable: "MemberStatus",
                         principalColumn: "StatusCode",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Event_Member_MemberID",
+                        column: x => x.MemberID,
+                        principalTable: "Member",
+                        principalColumn: "MemberID",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Event_Store_StoreID",
                         column: x => x.StoreID,
@@ -408,6 +324,11 @@ namespace LifetimeLiveHouse.Access.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Instrument", x => x.InstrumentID);
+                    table.ForeignKey(
+                        name: "FK_Instrument_Member_MemberID",
+                        column: x => x.MemberID,
+                        principalTable: "Member",
+                        principalColumn: "MemberID");
                     table.ForeignKey(
                         name: "FK_Instrument_Store_StoreID",
                         column: x => x.StoreID,
@@ -449,6 +370,12 @@ namespace LifetimeLiveHouse.Access.Migrations
                         principalTable: "EventStatus",
                         principalColumn: "StatusCode");
                     table.ForeignKey(
+                        name: "FK_Live_Member_MemberID",
+                        column: x => x.MemberID,
+                        principalTable: "Member",
+                        principalColumn: "MemberID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_Live_Store_StoreID",
                         column: x => x.StoreID,
                         principalTable: "Store",
@@ -470,31 +397,11 @@ namespace LifetimeLiveHouse.Access.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_LoginRecord", x => x.RecordID);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Member",
-                columns: table => new
-                {
-                    MemberID = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Birthday = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Cash = table.Column<decimal>(type: "money", nullable: false),
-                    CellphoneNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    MemberPoint = table.Column<int>(type: "int", nullable: false),
-                    Picture = table.Column<string>(type: "nvarchar(50)", nullable: true),
-                    StatusCode = table.Column<string>(type: "nchar(1)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Member", x => x.MemberID);
                     table.ForeignKey(
-                        name: "FK_Member_MemberStatus_StatusCode",
-                        column: x => x.StatusCode,
-                        principalTable: "MemberStatus",
-                        principalColumn: "StatusCode",
+                        name: "FK_LoginRecord_Member_MemberID",
+                        column: x => x.MemberID,
+                        principalTable: "Member",
+                        principalColumn: "MemberID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -511,6 +418,24 @@ namespace LifetimeLiveHouse.Access.Migrations
                     table.PrimaryKey("PK_MemberAccount", x => x.Email);
                     table.ForeignKey(
                         name: "FK_MemberAccount_Member_MemberID",
+                        column: x => x.MemberID,
+                        principalTable: "Member",
+                        principalColumn: "MemberID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MemberHeadPicture",
+                columns: table => new
+                {
+                    Picture = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    MemberID = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MemberHeadPicture", x => x.Picture);
+                    table.ForeignKey(
+                        name: "FK_MemberHeadPicture_Member_MemberID",
                         column: x => x.MemberID,
                         principalTable: "Member",
                         principalColumn: "MemberID",
@@ -576,47 +501,6 @@ namespace LifetimeLiveHouse.Access.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Order",
-                columns: table => new
-                {
-                    OrderID = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    oTel = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    Note = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
-                    MemberID = table.Column<long>(type: "bigint", nullable: false),
-                    EmployeeID = table.Column<long>(type: "bigint", nullable: true),
-                    PayCode = table.Column<string>(type: "nchar(2)", maxLength: 2, nullable: true),
-                    StatusCode = table.Column<string>(type: "nvarchar(1)", maxLength: 1, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Order", x => x.OrderID);
-                    table.ForeignKey(
-                        name: "FK_Order_Employee_EmployeeID",
-                        column: x => x.EmployeeID,
-                        principalTable: "Employee",
-                        principalColumn: "EmployeeID");
-                    table.ForeignKey(
-                        name: "FK_Order_Member_MemberID",
-                        column: x => x.MemberID,
-                        principalTable: "Member",
-                        principalColumn: "MemberID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Order_OrderStatus_StatusCode",
-                        column: x => x.StatusCode,
-                        principalTable: "OrderStatus",
-                        principalColumn: "StatusCode",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Order_PayType_PayCode",
-                        column: x => x.PayCode,
-                        principalTable: "PayType",
-                        principalColumn: "PayCode");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "PasswordResetToken",
                 columns: table => new
                 {
@@ -634,32 +518,6 @@ namespace LifetimeLiveHouse.Access.Migrations
                     table.PrimaryKey("PK_PasswordResetToken", x => x.Id);
                     table.ForeignKey(
                         name: "FK_PasswordResetToken_Member_MemberID",
-                        column: x => x.MemberID,
-                        principalTable: "Member",
-                        principalColumn: "MemberID",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "RegisteredEvent",
-                columns: table => new
-                {
-                    RecordID = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    EventID = table.Column<long>(type: "bigint", nullable: false),
-                    MemberID = table.Column<long>(type: "bigint", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RegisteredEvent", x => x.RecordID);
-                    table.ForeignKey(
-                        name: "FK_RegisteredEvent_Event_EventID",
-                        column: x => x.EventID,
-                        principalTable: "Event",
-                        principalColumn: "EventID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_RegisteredEvent_Member_MemberID",
                         column: x => x.MemberID,
                         principalTable: "Member",
                         principalColumn: "MemberID",
@@ -721,6 +579,192 @@ namespace LifetimeLiveHouse.Access.Migrations
                         principalTable: "Store",
                         principalColumn: "StoreID",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Cart",
+                columns: table => new
+                {
+                    CartID = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProductID = table.Column<long>(type: "bigint", nullable: false),
+                    MemberID = table.Column<long>(type: "bigint", nullable: false),
+                    Count = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Cart", x => x.CartID);
+                    table.ForeignKey(
+                        name: "FK_Cart_Member_MemberID",
+                        column: x => x.MemberID,
+                        principalTable: "Member",
+                        principalColumn: "MemberID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Cart_Product_ProductID",
+                        column: x => x.ProductID,
+                        principalTable: "Product",
+                        principalColumn: "ProductID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Coupon",
+                columns: table => new
+                {
+                    cNo = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    cDesc = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    Discount = table.Column<decimal>(type: "money", nullable: false),
+                    ProductID = table.Column<long>(type: "bigint", nullable: false),
+                    MemberID = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Coupon", x => x.cNo);
+                    table.ForeignKey(
+                        name: "FK_Coupon_Member_MemberID",
+                        column: x => x.MemberID,
+                        principalTable: "Member",
+                        principalColumn: "MemberID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Coupon_Product_ProductID",
+                        column: x => x.ProductID,
+                        principalTable: "Product",
+                        principalColumn: "ProductID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OrderDetailProduct",
+                columns: table => new
+                {
+                    ProductsProductID = table.Column<long>(type: "bigint", nullable: false),
+                    OrderDetailOrderID = table.Column<long>(type: "bigint", nullable: false),
+                    OrderDetailProductID = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderDetailProduct", x => new { x.ProductsProductID, x.OrderDetailOrderID, x.OrderDetailProductID });
+                    table.ForeignKey(
+                        name: "FK_OrderDetailProduct_OrderDetail_OrderDetailOrderID_OrderDetailProductID",
+                        columns: x => new { x.OrderDetailOrderID, x.OrderDetailProductID },
+                        principalTable: "OrderDetail",
+                        principalColumns: new[] { "OrderID", "ProductID" },
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OrderDetailProduct_Product_ProductsProductID",
+                        column: x => x.ProductsProductID,
+                        principalTable: "Product",
+                        principalColumn: "ProductID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AttendanceRecord",
+                columns: table => new
+                {
+                    AttendanceID = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PunchInTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    PunchOutTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    EmployeeID = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AttendanceRecord", x => x.AttendanceID);
+                    table.ForeignKey(
+                        name: "FK_AttendanceRecord_Employee_EmployeeID",
+                        column: x => x.EmployeeID,
+                        principalTable: "Employee",
+                        principalColumn: "EmployeeID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EmployeeAccount",
+                columns: table => new
+                {
+                    Email = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    EmployeeID = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EmployeeAccount", x => x.Email);
+                    table.ForeignKey(
+                        name: "FK_EmployeeAccount_Employee_EmployeeID",
+                        column: x => x.EmployeeID,
+                        principalTable: "Employee",
+                        principalColumn: "EmployeeID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Order",
+                columns: table => new
+                {
+                    OrderID = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    oTel = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Note = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    MemberID = table.Column<long>(type: "bigint", nullable: false),
+                    EmployeeID = table.Column<long>(type: "bigint", nullable: true),
+                    PayCode = table.Column<string>(type: "nchar(2)", maxLength: 2, nullable: true),
+                    StatusCode = table.Column<string>(type: "nvarchar(1)", maxLength: 1, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Order", x => x.OrderID);
+                    table.ForeignKey(
+                        name: "FK_Order_Employee_EmployeeID",
+                        column: x => x.EmployeeID,
+                        principalTable: "Employee",
+                        principalColumn: "EmployeeID");
+                    table.ForeignKey(
+                        name: "FK_Order_Member_MemberID",
+                        column: x => x.MemberID,
+                        principalTable: "Member",
+                        principalColumn: "MemberID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Order_OrderStatus_StatusCode",
+                        column: x => x.StatusCode,
+                        principalTable: "OrderStatus",
+                        principalColumn: "StatusCode",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Order_PayType_PayCode",
+                        column: x => x.PayCode,
+                        principalTable: "PayType",
+                        principalColumn: "PayCode");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RegisteredEvent",
+                columns: table => new
+                {
+                    RecordID = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    EventID = table.Column<long>(type: "bigint", nullable: false),
+                    MemberID = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RegisteredEvent", x => x.RecordID);
+                    table.ForeignKey(
+                        name: "FK_RegisteredEvent_Event_EventID",
+                        column: x => x.EventID,
+                        principalTable: "Event",
+                        principalColumn: "EventID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_RegisteredEvent_Member_MemberID",
+                        column: x => x.MemberID,
+                        principalTable: "Member",
+                        principalColumn: "MemberID");
                 });
 
             migrationBuilder.CreateTable(
@@ -790,19 +834,14 @@ namespace LifetimeLiveHouse.Access.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Event_EventStatusStatusCode",
-                table: "Event",
-                column: "EventStatusStatusCode");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Event_MemberID",
                 table: "Event",
                 column: "MemberID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Event_MemberStatusStatusCode",
+                name: "IX_Event_StatusCode",
                 table: "Event",
-                column: "MemberStatusStatusCode");
+                column: "StatusCode");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Event_StoreID",
@@ -845,13 +884,6 @@ namespace LifetimeLiveHouse.Access.Migrations
                 column: "MemberID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Member_Picture",
-                table: "Member",
-                column: "Picture",
-                unique: true,
-                filter: "[Picture] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Member_StatusCode",
                 table: "Member",
                 column: "StatusCode");
@@ -860,6 +892,12 @@ namespace LifetimeLiveHouse.Access.Migrations
                 name: "IX_MemberAccount_MemberID",
                 table: "MemberAccount",
                 column: "MemberID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MemberHeadPicture_MemberID",
+                table: "MemberHeadPicture",
+                column: "MemberID",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_MemberPicture_MemberID",
@@ -951,70 +989,11 @@ namespace LifetimeLiveHouse.Access.Migrations
                 name: "IX_Seat_StoreID",
                 table: "Seat",
                 column: "StoreID");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Cart_Member_MemberID",
-                table: "Cart",
-                column: "MemberID",
-                principalTable: "Member",
-                principalColumn: "MemberID",
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Coupon_Member_MemberID",
-                table: "Coupon",
-                column: "MemberID",
-                principalTable: "Member",
-                principalColumn: "MemberID",
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Event_Member_MemberID",
-                table: "Event",
-                column: "MemberID",
-                principalTable: "Member",
-                principalColumn: "MemberID",
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Instrument_Member_MemberID",
-                table: "Instrument",
-                column: "MemberID",
-                principalTable: "Member",
-                principalColumn: "MemberID");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Live_Member_MemberID",
-                table: "Live",
-                column: "MemberID",
-                principalTable: "Member",
-                principalColumn: "MemberID",
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_LoginRecord_Member_MemberID",
-                table: "LoginRecord",
-                column: "MemberID",
-                principalTable: "Member",
-                principalColumn: "MemberID",
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Member_MemberPicture_Picture",
-                table: "Member",
-                column: "Picture",
-                principalTable: "MemberPicture",
-                principalColumn: "Picture",
-                onDelete: ReferentialAction.SetNull);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_MemberPicture_Member_MemberID",
-                table: "MemberPicture");
-
             migrationBuilder.DropTable(
                 name: "AttendanceRecord");
 
@@ -1038,6 +1017,12 @@ namespace LifetimeLiveHouse.Access.Migrations
 
             migrationBuilder.DropTable(
                 name: "MemberAccount");
+
+            migrationBuilder.DropTable(
+                name: "MemberHeadPicture");
+
+            migrationBuilder.DropTable(
+                name: "MemberPicture");
 
             migrationBuilder.DropTable(
                 name: "MemberVerificationStatus");
@@ -1103,16 +1088,13 @@ namespace LifetimeLiveHouse.Access.Migrations
                 name: "EventStatus");
 
             migrationBuilder.DropTable(
+                name: "Member");
+
+            migrationBuilder.DropTable(
                 name: "EmployeeRole");
 
             migrationBuilder.DropTable(
                 name: "Store");
-
-            migrationBuilder.DropTable(
-                name: "Member");
-
-            migrationBuilder.DropTable(
-                name: "MemberPicture");
 
             migrationBuilder.DropTable(
                 name: "MemberStatus");
