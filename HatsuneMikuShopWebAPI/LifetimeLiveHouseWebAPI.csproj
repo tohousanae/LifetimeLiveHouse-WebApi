@@ -14,7 +14,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
     <PackageReference Include="NETCore.MailKit" Version="2.1.0" />
     <PackageReference Include="StackExchange.Redis" Version="2.9.25" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.6" />
@@ -25,10 +25,8 @@
 
   <ItemGroup>
     <Folder Include="Areas\News\" />
-    <Folder Include="Services\" />
     <Folder Include="DTOs\Products\" />
     <Folder Include="DTOs\Products\" />
-    <Folder Include="Services\" />
   </ItemGroup>
 
   <ItemGroup>
