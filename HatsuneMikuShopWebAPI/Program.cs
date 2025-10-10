@@ -1,7 +1,11 @@
 using LifetimeLiveHouse.Access.Data;
+using LifetimeLiveHouseWebAPI.Services.Implementations;
+using LifetimeLiveHouseWebAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using NETCore.MailKit.Extensions;
+using NETCore.MailKit.Infrastructure.Internal;
 
 //using StackExchange.Redis;
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +22,20 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("LifetimeLiveHous
 
 //builder.Services.AddDbContext<IdentityDbContext>(options =>
 //options.UseSqlServer(builder.Configuration.GetConnectionString("LifetimeLiveHouseSysDBConnection")));
+builder.Services.AddScoped<IForgetPasswordService, ForgetPasswordService>();
+builder.Services.AddMailKit(config =>
+{
+    config.UseMailKit(new MailKitOptions()
+    {
+        Server = "smtp.gmail.com",
+        Port = 587,
+        SenderName = "Lifetime LiveHouse",
+        SenderEmail = "saigyoujiyuyukoth@gmail.com",
+        Account = "saigyoujiyuyukoth@gmail.com",
+        Password = "sobi nwxj kusx wuss",
+        Security = true
+    });
+});
 
 builder.Services.AddControllers();
 

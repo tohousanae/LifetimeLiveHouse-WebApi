@@ -41,8 +41,8 @@ namespace LifetimeLiveHouseWebAPI.Services.Implementations
                 {
                     MemberID = user.MemberID,
                     TokenHash = hash,
-                    CreatedAt = DateTime.UtcNow,
-                    ExpiresAt = DateTime.UtcNow.AddHours(1),
+                    CreatedAt = DateTime.Now,
+                    ExpiresAt = DateTime.Now.AddHours(1),
                     Used = false
                 };
                 _db.PasswordResetToken.Add(prt);
@@ -68,14 +68,14 @@ namespace LifetimeLiveHouseWebAPI.Services.Implementations
                 throw new InvalidOperationException("密碼與確認密碼不一致。");
 
             // 因為 token 是隨機字串，所以需逐筆比對（BCrypt 雜湊不可逆）
-            var validTokens = await _db.PasswordResetTokens
-                .Where(t => !t.Used && t.ExpiresAt > DateTime.UtcNow)
+            var validTokens = await _db.PasswordResetToken
+                .Where(t => !t.Used && t.ExpiresAt > DateTime.Now)
                 .ToListAsync();
 
             PasswordResetToken? prt = null;
             foreach (var tokenRecord in validTokens)
             {
-                if (BCrypt.Net.BCrypt.Verify(dto.Token, tokenRecord.TokenHash))
+                if (BCrypt.Net.BCrypt.Verify(dto.inputToken, tokenRecord.TokenHash))
                 {
                     prt = tokenRecord;
                     break;
@@ -85,13 +85,13 @@ namespace LifetimeLiveHouseWebAPI.Services.Implementations
             if (prt == null)
                 throw new InvalidOperationException("重設密碼 token 無效或已過期。");
 
-            var user = await _db.Users.FindAsync(prt.UserId);
+            var user = await _db.MemberAccount.FindAsync(prt.MemberID);
             if (user == null)
                 throw new InvalidOperationException("使用者不存在。");
 
-            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
+            user.Password = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
             prt.Used = true;
-            prt.UsedAt = DateTime.UtcNow;
+            prt.UsedAt = DateTime.Now;
 
             await _db.SaveChangesAsync();
             return "密碼已重設成功。";
