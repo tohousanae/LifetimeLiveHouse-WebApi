@@ -41,9 +41,9 @@ namespace LifetimeLiveHouseWebAPI.Services.Implementations
                 {
                     MemberID = user.MemberID,
                     TokenHash = hash,
-                    CreatedAt = DateTime.Now,
-                    ExpiresAt = DateTime.Now.AddHours(1),
-                    Used = false
+                    //CreatedAt = DateTime.Now, /已在模型設定
+                    //ExpiresAt = DateTime.Now.AddHours(1),
+                    //Used = false
                 };
                 _db.PasswordResetToken.Add(prt);
                 await _db.SaveChangesAsync();
@@ -72,15 +72,8 @@ namespace LifetimeLiveHouseWebAPI.Services.Implementations
                 .Where(t => !t.Used && t.ExpiresAt > DateTime.Now)
                 .ToListAsync();
 
-            PasswordResetToken? prt = null;
-            foreach (var tokenRecord in validTokens)
-            {
-                if (BCrypt.Net.BCrypt.Verify(dto.inputToken, tokenRecord.TokenHash))
-                {
-                    prt = tokenRecord;
-                    break;
-                }
-            }
+            PasswordResetToken? prt = validTokens
+                .FirstOrDefault(t => BCrypt.Net.BCrypt.Verify(dto.InputToken, t.TokenHash));
 
             if (prt == null)
                 throw new InvalidOperationException("重設密碼 token 無效或已過期。");
