@@ -54,7 +54,7 @@ namespace LifetimeLiveHouseWebAPI.Services.Implementations
                 await _emailService.SendAsync(
                     user.Email,
                     "重設密碼通知",
-                    $"請點擊以下連結以重設您的密碼：<br/><a href=\"{resetLink}\">{resetLink}</a>",
+                    $"請在1小時內點擊以下連結以重設您的密碼：<br/><a href=\"{resetLink}\">{resetLink}</a>",
                     isHtml: true
                 );
             }
@@ -81,7 +81,7 @@ namespace LifetimeLiveHouseWebAPI.Services.Implementations
             if (prt == null)
                 throw new InvalidOperationException("重設密碼 token 無效或已過期。");
 
-            var user = await _db.MemberAccount.FindAsync(prt.MemberID);
+            var user = await _db.MemberAccount.FindAsync(prt.MemberID.ToString());
             if (user == null)
                 throw new InvalidOperationException("使用者不存在。");
 
