@@ -64,6 +64,9 @@ namespace LifetimeLiveHouseWebAPI.Services.Implementations
 
         public async Task<string> ResetPasswordAsync(ResetPasswordDto dto)
         {
+
+            dto.InputToken = Uri.UnescapeDataString(dto.InputToken); // 先解 URI
+
             if (dto.NewPassword != dto.ConfirmPassword)
                 throw new InvalidOperationException("密碼與確認密碼不一致。");
 
@@ -72,9 +75,9 @@ namespace LifetimeLiveHouseWebAPI.Services.Implementations
                 .Where(t => !t.Used && t.ExpiresAt > DateTime.Now)
                 .ToListAsync();
 
-            PasswordResetToken? prt = validTokens
-                .FirstOrDefault(t => BCrypt.Net.BCrypt.Verify(dto.InputToken, t.TokenHash));
+            PasswordResetToken? prt = validTokens.FirstOrDefault(t => BCrypt.Net.BCrypt.Verify(dto.InputToken, t.TokenHash));
 
+            //return $"{prt}";
             if (prt == null)
                 throw new InvalidOperationException("重設密碼 token 無效或已過期。");
 

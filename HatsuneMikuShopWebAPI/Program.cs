@@ -72,8 +72,11 @@ builder.Services.AddCors(options =>
 
 
 // cookie驗證預設設定
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = "MemberLogin";
+})
+    .AddCookie("MemberLogin", options =>
     {
         //options.LoginPath = "/api/auth/login";
         //options.LogoutPath = "/api/auth/logout";
