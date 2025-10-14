@@ -81,7 +81,7 @@ namespace LifetimeLiveHouseWebAPI.Services.Implementations
             if (prt == null)
                 throw new InvalidOperationException("重設密碼 token 無效或已過期。");
 
-            var user = await _db.MemberAccount.FindAsync(prt.MemberID.ToString());
+            var user = await _db.MemberAccount.FirstOrDefaultAsync(a => a.MemberID == prt.MemberID);
             if (user == null)
                 throw new InvalidOperationException("使用者不存在。");
 
