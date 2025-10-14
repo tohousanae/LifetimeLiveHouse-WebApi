@@ -20,8 +20,7 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("LifetimeLiveHous
 builder.Services.AddDbContext<LifetimeLiveHouseSysDBContext2>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("LifetimeLiveHouseSysDBConnection")));
 
-//builder.Services.AddDbContext<IdentityDbContext>(options =>
-//options.UseSqlServer(builder.Configuration.GetConnectionString("LifetimeLiveHouseSysDBConnection")));
+// 住入服務
 builder.Services.AddScoped<IForgetPasswordService, ForgetPasswordService>();
 builder.Services.AddMailKit(config =>
 {
@@ -36,6 +35,7 @@ builder.Services.AddMailKit(config =>
         Security = true
     });
 });
+builder.Services.AddScoped<IMemberLoginService, MemberLoginService>();
 
 builder.Services.AddControllers();
 
