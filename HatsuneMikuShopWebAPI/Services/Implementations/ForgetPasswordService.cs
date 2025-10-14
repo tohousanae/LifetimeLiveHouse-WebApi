@@ -5,8 +5,6 @@ using LifetimeLiveHouseWebAPI.Helpers;
 using LifetimeLiveHouseWebAPI.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using NETCore.MailKit.Core;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace LifetimeLiveHouseWebAPI.Services.Implementations
 {
