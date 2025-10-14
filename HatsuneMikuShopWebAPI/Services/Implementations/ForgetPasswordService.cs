@@ -64,6 +64,7 @@ namespace LifetimeLiveHouseWebAPI.Services.Implementations
 
         public async Task<string> ResetPasswordAsync(ResetPasswordDto dto)
         {
+            await CleanupExpiredTokensAsync(); // 建立新token前先清除使用過或過期的token
 
             dto.InputToken = Uri.UnescapeDataString(dto.InputToken); // 先解 URI
 
@@ -91,6 +92,20 @@ namespace LifetimeLiveHouseWebAPI.Services.Implementations
 
             await _db.SaveChangesAsync();
             return "密碼已重設成功。";
+        }
+
+        // 刪除過期或使用過的token
+        public async Task CleanupExpiredTokensAsync()
+        {
+            var expiredTokens = await _db.PasswordResetToken
+                .Where(t => t.ExpiresAt < DateTime.Now || t.Used)
+                .ToListAsync();
+
+            if (expiredTokens.Any())
+            {
+                _db.PasswordResetToken.RemoveRange(expiredTokens);
+                await _db.SaveChangesAsync();
+            }
         }
     }
 }
