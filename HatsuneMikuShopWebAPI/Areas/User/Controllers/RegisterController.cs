@@ -18,7 +18,7 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
             _context = context;
         }
 
-        [HttpPost("register-full")]
+        [HttpPost("register")]
         public async Task<ActionResult> PostUserFullRegister(MemberRegisterDTO input)
         {
             // 檢查 Email / 手機
@@ -29,27 +29,27 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
             if (await _context.Member.AnyAsync(u => u.CellphoneNumber == input.CellphoneNumber))
                 return Unauthorized("手機號碼已被註冊");
 
-            var user = ConvertToUser(new MemberRegisterDTO
-            {
-                Name = input.Name,
-                Password = input.Password,
-                Birthday = input.Birthday,
-                CellphoneNumber = input.CellphoneNumber,
-                StatusCode = "0" // 預設啟用
+            //var user = ConvertToUser(new MemberRegisterDTO
+            //{
+            //    Name = input.Name,
+            //    Password = input.Password,
+            //    Birthday = input.Birthday,
+            //    CellphoneNumber = input.CellphoneNumber,
+            //    StatusCode = "0" // 預設啟用
 
-            });
+            //});
 
-            var userAccount = new MemberAccount
-            {
-                Email = input.Email,
-                Password = user.Password,
-                Member = user
-            };
+            //var userAccount = new MemberAccount
+            //{
+            //    Email = input.Email,
+            //    Password = user.Password,
+            //    Member = user
+            //};
 
-            _context.Member.Add(user);
-            _context.MemberAccount.Add(userAccount);
+            //_context.Member.Add(user);
+            //_context.MemberAccount.Add(userAccount);
 
-            await _context.SaveChangesAsync();
+            //await _context.SaveChangesAsync();
 
             return Ok("完整會員註冊成功");
         }
