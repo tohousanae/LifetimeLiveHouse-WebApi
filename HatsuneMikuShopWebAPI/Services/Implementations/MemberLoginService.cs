@@ -29,6 +29,10 @@ namespace LifetimeLiveHouseWebAPI.Services.Implementations
             if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.Password))
                 return new UnauthorizedObjectResult("帳號或密碼錯誤，請重新輸入");
 
+            if (user.Member.StatusCode == "2")
+                return new UnauthorizedObjectResult("該帳號已停權，請檢察您的電子郵件");
+
+            //if (user.Member.)
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Actor, user.Email),
