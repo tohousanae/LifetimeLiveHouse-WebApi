@@ -1,7 +1,6 @@
 using LifetimeLiveHouse.Access.Data;
 using LifetimeLiveHouseWebAPI.Services.Implementations;
 using LifetimeLiveHouseWebAPI.Services.Interfaces;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NETCore.MailKit.Extensions;
