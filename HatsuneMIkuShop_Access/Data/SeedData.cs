@@ -23,7 +23,7 @@ namespace LifetimeLiveHouse.Access.Data
             {
 
                 //(4)加上 using () 及 判斷資料庫是否有資料的程式
-                if (!context.Book.Any())
+                if (!context.Member.Any())
                 {
                     //(2)撰寫Book及ReBook資料表內的初始資料程式
                     string[] guid = { Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), Guid.NewGuid().ToString() };
