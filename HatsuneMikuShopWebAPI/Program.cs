@@ -102,7 +102,12 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        // 加入swagger request duration顯示
+        c.DisplayRequestDuration();
+    });
+
 }
 
 app.UseHttpsRedirection();
