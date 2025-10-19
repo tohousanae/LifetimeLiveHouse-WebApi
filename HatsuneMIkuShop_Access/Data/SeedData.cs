@@ -1,8 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using LifetimeLiveHouse.Access.Data;
 
-namespace LifetimeLiveHouse.Models
+namespace LifetimeLiveHouse.Access.Data
 {
     public class SeedData
     {
