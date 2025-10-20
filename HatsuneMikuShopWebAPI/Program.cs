@@ -98,6 +98,15 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
+//1.3.4 在Program.cs撰寫啟用Initializer的程式
+//執行專案時自動載入初始資料
+using (var scope = app.Services.CreateScope())
+{
+    var service = scope.ServiceProvider;
+
+    SeedData.Initialize(service);
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
