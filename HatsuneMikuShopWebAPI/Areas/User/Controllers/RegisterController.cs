@@ -20,11 +20,25 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
             _context = context;
         }
 
-        [HttpPost("register")]
-        public async Task<ActionResult> PostUserFullRegister(MemberRegisterDTO input)
-        {
-            private readonly IMemberRegisterService _registerService;
+        private readonly IMemberLoginService _loginService;
 
+        public LoginController(IMemberLoginService loginService)
+        {
+            _loginService = loginService;
+        }
+
+        [HttpPost("login")]
+        public async Task<ActionResult<string>> PostUserLogin(LoginDTO memberAccount)
+        {
+            return await _loginService.LoginAsync(memberAccount, HttpContext);
+        }
+
+        [HttpPost("logout")]
+        [Authorize]
+        public async Task<ActionResult<string>> Logout()
+        {
+            return await _loginService.LogoutAsync(HttpContext);
+        }
         public RegisterController(IMemberRegisterService RegisterController)
         {
             _loginService = loginService;
