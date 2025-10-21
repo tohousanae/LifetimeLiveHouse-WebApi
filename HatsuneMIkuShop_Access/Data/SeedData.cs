@@ -66,7 +66,7 @@ public static class SeedData
             new MemberAccount
             {
                 MemberID = member2.MemberID,
-                Email = "yukaribba17@yahoo.com",  // 修正 email 錯字
+                Email = "miku@sakuyaonline.uk",  // 修正 email 錯字
                 Password = BCrypt.Net.BCrypt.HashPassword("%Bb789012")
             }
         );
