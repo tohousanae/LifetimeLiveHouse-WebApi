@@ -9,6 +9,8 @@ namespace LifetimeLiveHouseWebAPI.Services.Interfaces
 
         Task<string> ResetPasswordAsync(ResetPasswordDto dto);
 
+        Task<string> ValidResetPasswordTokenAsync(ValidResetPasswordTokenDto dto);
+
         Task CleanupExpiredTokensAsync();
     }
 }

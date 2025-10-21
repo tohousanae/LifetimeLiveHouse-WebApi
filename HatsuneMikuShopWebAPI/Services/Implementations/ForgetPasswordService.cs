@@ -60,6 +60,26 @@ namespace LifetimeLiveHouseWebAPI.Services.Implementations
             return responseMsg;
         }
 
+        public async Task<string> ValidResetPasswordTokenAsync(ValidResetPasswordTokenDto dto)
+        {
+            await CleanupExpiredTokensAsync(); // 建立新token前先清除使用過或過期的token
+
+            dto.InputToken = Uri.UnescapeDataString(dto.InputToken); // 先解 URI
+
+            // 因為 token 是隨機字串，所以需逐筆比對（BCrypt 雜湊不可逆）
+            var validTokens = await _db.PasswordResetToken
+                .Where(t => !t.Used && t.ExpiresAt > DateTime.Now)
+                .ToListAsync();
+
+            PasswordResetToken? prt = validTokens.FirstOrDefault(t => BCrypt.Net.BCrypt.Verify(dto.InputToken, t.TokenHash));
+
+            //return $"{prt}";
+            if (prt == null)
+                throw new InvalidOperationException("重設密碼 token 無效或已過期。");
+
+            return $"{prt}";
+        }
+
         public async Task<string> ResetPasswordAsync(ResetPasswordDto dto)
         {
             await CleanupExpiredTokensAsync(); // 建立新token前先清除使用過或過期的token
@@ -91,7 +111,6 @@ namespace LifetimeLiveHouseWebAPI.Services.Implementations
             await _db.SaveChangesAsync();
             return "密碼已重設成功。";
         }
-
         // 刪除過期或使用過的token
         public async Task CleanupExpiredTokensAsync()
         {
