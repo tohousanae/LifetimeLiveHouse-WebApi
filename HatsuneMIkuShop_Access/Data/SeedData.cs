@@ -60,13 +60,13 @@ public static class SeedData
             new MemberAccount
             {
                 MemberID = member1.MemberID,
-                Email = "support@sakuyaonline.uk",
+                Email = "ming01@sakuyaonline.uk",
                 Password = BCrypt.Net.BCrypt.HashPassword("#Aa123456")
             },
             new MemberAccount
             {
                 MemberID = member2.MemberID,
-                Email = "miku@sakuyaonline.uk",  // 修正 email 錯字
+                Email = "lili02@sakuyaonline.uk",
                 Password = BCrypt.Net.BCrypt.HashPassword("%Bb789012")
             }
         );

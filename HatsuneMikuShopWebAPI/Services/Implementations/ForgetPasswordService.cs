@@ -27,7 +27,7 @@ namespace LifetimeLiveHouseWebAPI.Services.Implementations
         public async Task<string> ForgotPasswordAsync(ForgotPasswordDto dto)
         {
             var user = await _db.MemberAccount.SingleOrDefaultAsync(u => u.Email == dto.Email);
-            var responseMsg = "如果該信箱有註冊，我們已發送重設密碼信件，請檢查信件。";
+            var responseMsg = "如果該信箱有註冊，我們已發送重設密碼信件，請檢查信件，若未收到郵件請檢察您的垃圾信件夾。";
 
             if (user != null)
             {
