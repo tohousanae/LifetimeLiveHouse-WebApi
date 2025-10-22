@@ -53,7 +53,8 @@ public partial class Member
     [ForeignKey("MemberStatus")]
     [StringLength(1)]
     [Column(TypeName = "nchar")]
-    public string StatusCode { get; set; } = null!; // 狀態編號 (FK)
+    [Required]        // 確保在 C#／驗證層面必填
+    public string StatusCode { get; set; } = "0";  // 預設值為 "0"
 
     // 導覽屬性
     public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();

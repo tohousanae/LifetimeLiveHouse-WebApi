@@ -17,7 +17,7 @@ namespace LifetimeLiveHouse.Access.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.9")
+                .HasAnnotation("ProductVersion", "9.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -43,7 +43,7 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     b.HasIndex("EmployeeID");
 
-                    b.ToTable("AttendanceRecord", (string)null);
+                    b.ToTable("AttendanceRecord");
                 });
 
             modelBuilder.Entity("BandRole", b =>
@@ -59,7 +59,7 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     b.HasKey("BandRoleID");
 
-                    b.ToTable("BandRole", (string)null);
+                    b.ToTable("BandRole");
                 });
 
             modelBuilder.Entity("Cart", b =>
@@ -85,7 +85,7 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     b.HasIndex("ProductID");
 
-                    b.ToTable("Cart", (string)null);
+                    b.ToTable("Cart");
                 });
 
             modelBuilder.Entity("Category", b =>
@@ -101,7 +101,7 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     b.HasKey("CateID");
 
-                    b.ToTable("Category", (string)null);
+                    b.ToTable("Category");
                 });
 
             modelBuilder.Entity("Coupon", b =>
@@ -131,7 +131,7 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     b.HasIndex("ProductID");
 
-                    b.ToTable("Coupon", (string)null);
+                    b.ToTable("Coupon");
                 });
 
             modelBuilder.Entity("EmployeeAccount", b =>
@@ -153,7 +153,7 @@ namespace LifetimeLiveHouse.Access.Migrations
                     b.HasIndex("EmployeeID")
                         .IsUnique();
 
-                    b.ToTable("EmployeeAccount", (string)null);
+                    b.ToTable("EmployeeAccount");
                 });
 
             modelBuilder.Entity("Event", b =>
@@ -205,7 +205,7 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     b.HasIndex("StoreID");
 
-                    b.ToTable("Event", (string)null);
+                    b.ToTable("Event");
                 });
 
             modelBuilder.Entity("EventStatus", b =>
@@ -221,7 +221,7 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     b.HasKey("StatusCode");
 
-                    b.ToTable("EventStatus", (string)null);
+                    b.ToTable("EventStatus");
                 });
 
             modelBuilder.Entity("Instrument", b =>
@@ -266,7 +266,7 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     b.HasIndex("StoreID");
 
-                    b.ToTable("Instrument", (string)null);
+                    b.ToTable("Instrument");
                 });
 
             modelBuilder.Entity("LifetimeLiveHouse.Models.Employee", b =>
@@ -311,7 +311,7 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     b.HasIndex("StoreID");
 
-                    b.ToTable("Employee", (string)null);
+                    b.ToTable("Employee");
                 });
 
             modelBuilder.Entity("LifetimeLiveHouse.Models.EmployeeRole", b =>
@@ -327,7 +327,7 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     b.HasKey("RoleCode");
 
-                    b.ToTable("EmployeeRole", (string)null);
+                    b.ToTable("EmployeeRole");
                 });
 
             modelBuilder.Entity("LifetimeLiveHouse.Models.MemberVerificationStatus", b =>
@@ -343,7 +343,7 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     b.HasKey("MemberID");
 
-                    b.ToTable("MemberVerificationStatus", (string)null);
+                    b.ToTable("MemberVerificationStatus");
                 });
 
             modelBuilder.Entity("LifetimeLiveHouse.Models.News", b =>
@@ -376,7 +376,7 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     b.HasKey("NewsID");
 
-                    b.ToTable("News", (string)null);
+                    b.ToTable("News");
                 });
 
             modelBuilder.Entity("LifetimeLiveHouse.Models.PasswordResetToken", b =>
@@ -410,7 +410,7 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     b.HasIndex("MemberID");
 
-                    b.ToTable("PasswordResetToken", (string)null);
+                    b.ToTable("PasswordResetToken");
                 });
 
             modelBuilder.Entity("LifetimeLiveHouse.Models.ProductStatus", b =>
@@ -426,7 +426,7 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     b.HasKey("StatusCode");
 
-                    b.ToTable("ProductStatus", (string)null);
+                    b.ToTable("ProductStatus");
                 });
 
             modelBuilder.Entity("LifetimeLiveHouse.Models.RegisteredEvent", b =>
@@ -449,7 +449,7 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     b.HasIndex("MemberID");
 
-                    b.ToTable("RegisteredEvent", (string)null);
+                    b.ToTable("RegisteredEvent");
                 });
 
             modelBuilder.Entity("LifetimeLiveHouse.Models.Store", b =>
@@ -490,7 +490,7 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     b.HasKey("StoreID");
 
-                    b.ToTable("Store", (string)null);
+                    b.ToTable("Store");
                 });
 
             modelBuilder.Entity("Live", b =>
@@ -550,7 +550,7 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     b.HasIndex("StoreID");
 
-                    b.ToTable("Live", (string)null);
+                    b.ToTable("Live");
                 });
 
             modelBuilder.Entity("LoginRecord", b =>
@@ -578,7 +578,7 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     b.HasIndex("MemberID");
 
-                    b.ToTable("LoginRecord", (string)null);
+                    b.ToTable("LoginRecord");
                 });
 
             modelBuilder.Entity("Member", b =>
@@ -620,7 +620,7 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     b.HasIndex("StatusCode");
 
-                    b.ToTable("Member", (string)null);
+                    b.ToTable("Member");
                 });
 
             modelBuilder.Entity("MemberAccount", b =>
@@ -641,7 +641,7 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     b.HasIndex("MemberID");
 
-                    b.ToTable("MemberAccount", (string)null);
+                    b.ToTable("MemberAccount");
                 });
 
             modelBuilder.Entity("MemberHeadPicture", b =>
@@ -658,7 +658,7 @@ namespace LifetimeLiveHouse.Access.Migrations
                     b.HasIndex("MemberID")
                         .IsUnique();
 
-                    b.ToTable("MemberHeadPicture", (string)null);
+                    b.ToTable("MemberHeadPicture");
                 });
 
             modelBuilder.Entity("MemberPicture", b =>
@@ -674,7 +674,7 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     b.HasIndex("MemberID");
 
-                    b.ToTable("MemberPicture", (string)null);
+                    b.ToTable("MemberPicture");
                 });
 
             modelBuilder.Entity("MemberStatus", b =>
@@ -690,7 +690,7 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     b.HasKey("StatusCode");
 
-                    b.ToTable("MemberStatus", (string)null);
+                    b.ToTable("MemberStatus");
                 });
 
             modelBuilder.Entity("Notification", b =>
@@ -715,7 +715,7 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     b.HasIndex("MemberID");
 
-                    b.ToTable("Notification", (string)null);
+                    b.ToTable("Notification");
                 });
 
             modelBuilder.Entity("Order", b =>
@@ -763,7 +763,7 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     b.HasIndex("StatusCode");
 
-                    b.ToTable("Order", (string)null);
+                    b.ToTable("Order");
                 });
 
             modelBuilder.Entity("OrderDetail", b =>
@@ -793,7 +793,7 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     b.HasIndex("ShippingMethodCode");
 
-                    b.ToTable("OrderDetail", (string)null);
+                    b.ToTable("OrderDetail");
                 });
 
             modelBuilder.Entity("OrderDetailProduct", b =>
@@ -811,7 +811,7 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     b.HasIndex("OrderDetailOrderID", "OrderDetailProductID");
 
-                    b.ToTable("OrderDetailProduct", (string)null);
+                    b.ToTable("OrderDetailProduct");
                 });
 
             modelBuilder.Entity("OrderOrderDetail", b =>
@@ -829,7 +829,7 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     b.HasIndex("OrderDetailOrderID", "OrderDetailProductID");
 
-                    b.ToTable("OrderOrderDetail", (string)null);
+                    b.ToTable("OrderOrderDetail");
                 });
 
             modelBuilder.Entity("OrderStatus", b =>
@@ -845,7 +845,7 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     b.HasKey("StatusCode");
 
-                    b.ToTable("OrderStatus", (string)null);
+                    b.ToTable("OrderStatus");
                 });
 
             modelBuilder.Entity("PayType", b =>
@@ -864,7 +864,7 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     b.HasKey("PayCode");
 
-                    b.ToTable("PayType", (string)null);
+                    b.ToTable("PayType");
                 });
 
             modelBuilder.Entity("Product", b =>
@@ -917,7 +917,7 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     b.HasIndex("StatusCode");
 
-                    b.ToTable("Product", (string)null);
+                    b.ToTable("Product");
                 });
 
             modelBuilder.Entity("RehearsalStudio", b =>
@@ -962,7 +962,7 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     b.HasIndex("StoreID");
 
-                    b.ToTable("RehearsalStudio", (string)null);
+                    b.ToTable("RehearsalStudio");
                 });
 
             modelBuilder.Entity("Seat", b =>
@@ -986,7 +986,7 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     b.HasIndex("StoreID");
 
-                    b.ToTable("Seat", (string)null);
+                    b.ToTable("Seat");
                 });
 
             modelBuilder.Entity("ShippingMethod", b =>
@@ -1002,7 +1002,7 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     b.HasKey("ShippingMethodCode");
 
-                    b.ToTable("ShippingMethod", (string)null);
+                    b.ToTable("ShippingMethod");
                 });
 
             modelBuilder.Entity("AttendanceRecord", b =>

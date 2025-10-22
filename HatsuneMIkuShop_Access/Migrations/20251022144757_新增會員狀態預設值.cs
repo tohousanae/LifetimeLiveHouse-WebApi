@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace LifetimeLiveHouse.Access.Migrations
 {
     /// <inheritdoc />
-    public partial class IntitalCreate : Migration
+    public partial class 新增會員狀態預設值 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

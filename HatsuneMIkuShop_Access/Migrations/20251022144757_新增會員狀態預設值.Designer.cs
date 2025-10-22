@@ -12,15 +12,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LifetimeLiveHouse.Access.Migrations
 {
     [DbContext(typeof(LifetimeLiveHouseSysDBContext))]
-    [Migration("20251008093646_IntitalCreate")]
-    partial class IntitalCreate
+    [Migration("20251022144757_新增會員狀態預設值")]
+    partial class 新增會員狀態預設值
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.9")
+                .HasAnnotation("ProductVersion", "9.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);

@@ -1,4 +1,5 @@
-﻿using LifetimeLiveHouseWebAPI.DTOs.Users;
+﻿using Humanizer;
+using LifetimeLiveHouseWebAPI.DTOs.Users;
 using LifetimeLiveHouseWebAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,13 +20,24 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<string>> PostUserLogin(LoginDTO memberAccount)
         {
-            return await _loginService.LoginAsync(memberAccount, HttpContext);
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            try
+            {
+                return await _loginService.LoginAsync(memberAccount, HttpContext);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            
         }
 
         [HttpPost("logout")]
         [Authorize]
         public async Task<ActionResult<string>> Logout()
         {
+
             return await _loginService.LogoutAsync(HttpContext);
         }
     }

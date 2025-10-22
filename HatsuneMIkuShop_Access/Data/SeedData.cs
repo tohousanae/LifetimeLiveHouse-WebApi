@@ -39,7 +39,7 @@ public static class SeedData
             Name = "林小明",
             Birthday = DateTime.Parse("1900-01-01"),
             CellphoneNumber = "0912345678",
-            StatusCode = "0",
+            //StatusCode = "0", 預設值已在模型設定
             Cash = 1000,
             MemberPoint = 100
         };
@@ -48,7 +48,7 @@ public static class SeedData
             Name = "張麗麗",
             Birthday = DateTime.Parse("1985-05-05"),
             CellphoneNumber = "0987654321",
-            StatusCode = "0",
+            //StatusCode = "0", 預設值已在模型設定
             Cash = 2000,
             MemberPoint = 200
         };
