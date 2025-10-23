@@ -20,7 +20,16 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<string>> MemberRegister(MemberRegisterDTO dto)
         {
-            return await _memberRegister.MemberRegisterAsync(dto);
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            try
+            {
+                return await _memberRegister.MemberRegisterAsync(dto);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
     }
 
