@@ -49,9 +49,9 @@ public class MemberRegisterServices : IMemberRegisterServices
         // 建立帳號（未驗證）
         var account = new MemberAccount
         {
-            MemberID = member.ID,
+            MemberID = member.MemberID,
             Email = dto.Email,
-            PasswordHash = Bycrdto.PasswordHash,
+            Password = BCrypt.Net.BCrypt.HashPassword(dto.Password),
             IsEmailVerified = false,
             EmailVerificationToken = Guid.NewGuid().ToString("N"),
             EmailVerificationTokenExpiry = DateTime.UtcNow.AddHours(24),
