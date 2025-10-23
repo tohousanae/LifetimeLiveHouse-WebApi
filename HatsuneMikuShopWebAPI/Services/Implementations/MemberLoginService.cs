@@ -8,14 +8,9 @@ using System.Security.Claims;
 
 namespace LifetimeLiveHouseWebAPI.Services.Implementations
 {
-    public class MemberLoginService : IMemberLoginService
+    public class MemberLoginService(LifetimeLiveHouseSysDBContext context) : IMemberLoginService
     {
-        private readonly LifetimeLiveHouseSysDBContext _context;
-
-        public MemberLoginService(LifetimeLiveHouseSysDBContext context)
-        {
-            _context = context;
-        }
+        private readonly LifetimeLiveHouseSysDBContext _context = context;
 
         public async Task<ActionResult<string>> LoginAsync(LoginDTO loginDto, HttpContext httpContext)
         {

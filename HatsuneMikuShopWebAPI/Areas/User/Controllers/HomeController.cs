@@ -23,5 +23,5 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
 //還有很多名稱與設計模式相關，例如 builder、factory、observer 等等。
 //我的很多命名方式都參考了微軟 .NET 程式碼、領域驅動設計和 CQRS 的做法。
 
-//API回應時間建議參考：https://ithelp.ithome.com.tw/m/articles/10363630
+//API回應時間建議參考：https://ithelp.ithome.com.tw/articles/10363630
 //會員信箱、手機驗證流程教學：https://www.tsg.com.tw/blog-detail9-232-1-verify.htm

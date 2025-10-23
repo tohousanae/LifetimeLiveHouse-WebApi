@@ -22,7 +22,7 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
 
             try
             {
-                var result = await _service.ForgotPasswordAsync(dto);
+                var result = await _service.SendForgotPasswordEmailAsync(dto);
                 return Ok(new { message = result });
             }
             catch (InvalidOperationException ex)

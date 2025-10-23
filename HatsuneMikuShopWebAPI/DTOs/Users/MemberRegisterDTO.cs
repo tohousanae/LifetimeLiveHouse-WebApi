@@ -6,6 +6,7 @@ namespace LifetimeLiveHouseWebAPI.DTOs.Users
 {
     public class MemberRegisterDTO
     {
+        // Member
         [StringLength(40)]
         public string Name { get; set; } = null!;    // 暱稱
 
@@ -16,6 +17,8 @@ namespace LifetimeLiveHouseWebAPI.DTOs.Users
         [StringLength(20)]
         public string CellphoneNumber { get; set; } = null!;   // 手機號碼
 
+
+        // MemberAccount
         [StringLength(30)]
         public string Email { get; set; } = null!;
 

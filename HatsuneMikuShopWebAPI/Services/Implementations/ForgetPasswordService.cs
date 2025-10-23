@@ -8,23 +8,16 @@ using NETCore.MailKit.Core;
 
 namespace LifetimeLiveHouseWebAPI.Services.Implementations
 {
-    public class ForgetPasswordService : IForgetPasswordService
+    public class ForgetPasswordService(
+        LifetimeLiveHouseSysDBContext db,
+        IEmailService emailService,
+        IConfiguration config) : IForgetPasswordService
     {
-        private readonly LifetimeLiveHouseSysDBContext _db;
-        private readonly IEmailService _emailService; // 假設你已有這個服務
-        private readonly string _frontendBaseUrl;
+        private readonly LifetimeLiveHouseSysDBContext _db = db;
+        private readonly IEmailService _emailService = emailService; // 假設你已有這個服務
+        private readonly string _frontendBaseUrl = config["FrontendBaseUrl"] ?? "https://example.com";
 
-        public ForgetPasswordService(
-            LifetimeLiveHouseSysDBContext db,
-            IEmailService emailService,
-            IConfiguration config)
-        {
-            _db = db;
-            _emailService = emailService;
-            _frontendBaseUrl = config["FrontendBaseUrl"] ?? "https://example.com"; // 可放 appsettings.json
-        }
-
-        public async Task<string> ForgotPasswordAsync(ForgotPasswordDto dto)
+        public async Task<string> SendForgotPasswordEmailAsync(ForgotPasswordDto dto)
         {
             var user = await _db.MemberAccount.SingleOrDefaultAsync(u => u.Email == dto.Email);
             var responseMsg = "如果該信箱有註冊，我們已發送重設密碼信件，請檢查信件，若未收到郵件請檢察您的垃圾信件夾。";
