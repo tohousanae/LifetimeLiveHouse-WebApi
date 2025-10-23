@@ -7,6 +7,6 @@ namespace LifetimeLiveHouseWebAPI.Services.Interfaces
     {
         Task<ActionResult<string>> MemberRegisterAsync(MemberRegisterDTO dto);
         Task<ActionResult<string>> VerifyEmailAsync(long accountId, string token);
-        Task<ActionResult<string>> VerifyPhoneAsync(long accountId, string code):
+        Task<ActionResult<string>> VerifyPhoneAsync(long accountId, string code);
     }
 }
