@@ -1,5 +1,4 @@
-﻿using Humanizer;
-using LifetimeLiveHouseWebAPI.DTOs.Users;
+﻿using LifetimeLiveHouseWebAPI.DTOs.Users;
 using LifetimeLiveHouseWebAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
