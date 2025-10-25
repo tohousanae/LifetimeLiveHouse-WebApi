@@ -37,7 +37,6 @@ public class MemberRegisterServices : IMemberRegisterServices
 
         //if (await _context.Member.AnyAsync(u => u.CellphoneNumber == dto.CellphoneNumber))
         //    return new BadRequestObjectResult("手機號碼已被註冊");
-        // 檢查信箱／手機是否已被註冊
         var checkResult = await CheckEmailOrCellphoneAlreadyRegisteredAsync(dto.Email, dto.CellphoneNumber);
         if (checkResult != null)
         {
