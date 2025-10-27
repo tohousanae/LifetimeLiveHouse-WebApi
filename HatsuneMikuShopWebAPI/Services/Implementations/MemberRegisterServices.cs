@@ -158,9 +158,9 @@ public class MemberRegisterServices : IMemberRegisterServices
 
         return account;
     }
-    public async Task<MemberVerificationStatus> InsertMemberVerificationStatus(long memberId)
+    public async Task<MemberEmailVerificationStatus> InsertMemberVerificationStatus(long memberId)
     {
-        var verificationStatus = new MemberVerificationStatus
+        var verificationStatus = new MemberEmailVerificationStatus
         {
             MemberID = memberId,
             IsEmailVerified = false,
@@ -185,7 +185,7 @@ public class MemberRegisterServices : IMemberRegisterServices
     public async Task<ActionResult<string>> VerifyEmailAsync(long accountId, string token)
     {
         var account = await _context.MemberAccount
-            .FirstOrDefaultAsync(a => a.ID == accountId && a.EmailVerificationToken == token);
+            .FirstOrDefaultAsync(a => a.MemberID == accountId && a.EmailVerificationToken == token);
 
         if (account == null)
             return new BadRequestObjectResult("驗證連結無效");

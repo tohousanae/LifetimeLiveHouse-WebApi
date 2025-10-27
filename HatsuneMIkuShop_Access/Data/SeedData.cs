@@ -74,13 +74,13 @@ public static class SeedData
 
         // 新增驗證狀態
         context.MemberVerificationStatus.AddRange(
-            new MemberVerificationStatus
+            new MemberEmailVerificationStatus
             {
                 MemberID = member1.MemberID,
                 PhoneVerificationStatus = false,
                 EmailVerificationStatus = false
             },
-            new MemberVerificationStatus
+            new MemberEmailVerificationStatus
             {
                 MemberID = member2.MemberID,
                 PhoneVerificationStatus = false,

@@ -44,7 +44,9 @@ namespace LifetimeLiveHouse.Access.Data
 
         public virtual DbSet<MemberStatus> MemberStatus { get; set; }
 
-        public virtual DbSet<MemberVerificationStatus> MemberVerificationStatus { get; set; }
+        public virtual DbSet<MemberEmailVerificationStatus> MemberEmailVerificationStatus { get; set; }
+
+        public virtual DbSet<MemberPhoneVerificationStatus> MemberPhoneVerificationStatus { get; set; }
 
         public virtual DbSet<News> News { get; set; }
 

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LifetimeLiveHouse.Models
 {
-    public class MemberVerificationStatus
+    public class MemberEmailVerificationStatus
     {
         [Key]
         [ForeignKey("Member")]

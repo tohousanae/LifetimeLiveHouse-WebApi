@@ -61,7 +61,9 @@ public partial class Member
 
     public virtual MemberStatus MemberStatus { get; set; } = null!;
 
-    public virtual MemberVerificationStatus MemberVerificationStatus { get; set; } = null!;
+    public virtual MemberEmailVerificationStatus MemberEmailVerificationStatus { get; set; } = null!;
+
+    public virtual MemberPhoneVerificationStatus MemberPhoneVerificationStatus { get; set; } = null!;
 
     public virtual Seat? Seat { get; set; }
 
