@@ -73,18 +73,30 @@ public static class SeedData
         context.SaveChanges();
 
         // 新增驗證狀態
-        context.MemberVerificationStatus.AddRange(
+        context.MemberEmailVerificationStatus.AddRange(
             new MemberEmailVerificationStatus
             {
                 MemberID = member1.MemberID,
-                PhoneVerificationStatus = false,
-                EmailVerificationStatus = false
+                IsEmailVerified = false
             },
             new MemberEmailVerificationStatus
             {
                 MemberID = member2.MemberID,
-                PhoneVerificationStatus = false,
-                EmailVerificationStatus = false
+                IsEmailVerified = false
+            }
+        );
+        context.SaveChanges();
+
+        context.MemberPhoneVerificationStatus.AddRange(
+            new MemberPhoneVerificationStatus
+            {
+                MemberID = member1.MemberID,
+                IsPhoneVerified = false
+            },
+            new MemberPhoneVerificationStatus
+            {
+                MemberID = member2.MemberID,
+                IsPhoneVerified = false
             }
         );
         context.SaveChanges();

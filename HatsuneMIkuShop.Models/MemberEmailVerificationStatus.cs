@@ -9,14 +9,12 @@ namespace LifetimeLiveHouse.Models
         [ForeignKey("Member")]
         public long MemberID { get; set; } 
 
-        public bool IsPhoneVerified { get; set; } = false;
-
         public bool IsEmailVerified { get; set; } = false;
 
-        IsEmailVerified
-            EmailVerificationToken 
-            EmailVerificationTokenExpiry = DateTime.Now.AddHours(24),
-            IsPhoneVerified = false
+        public string? EmailVerificationTokenHash { get; set; }
+
+        public DateTime EmailVerificationTokenExpiry { get; set; } = DateTime.Now.AddHours(24);
+
         public virtual Member Member { get; set; } = null!;
 
     }
