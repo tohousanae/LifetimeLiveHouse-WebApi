@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using LifetimeLiveHouseWebAPI.DTOs.Users;
 
-namespace LifetimeLiveHouseWebAPI.Services.Interfaces
+namespace LifetimeLiveHouseWebAPI.Modules.Member.Interfaces
 {
     public interface IForgetPasswordService
     {

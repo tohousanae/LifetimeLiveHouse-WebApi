@@ -1,10 +1,10 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace LifetimeLiveHouseWebAPI.Helpers
+namespace Common.Helpers
 {
     // 密碼產生工具類別
-    public static class PasswordTokenHelper
+    public static class TokenGeneratorHelper
     {
         private const string Upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         private const string Lower = "abcdefghijklmnopqrstuvwxyz";

@@ -1,12 +1,12 @@
 ﻿using LifetimeLiveHouse.Access.Data;
 using LifetimeLiveHouse.Models;
+using LifetimeLiveHouse.Services.Member.Interfaces;
 using LifetimeLiveHouseWebAPI.DTOs.Users;
 using LifetimeLiveHouseWebAPI.Helpers;
-using LifetimeLiveHouseWebAPI.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using NETCore.MailKit.Core;
 
-namespace LifetimeLiveHouseWebAPI.Services.Implementations
+namespace LifetimeLiveHouse.Services.Member.Implementations
 {
     public class ForgetPasswordService(
         LifetimeLiveHouseSysDBContext db,

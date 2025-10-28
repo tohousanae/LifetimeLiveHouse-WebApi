@@ -32,6 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Common.Helpers\Common.Helpers.csproj" />
     <ProjectReference Include="..\HatsuneMIkuShop_Access\LifetimeLiveHouse.Access.csproj" />
   </ItemGroup>
 

@@ -1,5 +1,5 @@
 ﻿using LifetimeLiveHouseWebAPI.DTOs.Users;
-using LifetimeLiveHouseWebAPI.Services.Interfaces;
+using LifetimeLiveHouseWebAPI.Modules.Member.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers

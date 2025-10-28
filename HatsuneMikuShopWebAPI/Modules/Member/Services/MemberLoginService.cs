@@ -1,12 +1,12 @@
 ﻿using LifetimeLiveHouse.Access.Data;
 using LifetimeLiveHouseWebAPI.DTOs.Users;
-using LifetimeLiveHouseWebAPI.Services.Interfaces;
+using LifetimeLiveHouseWebAPI.Modules.Member.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
-namespace LifetimeLiveHouseWebAPI.Services.Implementations
+namespace LifetimeLiveHouseWebAPI.Modules.Member.Services
 {
     public class MemberLoginService(LifetimeLiveHouseSysDBContext context) : IMemberLoginService
     {
@@ -27,8 +27,8 @@ namespace LifetimeLiveHouseWebAPI.Services.Implementations
                     u.Password,
                     u.Member.StatusCode,
                     u.Member.Name,
-                    u.Member.MemberVerificationStatus.PhoneVerificationStatus,
-                    u.Member.MemberVerificationStatus.EmailVerificationStatus
+                    u.Member.MemberEmailVerificationStatus.IsEmailVerified,
+                    u.Member.MemberPhoneVerificationStatus.IsPhoneVerified
                 })
                 .FirstOrDefaultAsync();
 
@@ -39,11 +39,11 @@ namespace LifetimeLiveHouseWebAPI.Services.Implementations
             if (user.StatusCode == "1")
                 return new UnauthorizedObjectResult("該帳號已停權，請檢察您的電子郵件");
 
-            //if (!user.PhoneVerificationStatus)
-            //    return new UnauthorizedObjectResult("未完成手機號碼驗證");
+            if (!user.IsPhoneVerified)
+                return new UnauthorizedObjectResult("未完成手機號碼驗證");
 
-            //if (!user.EmailVerificationStatus)
-            //    return new UnauthorizedObjectResult("未完成電子郵件驗證");
+            if (!user.IsEmailVerified)
+                return new UnauthorizedObjectResult("未完成電子郵件驗證");
 
             var claims = new List<Claim>
             {

@@ -11,7 +11,7 @@ namespace LifetimeLiveHouse.Models
 
         public bool IsEmailVerified { get; set; } = false;
 
-        public string? EmailVerificationTokenHash { get; set; }
+        public string? EmailVerificationTokenHash { get; set; } = Common.Helpers.TokenGeneratorHelper.GeneratePassword(100);
 
         public DateTime EmailVerificationTokenExpiry { get; set; } = DateTime.Now.AddHours(24);
 

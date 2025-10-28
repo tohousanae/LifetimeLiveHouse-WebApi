@@ -16,4 +16,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Common.Helpers\Common.Helpers.csproj" />
+  </ItemGroup>
+
 </Project>
