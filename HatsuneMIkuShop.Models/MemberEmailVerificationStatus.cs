@@ -13,7 +13,7 @@ namespace LifetimeLiveHouse.Models
 
         public string? EmailVerificationTokenHash { get; set; } = Common.Helpers.TokenGeneratorHelper.GeneratePassword(100);
 
-        public DateTime EmailVerificationTokenExpiry { get; set; } = DateTime.Now.AddHours(24);
+        public DateTime? EmailVerificationTokenExpiry { get; set; } = DateTime.Now.AddHours(24);
 
         public virtual Member Member { get; set; } = null!;
 

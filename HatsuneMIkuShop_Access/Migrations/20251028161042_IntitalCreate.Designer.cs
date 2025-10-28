@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LifetimeLiveHouse.Access.Migrations
 {
     [DbContext(typeof(LifetimeLiveHouseSysDBContext))]
-    [Migration("20251028090748_IntitalCreate")]
+    [Migration("20251028161042_IntitalCreate")]
     partial class IntitalCreate
     {
         /// <inheritdoc />
@@ -338,7 +338,7 @@ namespace LifetimeLiveHouse.Access.Migrations
                     b.Property<long>("MemberID")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTime>("EmailVerificationTokenExpiry")
+                    b.Property<DateTime?>("EmailVerificationTokenExpiry")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("EmailVerificationTokenHash")

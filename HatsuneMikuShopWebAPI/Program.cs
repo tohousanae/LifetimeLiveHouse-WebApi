@@ -1,8 +1,10 @@
 using LifetimeLiveHouse.Access.Data;
-using LifetimeLiveHouseWebAPI.Modules.Member.Interfaces;
-using LifetimeLiveHouseWebAPI.Modules.Member.Services;
+using LifetimeLiveHouse.Models;
+using LifetimeLiveHouseWebAPI.Modules.User.Interfaces;
+using LifetimeLiveHouseWebAPI.Modules.User.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using NETCore.MailKit.Extensions;
 using NETCore.MailKit.Infrastructure.Internal;
 
@@ -35,7 +37,15 @@ builder.Services.AddMailKit(config =>
     });
 });
 builder.Services.AddScoped<IMemberLoginService, MemberLoginService>();
-
+// 設定選項
+builder.Services.Configure<TwilioOptions>(builder.Configuration.GetSection("Twilio"));
+builder.Services.AddSingleton(sp =>
+{
+    var opts = sp.GetRequiredService<IOptions<TwilioOptions>>().Value;
+    Twilio.TwilioClient.Init(opts.AccountSid, opts.AuthToken);
+    return Twilio.TwilioClient.GetRestClient();
+});
+builder.Services.AddScoped<IMemberRegisterServices, MemberRegisterServices>();
 builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

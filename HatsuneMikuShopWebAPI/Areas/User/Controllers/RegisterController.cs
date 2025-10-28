@@ -1,5 +1,5 @@
 ﻿using LifetimeLiveHouseWebAPI.DTOs.Users;
-using LifetimeLiveHouseWebAPI.Modules.Member.Interfaces;
+using LifetimeLiveHouseWebAPI.Modules.User.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
@@ -24,6 +24,17 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
             {
                 return BadRequest(new { message = ex.Message });
             }
+        }
+        [HttpGet("verify-email")]
+        public async Task<ActionResult<string>> VerifyEmail([FromQuery] long accountId, [FromQuery] string token)
+        {
+            return await _memberRegister.VerifyEmailAsync(accountId, token);
+        }
+
+        [HttpPost("verify-phone")]
+        public async Task<ActionResult<string>> VerifyPhone([FromBody] VerifyPhoneDTO dto)
+        {
+            return await _memberRegister.VerifyPhoneAsync(dto.MemberId, dto.Code);
         }
     }
 

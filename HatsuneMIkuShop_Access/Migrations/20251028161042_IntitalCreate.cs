@@ -431,7 +431,7 @@ namespace LifetimeLiveHouse.Access.Migrations
                     MemberID = table.Column<long>(type: "bigint", nullable: false),
                     IsEmailVerified = table.Column<bool>(type: "bit", nullable: false),
                     EmailVerificationTokenHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    EmailVerificationTokenExpiry = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    EmailVerificationTokenExpiry = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {

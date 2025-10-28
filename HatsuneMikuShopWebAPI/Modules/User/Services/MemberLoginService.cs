@@ -1,12 +1,12 @@
 ﻿using LifetimeLiveHouse.Access.Data;
 using LifetimeLiveHouseWebAPI.DTOs.Users;
-using LifetimeLiveHouseWebAPI.Modules.Member.Interfaces;
+using LifetimeLiveHouseWebAPI.Modules.User.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
-namespace LifetimeLiveHouseWebAPI.Modules.Member.Services
+namespace LifetimeLiveHouseWebAPI.Modules.User.Services
 {
     public class MemberLoginService(LifetimeLiveHouseSysDBContext context) : IMemberLoginService
     {

@@ -1,7 +1,7 @@
 ﻿using LifetimeLiveHouseWebAPI.DTOs.Users;
 using Microsoft.AspNetCore.Mvc;
 
-namespace LifetimeLiveHouseWebAPI.Modules.Member.Interfaces
+namespace LifetimeLiveHouseWebAPI.Modules.User.Interfaces
 {
     public interface IMemberLoginService
     {

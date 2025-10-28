@@ -335,7 +335,7 @@ namespace LifetimeLiveHouse.Access.Migrations
                     b.Property<long>("MemberID")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTime>("EmailVerificationTokenExpiry")
+                    b.Property<DateTime?>("EmailVerificationTokenExpiry")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("EmailVerificationTokenHash")
