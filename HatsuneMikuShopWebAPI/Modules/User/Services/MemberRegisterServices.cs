@@ -40,16 +40,10 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
             }
 
             // 建立會員、會員帳號、未驗證的會員手機信箱驗證狀態
-            await InsertMember(dto);
+            await InsertMemberAsync(dto);
 
             // 發送信箱驗證信
-            var emailVerifyLink = $"{_frontendBaseUrl}/verify-email?token={Uri.EscapeDataString(account.EmailVerificationToken)}&accountId={account.ID}";
-            var emailBody = $@"
-            <p>您好 {dto.Name}：</p>
-            <p>請點擊以下連結完成信箱驗證：</p>
-            <p><a href='{emailVerifyLink}'>點我完成驗證</a></p>
-            <p>此連結將在 24 小時後失效。</p>";
-            await _emailService.SendAsync(dto.Email, "會員註冊 – 信箱驗證", emailBody, true);
+            await SendVerificationEmailAsync(dto.Name);
 
             // 發送手機簡訊驗證（使用 Twilio Verify）
             var serviceSid = _twilioOpts.VerifyServiceSid;
@@ -61,7 +55,17 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
             );
             return new OkObjectResult($"我們已發送驗證信至您的信箱({dto.Email})，請點選信件中的連結完成驗證。");
         }
-        private async Task<ActionResult<string>?> CheckEmailOrCellphoneAlreadyRegisteredAsync(string email, string cellphoneNumber)
+        public async Task<ActionResult<string>> SendVerificationEmailAsync(string memberName);
+        {
+            var emailVerifyLink = $"{_frontendBaseUrl}/verify-email?token={Uri.EscapeDataString(account.EmailVerificationToken)}&accountId={account.ID}";
+            var emailBody = $@"
+            <p>您好 {dto.Name}：</p>
+            <p>請點擊以下連結完成信箱驗證：</p>
+            <p><a href='{emailVerifyLink}'>點我完成驗證</a></p>
+            <p>此連結將在 24 小時後失效。</p>";
+            await _emailService.SendAsync(dto.Email, "會員註冊 – 信箱驗證", emailBody, true);
+        }
+        public async Task<ActionResult<string>?> CheckEmailOrCellphoneAlreadyRegisteredAsync(string email, string cellphoneNumber)
         {
             if (await _context.MemberAccount.AnyAsync(u => u.Email == email))
             {
@@ -75,7 +79,7 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
 
             return null;  // 表示都沒問題
         }
-        public async Task<Member> InsertMember(MemberRegisterDTO dto)
+        public async Task<Member> InsertMemberAsync(MemberRegisterDTO dto)
         {
             var member = new Member
             {
@@ -95,13 +99,13 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
             }
 
             // 新增帳號並回傳 Member（或回傳帳號，看你的需求）
-            await InsertMemberAccount(member.MemberID, dto.Email, dto.Password);
-            await InsertMemberEmailVerificationStatus(member.MemberID);
-            await InsertMemberPhoneVerificationStatus(member.MemberID);
+            await InsertMemberAccountAsync(member.MemberID, dto.Email, dto.Password);
+            await InsertMemberEmailVerificationStatusAsync(member.MemberID);
+            await InsertMemberPhoneVerificationStatusAsync(member.MemberID);
             return member;
         }
 
-        public async Task<MemberAccount> InsertMemberAccount(long memberId, string email, string password)
+        public async Task<MemberAccount> InsertMemberAccountAsync(long memberId, string email, string password)
         {
             var account = new MemberAccount
             {
@@ -123,7 +127,7 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
 
             return account;
         }
-        public async Task<MemberEmailVerificationStatus> InsertMemberEmailVerificationStatus(long memberId)
+        public async Task<MemberEmailVerificationStatus> InsertMemberEmailVerificationStatusAsync(long memberId)
         {
             var verificationStatus = new MemberEmailVerificationStatus
             {
@@ -142,7 +146,7 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
             }
             return verificationStatus;
         }
-        public async Task<MemberPhoneVerificationStatus> InsertMemberPhoneVerificationStatus(long memberId)
+        public async Task<MemberPhoneVerificationStatus> InsertMemberPhoneVerificationStatusAsync(long memberId)
         {
             var verificationStatus = new MemberPhoneVerificationStatus
             {
@@ -207,9 +211,11 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
 
             if (verificationCheck.Status == "approved")
             {
-                account.IsPhoneVerified = true;
+                await _context.MemberPhoneVerificationStatus
+                    .Where(s => s.MemberID == memberId)
+                    .ExecuteUpdateAsync(s => s
+                        .SetProperty(p => p.IsPhoneVerified, true));
 
-                await _context.SaveChangesAsync();
                 return new OkObjectResult("手機驗證成功！");
             }
             else

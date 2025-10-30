@@ -26,9 +26,9 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
             }
         }
         [HttpGet("verify-email")]
-        public async Task<ActionResult<string>> VerifyEmail([FromQuery] long accountId, [FromQuery] string token)
+        public async Task<ActionResult<string>> VerifyEmail([FromQuery] long memberId, [FromQuery] string token)
         {
-            return await _memberRegister.VerifyEmailAsync(accountId, token);
+            return await _memberRegister.VerifyEmailAsync(memberId, token);
         }
 
         [HttpPost("verify-phone")]
