@@ -53,17 +53,18 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
                 channel: "sms",
                 pathServiceSid: serviceSid
             );
-            return new OkObjectResult($"我們已發送驗證信至您的信箱({dto.Email})，請點選信件中的連結完成驗證。");
         }
         public async Task<ActionResult<string>> SendVerificationEmailAsync(string memberName);
         {
-            var emailVerifyLink = $"{_frontendBaseUrl}/verify-email?token={Uri.EscapeDataString(account.EmailVerificationToken)}&accountId={account.ID}";
+            var frontendBaseUrl = _frontendBaseUrl
+            var emailVerifyLink = $"{frontendBaseUrl}/verify-email?token={Uri.EscapeDataString(account.EmailVerificationToken)}&accountId={account.ID}";
             var emailBody = $@"
-            <p>您好 {dto.Name}：</p>
-            <p>請點擊以下連結完成信箱驗證：</p>
-            <p><a href='{emailVerifyLink}'>點我完成驗證</a></p>
-            <p>此連結將在 24 小時後失效。</p>";
-            await _emailService.SendAsync(dto.Email, "會員註冊 – 信箱驗證", emailBody, true);
+                <p>您好 {dto.Name}：</p>
+                <p>請點擊以下連結完成信箱驗證：</p>
+                <p><a href='{emailVerifyLink}'>點我完成驗證</a></p>
+                <p>此連結將在 24 小時後失效。</p>";
+        await _emailService.SendAsync(dto.Email, "會員註冊 – 信箱驗證", emailBody, true);
+        return new OkObjectResult($"我們已發送驗證信至您的信箱({dto.Email})，請點選信件中的連結完成驗證。");
         }
         public async Task<ActionResult<string>?> CheckEmailOrCellphoneAlreadyRegisteredAsync(string email, string cellphoneNumber)
         {
