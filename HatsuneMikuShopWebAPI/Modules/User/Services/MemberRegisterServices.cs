@@ -6,6 +6,7 @@ using LifetimeLiveHouseWebAPI.Modules.User.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using NETCore.MailKit.Core;
 using Twilio.Rest.Verify.V2.Service;
 using Twilio.Types;
@@ -43,7 +44,7 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
             await InsertMemberAsync(dto);
 
             // 發送信箱驗證信
-            await SendVerificationEmailAsync(dto.Name);
+            await SendVerificationEmailAsync(dto.Name, dto.Email);
 
             // 發送手機簡訊驗證（使用 Twilio Verify）
             var serviceSid = _twilioOpts.VerifyServiceSid;
@@ -53,18 +54,19 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
                 channel: "sms",
                 pathServiceSid: serviceSid
             );
+            return new OkObjectResult($"我們已發送驗證信至您的信箱({dto.Email})，請點選信件中的連結完成驗證)");
         }
-        public async Task<ActionResult<string>> SendVerificationEmailAsync(string memberName);
+        public async Task<ActionResult<string>> SendVerificationEmailAsync(string memberName, string email)
         {
-            var frontendBaseUrl = _frontendBaseUrl
-            var emailVerifyLink = $"{frontendBaseUrl}/verify-email?token={Uri.EscapeDataString(account.EmailVerificationToken)}&accountId={account.ID}";
+            var emailVerifyLink = $"{_frontendBaseUrl}/verify-email?token={Uri.EscapeDataString(Member.MemberEmailVerificationStatus.EmailVerificationTokenHash)}&accountId={account.ID}";
             var emailBody = $@"
-                <p>您好 {dto.Name}：</p>
+                <p>您好 {memberName}：</p>
                 <p>請點擊以下連結完成信箱驗證：</p>
                 <p><a href='{emailVerifyLink}'>點我完成驗證</a></p>
                 <p>此連結將在 24 小時後失效。</p>";
-        await _emailService.SendAsync(dto.Email, "會員註冊 – 信箱驗證", emailBody, true);
-        return new OkObjectResult($"我們已發送驗證信至您的信箱({dto.Email})，請點選信件中的連結完成驗證。");
+            await _emailService.SendAsync(email, "會員註冊 – 信箱驗證", emailBody, true);
+
+            return memberName;
         }
         public async Task<ActionResult<string>?> CheckEmailOrCellphoneAlreadyRegisteredAsync(string email, string cellphoneNumber)
         {
