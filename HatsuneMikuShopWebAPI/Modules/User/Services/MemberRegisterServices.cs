@@ -1,4 +1,5 @@
-﻿using Humanizer;
+﻿using Common.Helpers;
+using Humanizer;
 using LifetimeLiveHouse.Access.Data;
 using LifetimeLiveHouse.Models;
 using LifetimeLiveHouseWebAPI.DTOs.Users;
@@ -58,7 +59,11 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
         }
         public async Task<ActionResult<string>> SendVerificationEmailAsync(string memberName, string email)
         {
-            var emailVerifyLink = $"{_frontendBaseUrl}/verify-email?token={Uri.EscapeDataString(Member.MemberEmailVerificationStatus.EmailVerificationTokenHash)}&accountId={account.ID}";
+            // 產生 token
+            string token = TokenGeneratorHelper.GeneratePassword(100);
+            string hash = BCrypt.Net.BCrypt.HashPassword(token);
+
+            var emailVerifyLink = $"{_frontendBaseUrl}/verify-email?token={Uri.EscapeDataString(token)}&accountId={account.ID}";
             var emailBody = $@"
                 <p>您好 {memberName}：</p>
                 <p>請點擊以下連結完成信箱驗證：</p>
