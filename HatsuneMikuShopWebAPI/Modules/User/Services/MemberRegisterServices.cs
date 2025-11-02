@@ -60,7 +60,7 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
             string token = BCrypt.Net.BCrypt.HashPassword(TokenGeneratorHelper.GeneratePassword(100));
 
             // 將token存入會員信箱驗證資料表
-
+            // 依照會員id找到特定會員資料用修改
 
             var emailVerifyLink = $"{_frontendBaseUrl}/verify-email?token={Uri.EscapeDataString(token)}&accountId={memberID}";
             var emailBody = $@"
@@ -112,6 +112,7 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
 
             // 發送信箱驗證信
             await SendVerificationEmailAsync(dto.Name, dto.Email, member.MemberID);
+
             return member;
         }
 
