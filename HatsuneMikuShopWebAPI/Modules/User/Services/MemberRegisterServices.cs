@@ -41,11 +41,8 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
                 return checkResult;
             }
 
-            // 建立會員、會員帳號、未驗證的會員手機信箱驗證狀態
+            // 建立會員、會員帳號、未驗證的會員手機信箱驗證狀態資料，並發出驗證信
             await InsertMemberAsync(dto);
-
-            // 發送信箱驗證信
-            await SendVerificationEmailAsync(dto.Name, dto.Email);
 
             // 發送手機簡訊驗證（使用 Twilio Verify）
             var serviceSid = _twilioOpts.VerifyServiceSid;
@@ -57,13 +54,15 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
             );
             return new OkObjectResult($"我們已發送驗證信至您的信箱({dto.Email})，請點選信件中的連結完成驗證)");
         }
-        public async Task<ActionResult<string>> SendVerificationEmailAsync(string memberName, string email)
+        public async Task<ActionResult<string>> SendVerificationEmailAsync(string memberName, string email, long memberID)
         {
             // 產生 token
-            string token = TokenGeneratorHelper.GeneratePassword(100);
-            string hash = BCrypt.Net.BCrypt.HashPassword(token);
+            string token = BCrypt.Net.BCrypt.HashPassword(TokenGeneratorHelper.GeneratePassword(100));
 
-            var emailVerifyLink = $"{_frontendBaseUrl}/verify-email?token={Uri.EscapeDataString(token)}&accountId={account.ID}";
+            // 將token存入會員信箱驗證資料表
+
+
+            var emailVerifyLink = $"{_frontendBaseUrl}/verify-email?token={Uri.EscapeDataString(token)}&accountId={memberID}";
             var emailBody = $@"
                 <p>您好 {memberName}：</p>
                 <p>請點擊以下連結完成信箱驗證：</p>
@@ -110,6 +109,9 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
             await InsertMemberAccountAsync(member.MemberID, dto.Email, dto.Password);
             await InsertMemberEmailVerificationStatusAsync(member.MemberID);
             await InsertMemberPhoneVerificationStatusAsync(member.MemberID);
+
+            // 發送信箱驗證信
+            await SendVerificationEmailAsync(dto.Name, dto.Email, member.MemberID);
             return member;
         }
 
