@@ -1,4 +1,5 @@
 ﻿
+using Common.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -15,7 +16,8 @@ namespace LifetimeLiveHouse.Models
         [ForeignKey("Member")]
         public long MemberID { get; set; }
 
-        public string TokenHash { get; set; } = null!; // 重設密碼的 Token 雜湊值
+        [Required]
+        public string TokenHash { get; set; } = BCrypt.Net.BCrypt.HashPassword(TokenGeneratorHelper.GeneratePassword(100)); // 重設密碼的 Token 雜湊值
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 

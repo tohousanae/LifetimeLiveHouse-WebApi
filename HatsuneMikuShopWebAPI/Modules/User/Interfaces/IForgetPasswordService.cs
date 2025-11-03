@@ -1,11 +1,12 @@
-﻿using System.Threading.Tasks;
-using LifetimeLiveHouseWebAPI.DTOs.Users;
+﻿using LifetimeLiveHouseWebAPI.DTOs.Users;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace LifetimeLiveHouseWebAPI.Modules.User.Interfaces
 {
     public interface IForgetPasswordService
     {
-        Task<string> SendForgotPasswordEmailAsync(ForgotPasswordDto dto);
+        Task<ActionResult<string>> SendForgotPasswordEmailAsync(ForgotPasswordDto dto);
 
         Task<string> ResetPasswordAsync(ResetPasswordDto dto);
 

@@ -5,6 +5,7 @@ using Common.Helpers;
 using Microsoft.EntityFrameworkCore;
 using NETCore.MailKit.Core;
 using LifetimeLiveHouseWebAPI.Modules.User.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 namespace LifetimeLiveHouseWebAPI.Modules.User.Services
 {
@@ -17,30 +18,21 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
         private readonly IEmailService _emailService = emailService; // 假設你已有這個服務
         private readonly string _frontendBaseUrl = config["FrontendBaseUrl"] ?? "https://example.com";
 
-        public async Task<string> SendForgotPasswordEmailAsync(ForgotPasswordDto dto)
+        public async Task<ActionResult<string>> SendForgotPasswordEmailAsync(ForgotPasswordDto dto)
         {
             var user = await _db.MemberAccount.SingleOrDefaultAsync(u => u.Email == dto.Email);
             var responseMsg = "如果該信箱有註冊，我們已發送重設密碼信件，請檢查信件，若未收到郵件請檢察您的垃圾信件夾。";
 
             if (user != null)
             {
-                // 產生 token
-                string token = TokenGeneratorHelper.GeneratePassword(100);
-                string hash = BCrypt.Net.BCrypt.HashPassword(token);
-
-                var prt = new PasswordResetToken
+                var u = await _db.PasswordResetToken.FindAsync(user.MemberID);
+                if (u == null)
                 {
-                    MemberID = user.MemberID,
-                    TokenHash = hash,
-                    //CreatedAt = DateTime.Now, /已在模型設定
-                    //ExpiresAt = DateTime.Now.AddHours(1),
-                    //Used = false
-                };
-                _db.PasswordResetToken.Add(prt);
-                await _db.SaveChangesAsync();
+                    return new NotFoundObjectResult("查無資料");
+                }
 
                 // 建立重設連結
-                string resetLink = $"{_frontendBaseUrl}/reset-password?token={Uri.EscapeDataString(token)}";
+                string resetLink = $"{_frontendBaseUrl}/reset-password?token={Uri.EscapeDataString(u.TokenHash)}";
 
                 await _emailService.SendAsync(
                     user.Email,

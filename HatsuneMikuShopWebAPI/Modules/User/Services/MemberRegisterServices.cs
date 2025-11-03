@@ -47,21 +47,29 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
             // 發送手機簡訊驗證（使用 Twilio Verify）
             var serviceSid = _twilioOpts.VerifyServiceSid;
             var toNumber = new PhoneNumber(dto.CellphoneNumber); // 確保為 +8869xxxxxxx 格式
-            var verification = await VerificationResource.CreateAsync(
+            _ = await VerificationResource.CreateAsync(
                 to: toNumber.ToString(), // 將 PhoneNumber 物件轉換為字串
                 channel: "sms",
                 pathServiceSid: serviceSid
             );
-            return new OkObjectResult($"我們已發送驗證信至您的信箱({dto.Email})，請點選信件中的連結完成驗證)");
+            return new OkObjectResult($"註冊成功，我們已發送驗證信至您的信箱({dto.Email})，請點選信件中的連結完成驗證以啟用帳號)");
         }
         public async Task<ActionResult<string>> SendVerificationEmailAsync(string memberName, string email, long memberID)
         {
             // 產生 token
-            string token = BCrypt.Net.BCrypt.HashPassword(TokenGeneratorHelper.GeneratePassword(100));
+            //string token = BCrypt.Net.BCrypt.HashPassword(TokenGeneratorHelper.GeneratePassword(100)); 
 
             // 將token存入會員信箱驗證資料表
-            // 依照會員id找到特定會員資料用修改
+            // 用memberID找出對應的MemberEmailVerificationStatus並更新token和過期時間
+            var u = await _context.MemberEmailVerificationStatus.FindAsync(memberID);
+            if (u == null)
+            {
+                // 在 service 類別中應使用 ActionResult 的具體結果型別，不可呼叫 ControllerBase 的 helper 方法（例如 NotFound()）
+                return new NotFoundObjectResult("查無資料");
+            }
 
+            // 修正 CS8604: 檢查 EmailVerificationTokenHash 是否為 null
+            var token = u.EmailVerificationTokenHash ?? string.Empty;
             var emailVerifyLink = $"{_frontendBaseUrl}/verify-email?token={Uri.EscapeDataString(token)}&accountId={memberID}";
             var emailBody = $@"
                 <p>您好 {memberName}：</p>
@@ -209,7 +217,7 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
                     .FirstOrDefaultAsync();
 
             if (account == null)
-                return new BadRequestObjectResult("帳號不存在");
+                return new NotFoundObjectResult("帳號不存在");
 
             var serviceSid = _twilioOpts.VerifyServiceSid;
             var toNumber = new PhoneNumber(account.CellphoneNumber);

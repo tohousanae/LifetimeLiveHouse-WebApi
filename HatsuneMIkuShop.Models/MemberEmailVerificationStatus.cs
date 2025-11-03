@@ -1,5 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using Common.Helpers;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LifetimeLiveHouse.Models
 {
@@ -11,7 +12,7 @@ namespace LifetimeLiveHouse.Models
 
         public bool IsEmailVerified { get; set; } = false;
 
-        public string? EmailVerificationTokenHash { get; set; }
+        public string? EmailVerificationTokenHash { get; set; } = BCrypt.Net.BCrypt.HashPassword(TokenGeneratorHelper.GeneratePassword(100));
 
         public DateTime? EmailVerificationTokenExpiry { get; set; } = DateTime.Now.AddHours(24);
 
