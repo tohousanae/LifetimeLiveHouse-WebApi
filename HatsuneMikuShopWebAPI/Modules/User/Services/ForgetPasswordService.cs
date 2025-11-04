@@ -31,6 +31,19 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
                     return new NotFoundObjectResult("查無資料");
                 }
 
+                var prt = new PasswordResetToken
+                {
+                    MemberID = user.MemberID,
+
+                    //已在模型設定
+                    //TokenHash = hash,
+                    //CreatedAt = DateTime.Now,
+                    //ExpiresAt = DateTime.Now.AddHours(1),
+                    //Used = false
+                };
+                _db.PasswordResetToken.Add(prt);
+                await _db.SaveChangesAsync();
+
                 // 建立重設連結
                 string resetLink = $"{_frontendBaseUrl}/reset-password?token={Uri.EscapeDataString(u.TokenHash)}";
 

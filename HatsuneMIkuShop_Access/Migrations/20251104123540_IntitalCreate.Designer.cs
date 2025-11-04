@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LifetimeLiveHouse.Access.Migrations
 {
     [DbContext(typeof(LifetimeLiveHouseSysDBContext))]
-    [Migration("20251028161042_IntitalCreate")]
+    [Migration("20251104123540_IntitalCreate")]
     partial class IntitalCreate
     {
         /// <inheritdoc />

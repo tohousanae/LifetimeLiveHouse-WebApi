@@ -68,6 +68,14 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
                 return new NotFoundObjectResult("查無資料");
             }
 
+            // 用memberID找出對應的MemberEmailVerificationStatus並更新token和過期時間
+            var prt = new MemberEmailVerificationStatus
+            {
+                MemberID = u.MemberID,
+            };
+            _context.MemberEmailVerificationStatus.Add(prt);
+            await _context.SaveChangesAsync();
+
             // 修正 CS8604: 檢查 EmailVerificationTokenHash 是否為 null
             var token = u.EmailVerificationTokenHash ?? string.Empty;
             var emailVerifyLink = $"{_frontendBaseUrl}/verify-email?token={Uri.EscapeDataString(token)}&accountId={memberID}";
