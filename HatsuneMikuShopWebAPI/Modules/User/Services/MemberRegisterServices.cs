@@ -45,20 +45,11 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
             await InsertMemberAsync(dto);
 
             // 發送手機簡訊驗證（使用 Twilio Verify）
-            var serviceSid = _twilioOpts.VerifyServiceSid;
-            var toNumber = new PhoneNumber(dto.CellphoneNumber); // 確保為 +8869xxxxxxx 格式
-            _ = await VerificationResource.CreateAsync(
-                to: toNumber.ToString(), // 將 PhoneNumber 物件轉換為字串
-                channel: "sms",
-                pathServiceSid: serviceSid
-            );
+            await SendVerificationSMSAsync(dto.CellphoneNumber);
             return new OkObjectResult($"註冊成功，我們已發送驗證信至您的信箱({dto.Email})，請點選信件中的連結完成驗證以啟用帳號)");
         }
         public async Task<ActionResult<string>> SendVerificationEmailAsync(string memberName, string email, long memberID)
         {
-            // 產生 token
-            //string token = BCrypt.Net.BCrypt.HashPassword(TokenGeneratorHelper.GeneratePassword(100)); 
-
             // 將token存入會員信箱驗證資料表
             // 用memberID找出對應的MemberEmailVerificationStatus並更新token和過期時間
             var u = await _context.MemberEmailVerificationStatus.FindAsync(memberID);
@@ -69,16 +60,16 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
             }
 
             // 用memberID找出對應的MemberEmailVerificationStatus並更新token和過期時間
+            var plainToken = TokenGeneratorHelper.GeneratePassword(100);
             var prt = new MemberEmailVerificationStatus
             {
                 MemberID = u.MemberID,
+                EmailVerificationTokenHash = BCrypt.Net.BCrypt.HashPassword(plainToken),
             };
             _context.MemberEmailVerificationStatus.Add(prt);
             await _context.SaveChangesAsync();
 
-            // 修正 CS8604: 檢查 EmailVerificationTokenHash 是否為 null
-            var token = u.EmailVerificationTokenHash ?? string.Empty;
-            var emailVerifyLink = $"{_frontendBaseUrl}/verify-email?token={Uri.EscapeDataString(token)}&accountId={memberID}";
+            var emailVerifyLink = $"{_frontendBaseUrl}/verify-email?token={Uri.EscapeDataString(plainToken)}&accountId={memberID}";
             var emailBody = $@"
                 <p>您好 {memberName}：</p>
                 <p>請點擊以下連結完成信箱驗證：</p>
@@ -87,6 +78,18 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
             await _emailService.SendAsync(email, "會員註冊 – 信箱驗證", emailBody, true);
 
             return memberName;
+        }
+        public async Task<ActionResult<string>> SendVerificationSMSAsync(string phoneNumber)
+        {
+            var serviceSid = _twilioOpts.VerifyServiceSid;
+            var toNumber = new PhoneNumber(phoneNumber); // 確保為 +8869xxxxxxx 格式
+            _ = await VerificationResource.CreateAsync(
+                to: toNumber.ToString(), // 將 PhoneNumber 物件轉換為字串
+                channel: "sms",
+                pathServiceSid: serviceSid
+            );
+
+            return phoneNumber;
         }
         public async Task<ActionResult<string>?> CheckEmailOrCellphoneAlreadyRegisteredAsync(string email, string cellphoneNumber)
         {
@@ -194,8 +197,14 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
         }
         public async Task<ActionResult<string>> VerifyEmailAsync(long memberId, string token)
         {
-            var account = await _context.Member
-                .FirstOrDefaultAsync(a => a.MemberID == memberId && a.MemberEmailVerificationStatus.EmailVerificationTokenHash == token);
+            dto.InputToken = Uri.UnescapeDataString(dto.InputToken); // 先解 URI
+
+            // 因為 token 是隨機字串，所以需逐筆比對（BCrypt 雜湊不可逆）
+            var validTokens = await _context.PasswordResetToken
+                .Where(t => !t.Used && t.ExpiresAt > DateTime.Now)
+                .ToListAsync();
+
+            PasswordResetToken? prt = validTokens.FirstOrDefault(t => BCrypt.Net.BCrypt.Verify(dto.InputToken, t.TokenHash));
 
             if (account == null)
                 return new BadRequestObjectResult("驗證連結無效");

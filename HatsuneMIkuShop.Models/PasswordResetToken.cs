@@ -17,7 +17,7 @@ namespace LifetimeLiveHouse.Models
         public long MemberID { get; set; }
 
         [Required]
-        public string TokenHash { get; set; } = BCrypt.Net.BCrypt.HashPassword(TokenGeneratorHelper.GeneratePassword(100)); // 重設密碼的 Token 雜湊值
+        public string TokenHash { get; set; } = string.Empty;
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 

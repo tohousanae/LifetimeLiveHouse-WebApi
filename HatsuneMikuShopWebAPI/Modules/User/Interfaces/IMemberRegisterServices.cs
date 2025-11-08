@@ -10,6 +10,8 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Interfaces
 
         Task<ActionResult<string>> SendVerificationEmailAsync(string memberName, string email, long memberID);
 
+        Task<ActionResult<string>> SendVerificationSMSAsync(string phoneNumber);
+
         Task<ActionResult<string>?> CheckEmailOrCellphoneAlreadyRegisteredAsync(string email, string cellphoneNumber);
         
         Task<Member> InsertMemberAsync(MemberRegisterDTO dto);
