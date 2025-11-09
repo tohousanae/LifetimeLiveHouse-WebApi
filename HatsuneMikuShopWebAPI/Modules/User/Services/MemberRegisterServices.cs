@@ -34,83 +34,82 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
 
         public async Task<ActionResult<string>> RegisterAsync(MemberRegisterDTO dto)
         {
-            // 檢查信箱／手機是否已被註冊
-            if (await _context.MemberAccounts.AnyAsync(a => a.Email == dto.Email))
-            {
-                return new BadRequestObjectResult("信箱已被註冊");
-            }
-
-            if (await _context.Members.AnyAsync(m => m.CellphoneNumber == dto.CellphoneNumber))
-            {
-                return new BadRequestObjectResult("手機號碼已被註冊");
-            }
-
             using var transaction = await _context.Database.BeginTransactionAsync();
 
             try
             {
-                // 新增 Member
-                var member = new Member
+                // 檢查信箱／手機是否已被註冊
+                if (await _context.MemberAccount.AnyAsync(a => a.Email == dto.Email))
                 {
-                    Name = dto.Name,
-                    Birthday = dto.Birthday,
-                    CellphoneNumber = dto.CellphoneNumber
-                };
-                _context.Members.Add(member);
-                await _context.SaveChangesAsync();
+                    return new BadRequestObjectResult("信箱已被註冊");
+                }
 
-                // 新增 MemberAccount
-                var account = new MemberAccount
+                else if (await _context.Member.AnyAsync(m => m.CellphoneNumber == dto.CellphoneNumber))
                 {
-                    MemberID = member.MemberID,
-                    Email = dto.Email,
-                    Password = BCrypt.Net.BCrypt.HashPassword(dto.Password)
-                };
-                _context.MemberAccounts.Add(account);
-                await _context.SaveChangesAsync();
+                    return new BadRequestObjectResult("手機號碼已被註冊");
+                }
+                else {
+                    // 新增 Member
+                    var member = new Member
+                    {
+                        Name = dto.Name,
+                        Birthday = dto.Birthday,
+                        CellphoneNumber = dto.CellphoneNumber
+                    };
+                    _context.Member.Add(member);
+                    await _context.SaveChangesAsync();
 
-                // 新增 EmailVerificationStatus
-                var emailVer = new MemberEmailVerificationStatus
-                {
-                    MemberID = member.MemberID,
-                    IsEmailVerified = false,
-                    TokenCreatedAt = DateTime.UtcNow,
-                    // EmailVerificationTokenHash 留空，稍後更新
-                };
-                _context.MemberEmailVerificationStatus.Add(emailVer);
+                    // 新增 MemberAccount
+                    var account = new MemberAccount
+                    {
+                        MemberID = member.MemberID,
+                        Email = dto.Email,
+                        Password = BCrypt.Net.BCrypt.HashPassword(dto.Password)
+                    };
+                    _context.MemberAccount.Add(account);
+                    await _context.SaveChangesAsync();
 
-                // 新增 PhoneVerificationStatus
-                var phoneVer = new MemberPhoneVerificationStatus
-                {
-                    MemberID = member.MemberID,
-                    IsPhoneVerified = false
-                };
-                _context.MemberPhoneVerificationStatuses.Add(phoneVer);
+                    // 新增 EmailVerificationStatus
+                    var emailVer = new MemberEmailVerificationStatus
+                    {
+                        MemberID = member.MemberID,
+                        IsEmailVerified = false,
+                        // EmailVerificationTokenHash 留空，稍後更新
+                    };
+                    _context.MemberEmailVerificationStatus.Add(emailVer);
 
-                await _context.SaveChangesAsync();
+                    // 新增 PhoneVerificationStatus
+                    var phoneVer = new MemberPhoneVerificationStatus
+                    {
+                        MemberID = member.MemberID,
+                        IsPhoneVerified = false
+                    };
+                    _context.MemberPhoneVerificationStatus.Add(phoneVer);
 
-                // 產生 token 更新 EmailVerificationStatus
-                var plainToken = TokenGeneratorHelper.GeneratePassword(100);
-                emailVer.EmailVerificationTokenHash = BCrypt.Net.BCrypt.HashPassword(plainToken);
-                emailVer.TokenExpireAt = DateTime.UtcNow.AddHours(24);
-                _context.MemberEmailVerificationStatuses.Update(emailVer);
+                    await _context.SaveChangesAsync();
 
-                await _context.SaveChangesAsync();
+                    // 產生 token 更新 EmailVerificationStatus
+                    var plainToken = TokenGeneratorHelper.GeneratePassword(100);
+                    emailVer.EmailVerificationTokenHash = BCrypt.Net.BCrypt.HashPassword(plainToken);
+                    _context.MemberEmailVerificationStatus.Update(emailVer);
 
-                // 發送驗證信
-                var emailVerifyLink = $"{_frontendBaseUrl}/verify-email?token={Uri.EscapeDataString(plainToken)}&accountId={member.MemberID}";
-                var body = $@"
-                <p>您好 {dto.Name}：</p>
-                <p>請點擊以下連結完成信箱驗證：</p>
-                <p><a href='{emailVerifyLink}'>點我完成驗證</a></p>
-                <p>此連結將在 24 小時後失效。</p>";
-                await _emailService.SendAsync(dto.Email, "會員註冊 – 信箱驗證", body, true);
+                    await _context.SaveChangesAsync();
 
-                await transaction.CommitAsync();
+                    // 發送驗證信
+                    var emailVerifyLink = $"{_frontendBaseUrl}/verify-email?token={Uri.EscapeDataString(plainToken)}&accountId={member.MemberID}";
+                    var body = $@"
+                    <p>您好 {dto.Name}：</p>
+                    <p>請點擊以下連結完成信箱驗證：</p>
+                    <p><a href='{emailVerifyLink}'>{emailVerifyLink}</a></p>
+                    <p>此連結將在 24 小時後失效。</p>";
+                    await _emailService.SendAsync(dto.Email, "會員註冊 – 信箱驗證", body, true);
 
-                return dto.Name;  // 或回傳成功訊息或 memberId
+                    await transaction.CommitAsync();
+
+                    return dto.Name;  // 或回傳成功訊息或 memberId
+                }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 await transaction.RollbackAsync();
                 // 可記錄異常

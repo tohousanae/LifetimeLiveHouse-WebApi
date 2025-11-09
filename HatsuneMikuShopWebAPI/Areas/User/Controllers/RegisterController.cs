@@ -12,18 +12,14 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
         private readonly IMemberRegisterServices _memberRegister = memberRegister;
 
         [HttpPost("register")]
-        public async Task<ActionResult<string>> MemberRegister(MemberRegisterDTO dto)
+        public async Task<IActionResult> Register(MemberRegisterDTO dto)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
-
-            try
+            var result = await _memberRegister.RegisterAsync(dto);
+            if (result.Result is BadRequestObjectResult badReq)
             {
-                return await _memberRegister.MemberRegisterAsync(dto);
+                return badReq;
             }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+            return Ok(new { Message = "註冊成功", Name = result.Value });
         }
         [HttpPost("sendValidationSMS")]
         public async Task<ActionResult<string>> SendValidationSMS(UserPhoneNumberDTO dto)
@@ -39,7 +35,7 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
-        [HttpGet("verify-email")]
+        [HttpPost("verify-email")]
         public async Task<ActionResult<string>> VerifyEmail([FromQuery] long memberId, [FromQuery] string token)
         {
             return await _memberRegister.VerifyEmailAsync(memberId, token);
