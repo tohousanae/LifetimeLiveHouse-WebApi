@@ -64,7 +64,7 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
 
             //return $"{prt}";
             if (prt == null)
-                throw new InvalidOperationException("重設密碼 token 無效或已過期。");
+                throw new InvalidOperationException("驗證連結無效或已過期。");
 
             return $"{prt}";
         }
@@ -85,7 +85,7 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
 
             //return $"{prt}";
             if (prt == null)
-                throw new InvalidOperationException("重設密碼 token 無效或已過期。");
+                throw new InvalidOperationException("驗證連結無效或已過期。");
 
             var user = await _context.MemberAccount.FirstOrDefaultAsync(a => a.MemberID == prt.MemberID);
             if (user == null)

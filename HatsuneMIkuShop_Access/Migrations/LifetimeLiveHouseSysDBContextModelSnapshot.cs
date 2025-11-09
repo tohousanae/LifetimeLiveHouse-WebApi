@@ -339,6 +339,7 @@ namespace LifetimeLiveHouse.Access.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("EmailVerificationTokenHash")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsEmailVerified")

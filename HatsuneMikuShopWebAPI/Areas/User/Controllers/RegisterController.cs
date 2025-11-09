@@ -25,6 +25,20 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+        [HttpPost("sendValidationSMS")]
+        public async Task<ActionResult<string>> SendValidationSMS(UserPhoneNumberDTO dto)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            try
+            {
+                return await _memberRegister.SendVerificationSMSAsync(dto.CellphoneNumber);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
         [HttpGet("verify-email")]
         public async Task<ActionResult<string>> VerifyEmail([FromQuery] long memberId, [FromQuery] string token)
         {
