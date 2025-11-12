@@ -4,6 +4,7 @@ using LifetimeLiveHouse.Access.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LifetimeLiveHouse.Access.Migrations
 {
     [DbContext(typeof(LifetimeLiveHouseSysDBContext))]
-    partial class LifetimeLiveHouseSysDBContextModelSnapshot : ModelSnapshot
+    [Migration("20251111184445_修改會員註冊信箱驗證的模型")]
+    partial class 修改會員註冊信箱驗證的模型
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

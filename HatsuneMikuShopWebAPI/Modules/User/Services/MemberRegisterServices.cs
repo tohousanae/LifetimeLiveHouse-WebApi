@@ -74,7 +74,8 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
                     {
                         MemberID = member.MemberID,
                         IsEmailVerified = false,
-                        // EmailVerificationTokenHash 留空，稍後更新
+                        EmailVerificationTokenExpiry = DateTime.Now.AddHours(24)
+
                     };
                     _context.MemberEmailVerificationStatus.Add(emailVer);
 
@@ -96,7 +97,7 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
                     await _context.SaveChangesAsync();
 
                     // 發送驗證信
-                    var emailVerifyLink = $"{_frontendBaseUrl}/verify-email?token={Uri.EscapeDataString(plainToken)}&accountId={member.MemberID}";
+                    var emailVerifyLink = $"{_frontendBaseUrl}/verify-email?token={Uri.EscapeDataString(plainToken)}";
                     var body = $@"
                     <p>您好 {dto.Name}：</p>
                     <p>請點擊以下連結完成信箱驗證：</p>
@@ -128,7 +129,7 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
 
             return phoneNumber;
         }
-        public async Task<ActionResult<string>> VerifyEmailAsync(long memberId, string token)
+        public async Task<ActionResult<string>> VerifyEmailAsync(string token)
         {
             token = Uri.UnescapeDataString(token); // 先解 URI
 

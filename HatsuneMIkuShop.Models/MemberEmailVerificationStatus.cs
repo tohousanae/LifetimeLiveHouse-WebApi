@@ -12,10 +12,9 @@ namespace LifetimeLiveHouse.Models
 
         public bool IsEmailVerified { get; set; } = false;
 
-        [Required]
-        public string? EmailVerificationTokenHash { get; set; } = string.Empty;
+        public string? EmailVerificationTokenHash { get; set; }
 
-        public DateTime? EmailVerificationTokenExpiry { get; set; } = DateTime.Now.AddHours(24);
+        public DateTime? EmailVerificationTokenExpiry { get; set; }
 
         public virtual Member Member { get; set; } = null!;
 
