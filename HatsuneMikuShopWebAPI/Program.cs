@@ -96,6 +96,7 @@ builder.Services.AddAuthentication(options =>
         options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // 強制瀏覽器僅在 HTTPS 連線下傳送該 Cookie。
         options.SlidingExpiration = true; // 自動延長有效時間
     });
+builder.Services.AddApplicationInsightsTelemetry();
 
 ////builder.Services
 //    .AddIdentity<MemberAccount, IdentityRole>()
