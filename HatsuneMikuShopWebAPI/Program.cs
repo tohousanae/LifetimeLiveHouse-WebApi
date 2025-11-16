@@ -11,9 +11,6 @@ using NETCore.MailKit.Infrastructure.Internal;
 //using StackExchange.Redis;
 var builder = WebApplication.CreateBuilder(args);
 
-//// 呼叫 AddAuthorization 以將服務新增至相依性插入 (DI) 容器
-//builder.Services.AddAuthorization();
-
 // 注入DBContext
 builder.Services.AddDbContext<LifetimeLiveHouseSysDBContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("LifetimeLiveHouseSysDBConnection")));
@@ -21,8 +18,7 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("LifetimeLiveHous
 builder.Services.AddDbContext<LifetimeLiveHouseSysDBContext2>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("LifetimeLiveHouseSysDBConnection")));
 
-// 住入服務
-builder.Services.AddScoped<IForgetPasswordService, ForgetPasswordService>();
+
 builder.Services.AddMailKit(config =>
 {
     config.UseMailKit(new MailKitOptions()
@@ -36,7 +32,7 @@ builder.Services.AddMailKit(config =>
         Security = true
     });
 });
-builder.Services.AddScoped<IMemberLoginService, MemberLoginService>();
+
 // 設定選項
 builder.Services.Configure<TwilioOptions>(builder.Configuration.GetSection("Twilio"));
 builder.Services.AddSingleton(sp =>
@@ -45,7 +41,12 @@ builder.Services.AddSingleton(sp =>
     Twilio.TwilioClient.Init(opts.AccountSid, opts.AuthToken);
     return Twilio.TwilioClient.GetRestClient();
 });
+
+// 住入服務
+builder.Services.AddScoped<IForgetPasswordService, ForgetPasswordService>();
 builder.Services.AddScoped<IMemberRegisterServices, MemberRegisterServices>();
+builder.Services.AddScoped<IMemberLoginService, MemberLoginService>();
+
 builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
