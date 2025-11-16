@@ -1,5 +1,4 @@
 ﻿using Common.Helpers;
-using Humanizer;
 using LifetimeLiveHouse.Access.Data;
 using LifetimeLiveHouse.Models;
 using LifetimeLiveHouseWebAPI.DTOs.Users;
@@ -7,10 +6,13 @@ using LifetimeLiveHouseWebAPI.Modules.User.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using NETCore.MailKit.Core;
+using System.Text.RegularExpressions;
+using Twilio.Exceptions;
 using Twilio.Rest.Verify.V2.Service;
 using Twilio.Types;
+using Microsoft.Extensions.Logging;
+
 namespace LifetimeLiveHouseWebAPI.Modules.User.Services
 {
     public class MemberRegisterServices : IMemberRegisterServices
@@ -19,17 +21,20 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
         private readonly IEmailService _emailService;
         private readonly string _frontendBaseUrl;
         private readonly TwilioOptions _twilioOpts;
+        private readonly ILogger<MemberRegisterServices>? _logger;
 
         public MemberRegisterServices(
             LifetimeLiveHouseSysDBContext context,
             IEmailService emailService,
             IConfiguration config,
-            IOptions<TwilioOptions> twilioOptions)
+            IOptions<TwilioOptions> twilioOptions,
+            ILogger<MemberRegisterServices>? logger = null)
         {
             _context = context;
             _emailService = emailService;
             _frontendBaseUrl = config["FrontendBaseUrl"] ?? "https://example.com";
             _twilioOpts = twilioOptions.Value;
+            _logger = logger;
         }
 
         public async Task<ActionResult<string>> RegisterAsync(MemberRegisterDTO dto)
@@ -117,18 +122,112 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
                 throw;
             }
         }
+
         public async Task<ActionResult<string>> SendVerificationSMSAsync(string phoneNumber)
         {
-            var serviceSid = _twilioOpts.VerifyServiceSid;
-            var toNumber = new PhoneNumber(phoneNumber); // 確保為 +8869xxxxxxx 格式
-            _ = await VerificationResource.CreateAsync(
-                to: toNumber.ToString(), // 將 PhoneNumber 物件轉換為字串
-                channel: "sms",
-                pathServiceSid: serviceSid
-            );
+            if (string.IsNullOrWhiteSpace(phoneNumber))
+                return new BadRequestObjectResult("phoneNumber is required.");
 
-            return phoneNumber;
+            // 1. 標準化國際電話
+            string NormalizePhone(string raw)
+            {
+                // 保留數字與 +
+                string cleaned = new string(raw.Where(c => char.IsDigit(c) || c == '+').ToArray());
+
+                // 特殊處理台灣 09xxxxxxxx
+                if (cleaned.StartsWith("09") && cleaned.Length >= 10)
+                    return "+886" + cleaned.Substring(1);
+
+                // 若是台灣 9xxxxxxxx
+                if (cleaned.Length == 9 && cleaned.StartsWith("9"))
+                    return "+886" + cleaned;
+
+                // 若是 + 開頭，視為國際格式
+                if (cleaned.StartsWith("+"))
+                    return cleaned;
+
+                // 若是未加 + 的國際格式，例如 8869xxxxxxx → 加上 +
+                if (Regex.IsMatch(cleaned, @"^\d{8,15}$"))
+                    return "+" + cleaned;
+
+                return cleaned;
+            }
+
+            var normalized = NormalizePhone(phoneNumber);
+
+            // 2. 必須符合 E.164 格式：+國碼 + 最少8碼
+            if (!Regex.IsMatch(normalized, @"^\+\d{8,15}$"))
+            {
+                return new BadRequestObjectResult($"Invalid phone number format: '{normalized}'. Phone must be in E.164 format (e.g., +886912345678).");
+            }
+
+            // 3. 檢查帳號是否存在
+            var account = await _context.Member
+                .AsNoTracking()
+                .Where(a => a.CellphoneNumber == normalized || a.CellphoneNumber == phoneNumber)
+                .Select(a => new
+                {
+                    a.MemberID,
+                    a.CellphoneNumber,
+                    a.MemberPhoneVerificationStatus.IsPhoneVerified
+                })
+                .FirstOrDefaultAsync();
+
+            if (account == null)
+                return new NotFoundObjectResult("此手機號碼尚未註冊");
+
+            // 4. 檢查是否已驗證
+            if (account.IsPhoneVerified)
+                return new BadRequestObjectResult("此手機號碼已驗證過");
+
+            var serviceSid = _twilioOpts.VerifyServiceSid;
+
+            if (string.IsNullOrWhiteSpace(serviceSid))
+                return new StatusCodeResult(500);
+
+            try
+            {
+                var verification = await VerificationResource.CreateAsync(
+                    to: normalized,
+                    channel: "sms",
+                    pathServiceSid: serviceSid
+                );
+
+                return new OkObjectResult(new
+                {
+                    message = "驗證碼已發送",
+                    status = verification.Status,
+                    sid = verification.Sid,
+                    to = normalized
+                });
+            }
+            catch (ApiException tex)
+            {
+                return new ObjectResult(new
+                {
+                    error = "Twilio API error",
+                    twilioStatus = tex.Status,
+                    twilioCode = tex.Code,
+                    message = tex.Message,
+                    moreInfo = tex.MoreInfo
+                })
+                {
+                    StatusCode = 502
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ObjectResult(new
+                {
+                    error = "伺服器錯誤",
+                    message = ex.Message
+                })
+                {
+                    StatusCode = 500
+                };
+            }
         }
+
         public async Task<ActionResult<string>> VerifyEmailAsync(string token)
         {
             token = Uri.UnescapeDataString(token); // 先解 URI
@@ -151,43 +250,99 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
             return new OkObjectResult("信箱驗證成功！");
         }
 
+        // Verify Phone
         public async Task<ActionResult<string>> VerifyPhoneAsync(long memberId, string code)
         {
-            var account = await _context.Member
-                .AsNoTracking()
+            if (memberId <= 0 || string.IsNullOrWhiteSpace(code))
+                return new BadRequestObjectResult("memberId and code are required.");
+
+            try
+            {
+                var account = await _context.Member
+                    .AsNoTracking()
                     .Where(a => a.MemberID == memberId)
                     .Select(a => new
                     {
                         a.MemberID,
-                        a.MemberPhoneVerificationStatus.IsPhoneVerified,
-                        a.CellphoneNumber,
+                        IsPhoneVerified = a.MemberPhoneVerificationStatus.IsPhoneVerified,
+                        CellphoneNumber = a.CellphoneNumber
                     })
                     .FirstOrDefaultAsync();
 
-            if (account == null)
-                return new NotFoundObjectResult("帳號不存在");
+                if (account == null)
+                    return new NotFoundObjectResult("帳號不存在");
 
-            var serviceSid = _twilioOpts.VerifyServiceSid;
-            var toNumber = new PhoneNumber(account.CellphoneNumber);
+                if (account.IsPhoneVerified)
+                    return new BadRequestObjectResult("此手機號碼已驗證過");
 
-            var verificationCheck = await VerificationCheckResource.CreateAsync(
-                to: toNumber.ToString(),
-                code: code,
-                pathServiceSid: serviceSid
-            );
+                if (string.IsNullOrWhiteSpace(account.CellphoneNumber))
+                    return new BadRequestObjectResult("會員尚未設定手機號碼");
 
-            if (verificationCheck.Status == "approved")
-            {
-                await _context.MemberPhoneVerificationStatus
-                    .Where(s => s.MemberID == memberId)
-                    .ExecuteUpdateAsync(s => s
-                        .SetProperty(p => p.IsPhoneVerified, true));
+                // 若 DB 內的號碼不是 E.164 格式，視情況先 normalize（可抽成 function）
+                string NormalizePhone(string raw)
+                {
+                    var cleaned = new string(raw.Where(c => char.IsDigit(c) || c == '+').ToArray());
+                    if (cleaned.StartsWith("09") && cleaned.Length >= 10)
+                        return "+886" + cleaned.Substring(1);
+                    if (cleaned.StartsWith("+"))
+                        return cleaned;
+                    if (Regex.IsMatch(cleaned, @"^\d{8,15}$"))
+                        return "+" + cleaned;
+                    return cleaned;
+                }
 
-                return new OkObjectResult("手機驗證成功！");
+                var toNumber = NormalizePhone(account.CellphoneNumber);
+
+                if (!Regex.IsMatch(toNumber, @"^\+\d{8,15}$"))
+                    return new BadRequestObjectResult("儲存在資料庫的手機號碼格式錯誤，請聯絡客服或重新輸入手機號碼");
+
+                var serviceSid = _twilioOpts?.VerifyServiceSid;
+                if (string.IsNullOrWhiteSpace(serviceSid))
+                    return new ObjectResult("VerifyServiceSid 未設定，請檢查系統設定") { StatusCode = 500 };
+
+                VerificationCheckResource verificationCheck;
+                try
+                {
+                    verificationCheck = await VerificationCheckResource.CreateAsync(
+                        to: toNumber,
+                        code: code,
+                        pathServiceSid: serviceSid
+                    );
+                }
+                catch (ApiException tex)
+                {
+                    _logger?.LogError(tex, "Twilio ApiException during verification check for member {MemberId}", memberId);
+                    return new ObjectResult(new
+                    {
+                        error = "Twilio API error",
+                        twilioStatus = tex.Status,
+                        twilioCode = tex.Code,
+                        message = tex.Message,
+                        moreInfo = tex.MoreInfo
+                    })
+                    { StatusCode = 502 };
+                }
+
+                if (verificationCheck == null)
+                    return new ObjectResult("未收到 Twilio 回應，請稍後再試") { StatusCode = 502 };
+
+                if (verificationCheck.Status == "approved")
+                {
+                    await _context.MemberPhoneVerificationStatus
+                        .Where(s => s.MemberID == memberId)
+                        .ExecuteUpdateAsync(s => s.SetProperty(p => p.IsPhoneVerified, true));
+
+                    return new OkObjectResult("手機驗證成功！");
+                }
+                else
+                {
+                    return new BadRequestObjectResult("驗證碼無效或已過期");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return new BadRequestObjectResult("驗證碼無效或已過期");
+                _logger?.LogError(ex, "Unexpected error during phone verification for member {MemberId}", memberId);
+                return new ObjectResult(new { error = "Internal server error", message = ex.Message }) { StatusCode = 500 };
             }
         }
     }

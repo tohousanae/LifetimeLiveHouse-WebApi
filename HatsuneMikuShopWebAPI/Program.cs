@@ -8,7 +8,6 @@ using Microsoft.Extensions.Options;
 using NETCore.MailKit.Extensions;
 using NETCore.MailKit.Infrastructure.Internal;
 
-//using StackExchange.Redis;
 var builder = WebApplication.CreateBuilder(args);
 
 // 注入DBContext
@@ -31,15 +30,6 @@ builder.Services.AddMailKit(config =>
         Password = "sobi nwxj kusx wuss",
         Security = true
     });
-});
-
-// 設定選項
-builder.Services.Configure<TwilioOptions>(builder.Configuration.GetSection("Twilio"));
-builder.Services.AddSingleton(sp =>
-{
-    var opts = sp.GetRequiredService<IOptions<TwilioOptions>>().Value;
-    Twilio.TwilioClient.Init(opts.AccountSid, opts.AuthToken);
-    return Twilio.TwilioClient.GetRestClient();
 });
 
 // 住入服務
@@ -108,8 +98,33 @@ builder.Services.AddApplicationInsightsTelemetry();
 //builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
 //    opt.TokenLifespan = TimeSpan.FromHours(2));
 
+// twilio設定綁定
+builder.Services.Configure<TwilioOptions>(builder.Configuration.GetSection("Twilio"));
+builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<TwilioOptions>>().Value);
+
 var app = builder.Build();
 
+// --------------- 在 Build 之後初始化 Twilio ---------------
+var twilioOpts = app.Services.GetRequiredService<TwilioOptions>();
+
+// 在開發模式使用秘密管理員設定
+if (builder.Environment.IsDevelopment())
+{
+    builder.Configuration.AddUserSecrets<Program>();
+    // 偵錯用：印出是否有設定（切勿印出完整 AuthToken 到生產 log）
+    Console.WriteLine($"[DEBUG] Twilio AccountSid set? {!string.IsNullOrWhiteSpace(twilioOpts.AccountSid)}");
+    Console.WriteLine($"[DEBUG] Twilio AuthToken set? {!string.IsNullOrWhiteSpace(twilioOpts.AuthToken)}");
+    Console.WriteLine($"[DEBUG] Twilio VerifyServiceSid set? {!string.IsNullOrWhiteSpace(twilioOpts.VerifyServiceSid)}");
+
+    if (string.IsNullOrWhiteSpace(twilioOpts.AccountSid) || string.IsNullOrWhiteSpace(twilioOpts.AuthToken))
+    {
+        // 開發階段可以直接丟例外，提醒缺少設定
+        throw new InvalidOperationException("Twilio AccountSid 或 AuthToken 未設定。請檢查 appsettings / user-secrets / environment variables。");
+    }
+}
+
+// 呼叫初始化（這會設定 TwilioClient 的全域認證）
+Twilio.TwilioClient.Init(twilioOpts.AccountSid, twilioOpts.AuthToken);
 //1.3.4 在Program.cs撰寫啟用Initializer的程式
 //執行專案時自動載入初始資料
 using (var scope = app.Services.CreateScope())
