@@ -86,8 +86,8 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
 //✅ 結論
 //當一個服務類別的功能橫跨多個領域（註冊、驗證、資料處理等），或函數超過一頁（>5 個以上的主要公用方法）時，就應該拆成獨立服務與介面。
 
-
 // [C#]AsNoTracking()方法-不使用追蹤以增進查詢效能：https://ithelp.ithome.com.tw/articles/10310644
 
-
 //C# — 封裝性 Public vs Private https://medium.com/jason%E7%9A%84%E5%89%8D%E7%AB%AF%E4%B9%8B%E8%B7%AF/c-%E5%B0%81%E8%A3%9D%E6%80%A7-public-vs-private-76549e407a6d
+
+// 流程圖製作教學 https://www.thingsaboutweb.dev/zh-TW/posts/flowchart-introduction
