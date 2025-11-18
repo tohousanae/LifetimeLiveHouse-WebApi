@@ -4,23 +4,18 @@
 
 https://github.com/tohousanae/am3buger-vue
 
-## api介紹
-
+## 功能介紹與操作演示
 
 ### 會員相關
-
-![image](https://github.com/user-attachments/assets/eee2af9b-143a-478f-9a56-3c4fb3bd10f8)
+#### 會員登入
 
 ### 商品相關
 
+### 練團室租借相關
 
-### 優惠券相關
-
+### 表演/活動預約相關
 
 ### 商家後臺相關
-
-
-### 寄送Email
 
 ![image](https://github.com/user-attachments/assets/3912ef39-bb63-4e6b-986f-f8b95db3e3da)
 
