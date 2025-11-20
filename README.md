@@ -11,9 +11,7 @@ https://github.com/tohousanae/am3buger-vue
 
 #### 註冊
 
-#### 驗證註冊信箱
-
-#### 驗證註冊手機號碼
+#### 忘記密碼
 
 ### 商品相關功能
 
