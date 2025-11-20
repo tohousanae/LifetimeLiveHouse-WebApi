@@ -12,11 +12,12 @@ https://github.com/tohousanae/am3buger-vue
 1. 建立帳號並發送註冊驗證信
 <img width="1488" height="728" alt="image" src="https://github.com/user-attachments/assets/c12c3590-5108-4548-8153-40eb788442e1" />
 <img width="1466" height="797" alt="image" src="https://github.com/user-attachments/assets/ebe1fbd1-3294-4164-835a-ac75476323fe" />
+
 2. 點擊信箱連結並驗證會員
-收到的驗證信
-<img width="1230" height="486" alt="image" src="https://github.com/user-attachments/assets/6128624d-db05-4ab4-ba3d-48d0d4e118a1" />
-輸入從信件收到的token，另外，從連結取得token的程序由前端處理，後端只負責接收token值。
-<img width="1503" height="960" alt="image" src="https://github.com/user-attachments/assets/4836752d-3970-46b2-8275-e46a28c29086" />
+  2.1 收到驗證信
+  <img width="1230" height="486" alt="image" src="https://github.com/user-attachments/assets/6128624d-db05-4ab4-ba3d-48d0d4e118a1" />
+  2.2輸入從信件收到的token，另外，從連結取得token的程序由前端處理，後端只負責接收token值。
+  <img width="1503" height="960" alt="image" src="https://github.com/user-attachments/assets/4836752d-3970-46b2-8275-e46a28c29086" />
 
 #### 忘記密碼
 
