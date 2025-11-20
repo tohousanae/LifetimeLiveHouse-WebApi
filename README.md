@@ -4,7 +4,7 @@
 
 https://github.com/tohousanae/am3buger-vue
 
-## 操作流程演示
+## 操作流程演示  &nbsp;&nbsp;
 ### 會員功能
 #### 登入
 
@@ -13,7 +13,7 @@ https://github.com/tohousanae/am3buger-vue
 <img width="1488" height="728" alt="image" src="https://github.com/user-attachments/assets/c12c3590-5108-4548-8153-40eb788442e1" />
 <img width="1466" height="797" alt="image" src="https://github.com/user-attachments/assets/ebe1fbd1-3294-4164-835a-ac75476323fe" />
 
-2. 點擊信箱連結並驗證會員  
+2. 點擊信箱連結並驗證會員  &nbsp;
 2.1 收到驗證信  &nbsp;
 <img width="1230" height="486" alt="image" src="https://github.com/user-attachments/assets/6128624d-db05-4ab4-ba3d-48d0d4e118a1" />
 2.2 輸入從信件收到的token，另外，從連結取得token的程序由前端處理，後端只負責接收token值。  &nbsp;
