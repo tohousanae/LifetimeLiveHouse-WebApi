@@ -11,7 +11,7 @@ https://github.com/tohousanae/am3buger-vue
 #### 註冊
 1. 建立帳號並發送註冊驗證信
 <img width="1488" height="728" alt="image" src="https://github.com/user-attachments/assets/c12c3590-5108-4548-8153-40eb788442e1" />
-<img width="1466" height="797" alt="image" src="https://github.com/user-attachments/assets/ebe1fbd1-3294-4164-835a-ac75476323fe" />
+<img width="1466" height="797" alt="image" src="https://github.com/user-attachments/assets/ebe1fbd1-3294-4164-835a-ac75476323fe" />\n
 
 2. 點擊信箱連結並驗證會員
   2.1 收到驗證信
