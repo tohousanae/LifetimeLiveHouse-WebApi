@@ -264,8 +264,8 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
                     .Select(a => new
                     {
                         a.MemberID,
-                        IsPhoneVerified = a.MemberPhoneVerificationStatus.IsPhoneVerified,
-                        CellphoneNumber = a.CellphoneNumber
+                        a.MemberPhoneVerificationStatus.IsPhoneVerified,
+                        a.CellphoneNumber
                     })
                     .FirstOrDefaultAsync();
 
