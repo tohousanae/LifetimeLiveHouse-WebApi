@@ -10,22 +10,22 @@ https://github.com/tohousanae/am3buger-vue
 
 #### 註冊
 1. 建立帳號並發送註冊驗證信&nbsp;  
-<img width="1488" height="728" alt="image" src="https://github.com/user-attachments/assets/c12c3590-5108-4548-8153-40eb788442e1" />
-<img width="1466" height="797" alt="image" src="https://github.com/user-attachments/assets/ebe1fbd1-3294-4164-835a-ac75476323fe" />
+<img width="1488" height="728" alt="image" src="https://github.com/user-attachments/assets/c12c3590-5108-4548-8153-40eb788442e1" />&nbsp;
+<img width="1466" height="797" alt="image" src="https://github.com/user-attachments/assets/ebe1fbd1-3294-4164-835a-ac75476323fe" />&nbsp;
 
 2. 點擊信箱連結並驗證會員&nbsp;  
 2.1 收到驗證信&nbsp;  
-<img width="1230" height="486" alt="image" src="https://github.com/user-attachments/assets/6128624d-db05-4ab4-ba3d-48d0d4e118a1" />
+<img width="1230" height="486" alt="image" src="https://github.com/user-attachments/assets/6128624d-db05-4ab4-ba3d-48d0d4e118a1" />&nbsp;
 2.2 輸入從信件收到的token，另外，從連結取得token字串的程序由前端處理，後端只負責接收token值。&nbsp;  
-<img width="1503" height="960" alt="image" src="https://github.com/user-attachments/assets/4836752d-3970-46b2-8275-e46a28c29086" />
+<img width="1503" height="960" alt="image" src="https://github.com/user-attachments/assets/4836752d-3970-46b2-8275-e46a28c29086" />&nbsp;
 
 #### 忘記密碼
 1. 發送忘記密碼驗證信&nbsp;  
-<img width="1463" height="962" alt="image" src="https://github.com/user-attachments/assets/edfa5165-9219-4104-9dec-bc3b720d3441" />
+<img width="1463" height="962" alt="image" src="https://github.com/user-attachments/assets/edfa5165-9219-4104-9dec-bc3b720d3441" />&nbsp;
 1.1 收到忘記密碼驗證信&nbsp;
-<img width="973" height="263" alt="image" src="https://github.com/user-attachments/assets/a9bcf73f-e7b9-4c6d-ae29-1dd7c3e702aa" />
+<img width="973" height="263" alt="image" src="https://github.com/user-attachments/assets/a9bcf73f-e7b9-4c6d-ae29-1dd7c3e702aa" />&nbsp;
 1.2 輸入從信箱取得的token進行驗證，模擬點擊重設密碼連結時驗證連結是否有效，從連結取得token字串的程序由前端處理，後端只負責接收token值。&nbsp;  
-<img width="1455" height="951" alt="image" src="https://github.com/user-attachments/assets/a37c3601-ed9c-4054-89c0-bd99331dbdc5" />
+<img width="1455" height="951" alt="image" src="https://github.com/user-attachments/assets/a37c3601-ed9c-4054-89c0-bd99331dbdc5" />&nbsp;
 1.3 
 <img width="1539" height="869" alt="image" src="https://github.com/user-attachments/assets/078c4b83-85a2-4098-9b32-eff9985d8ec6" /><img width="1481" height="944" alt="image" src="https://github.com/user-attachments/assets/536c6f33-86cb-402b-8dfc-46c950f0a387" />
 
