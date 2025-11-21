@@ -4,9 +4,11 @@
 
 https://github.com/tohousanae/am3buger-vue
 
-## 操作流程演示
+## API操作示範
 ### 會員功能
 #### 登入
+1. 完成會員信箱與手機驗證的會員，可正常登入，否則提醒會員未完成信箱或手機驗證&nbsp;
+
 
 #### 註冊
 1. 建立帳號並發送註冊驗證信&nbsp;  
@@ -19,6 +21,15 @@ https://github.com/tohousanae/am3buger-vue
 2.2 輸入從信件收到的token，另外，從連結取得token字串的程序由前端處理，後端只負責接收token值。&nbsp;  
 <img width="1503" height="960" alt="image" src="https://github.com/user-attachments/assets/4836752d-3970-46b2-8275-e46a28c29086" />&nbsp;  
 <img width="1464" height="738" alt="image" src="https://github.com/user-attachments/assets/35ad8e4f-b4de-4edb-9406-9fe51cd84066" />&nbsp;  
+
+3. 驗證註冊會員手機號碼&nbsp;  
+3.1 發送手機驗證簡訊&nbsp;  
+<img width="1429" height="962" alt="1" src="https://github.com/user-attachments/assets/ad96210d-0d61-4e6f-8bed-810979572365" />
+<img width="1510" height="888" alt="2" src="https://github.com/user-attachments/assets/6dba854c-92b0-43b5-8670-4b7c189d9073" />
+
+3.2 輸入收到的簡訊驗證碼&nbsp;  
+
+
 
 #### 忘記密碼
 1. 發送忘記密碼驗證信&nbsp;  
