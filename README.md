@@ -25,9 +25,9 @@ https://github.com/tohousanae/am3buger-vue
 <img width="1463" height="962" alt="image" src="https://github.com/user-attachments/assets/edfa5165-9219-4104-9dec-bc3b720d3441" />&nbsp;  
 <img width="1512" height="835" alt="image" src="https://github.com/user-attachments/assets/76accb41-3ea6-47e6-89c0-d9d3bdf30fab" />&nbsp;  
 
-1.1 收到忘記密碼驗證信&nbsp;
+1.1 收到忘記密碼驗證信&nbsp;  
 <img width="973" height="263" alt="image" src="https://github.com/user-attachments/assets/a9bcf73f-e7b9-4c6d-ae29-1dd7c3e702aa" />&nbsp;  
-1.2 輸入從信箱取得的token進行驗證，模擬點擊重設密碼連結時驗證連結是否有效與是否過期，從連結取得token字串的程序由前端處理，後端只負責接收token值。&nbsp;    
+1.2 輸入從信箱取得的token進行驗證，模擬點擊重設密碼連結時驗證連結是否有效與是否過期，從連結取得token字串的程序由前端處理，後端只負責接收token值。&nbsp;  
 <img width="1455" height="951" alt="image" src="https://github.com/user-attachments/assets/a37c3601-ed9c-4054-89c0-bd99331dbdc5" />&nbsp;  
 1.3 重設密碼，並在送出表單時再次驗證token是否有效。&nbsp;  
 <img width="1539" height="869" alt="image" src="https://github.com/user-attachments/assets/078c4b83-85a2-4098-9b32-eff9985d8ec6" /><img width="1481" height="944" alt="image" src="https://github.com/user-attachments/assets/536c6f33-86cb-402b-8dfc-46c950f0a387" />&nbsp;  
