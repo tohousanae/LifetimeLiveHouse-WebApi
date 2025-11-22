@@ -12,15 +12,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LifetimeLiveHouse.Access.Migrations
 {
     [DbContext(typeof(LifetimeLiveHouseSysDBContext))]
-    [Migration("20251008093646_IntitalCreate")]
-    partial class IntitalCreate
+    [Migration("20251111184445_修改會員註冊信箱驗證的模型")]
+    partial class 修改會員註冊信箱驗證的模型
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.9")
+                .HasAnnotation("ProductVersion", "9.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -333,20 +333,36 @@ namespace LifetimeLiveHouse.Access.Migrations
                     b.ToTable("EmployeeRole");
                 });
 
-            modelBuilder.Entity("LifetimeLiveHouse.Models.MemberVerificationStatus", b =>
+            modelBuilder.Entity("LifetimeLiveHouse.Models.MemberEmailVerificationStatus", b =>
                 {
                     b.Property<long>("MemberID")
                         .HasColumnType("bigint");
 
-                    b.Property<bool>("EmailVerificationStatus")
-                        .HasColumnType("bit");
+                    b.Property<DateTime?>("EmailVerificationTokenExpiry")
+                        .HasColumnType("datetime2");
 
-                    b.Property<bool>("PhoneVerificationStatus")
+                    b.Property<string>("EmailVerificationTokenHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsEmailVerified")
                         .HasColumnType("bit");
 
                     b.HasKey("MemberID");
 
-                    b.ToTable("MemberVerificationStatus");
+                    b.ToTable("MemberEmailVerificationStatus");
+                });
+
+            modelBuilder.Entity("LifetimeLiveHouse.Models.MemberPhoneVerificationStatus", b =>
+                {
+                    b.Property<long>("MemberID")
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("IsPhoneVerified")
+                        .HasColumnType("bit");
+
+                    b.HasKey("MemberID");
+
+                    b.ToTable("MemberPhoneVerificationStatus");
                 });
 
             modelBuilder.Entity("LifetimeLiveHouse.Models.News", b =>
@@ -1131,11 +1147,22 @@ namespace LifetimeLiveHouse.Access.Migrations
                     b.Navigation("Store");
                 });
 
-            modelBuilder.Entity("LifetimeLiveHouse.Models.MemberVerificationStatus", b =>
+            modelBuilder.Entity("LifetimeLiveHouse.Models.MemberEmailVerificationStatus", b =>
                 {
                     b.HasOne("Member", "Member")
-                        .WithOne("MemberVerificationStatus")
-                        .HasForeignKey("LifetimeLiveHouse.Models.MemberVerificationStatus", "MemberID")
+                        .WithOne("MemberEmailVerificationStatus")
+                        .HasForeignKey("LifetimeLiveHouse.Models.MemberEmailVerificationStatus", "MemberID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Member");
+                });
+
+            modelBuilder.Entity("LifetimeLiveHouse.Models.MemberPhoneVerificationStatus", b =>
+                {
+                    b.HasOne("Member", "Member")
+                        .WithOne("MemberPhoneVerificationStatus")
+                        .HasForeignKey("LifetimeLiveHouse.Models.MemberPhoneVerificationStatus", "MemberID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1467,12 +1494,15 @@ namespace LifetimeLiveHouse.Access.Migrations
 
                     b.Navigation("LoginRecords");
 
+                    b.Navigation("MemberEmailVerificationStatus")
+                        .IsRequired();
+
                     b.Navigation("MemberHeadPicture");
 
-                    b.Navigation("MemberPictures");
-
-                    b.Navigation("MemberVerificationStatus")
+                    b.Navigation("MemberPhoneVerificationStatus")
                         .IsRequired();
+
+                    b.Navigation("MemberPictures");
 
                     b.Navigation("Notifications");
 

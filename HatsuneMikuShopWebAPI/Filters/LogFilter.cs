@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace HotelSystem.Filters
+namespace LifetimeLiveHouseWebAPI.Filters
 {
     public class LogFilter:IActionFilter
     {

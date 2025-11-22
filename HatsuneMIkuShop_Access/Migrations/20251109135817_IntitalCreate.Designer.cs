@@ -4,6 +4,7 @@ using LifetimeLiveHouse.Access.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LifetimeLiveHouse.Access.Migrations
 {
     [DbContext(typeof(LifetimeLiveHouseSysDBContext))]
-    partial class LifetimeLiveHouseSysDBContextModelSnapshot : ModelSnapshot
+    [Migration("20251109135817_IntitalCreate")]
+    partial class IntitalCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -339,6 +342,7 @@ namespace LifetimeLiveHouse.Access.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("EmailVerificationTokenHash")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsEmailVerified")

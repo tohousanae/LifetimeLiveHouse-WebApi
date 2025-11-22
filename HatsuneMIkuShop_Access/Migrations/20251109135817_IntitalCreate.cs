@@ -425,6 +425,26 @@ namespace LifetimeLiveHouse.Access.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "MemberEmailVerificationStatus",
+                columns: table => new
+                {
+                    MemberID = table.Column<long>(type: "bigint", nullable: false),
+                    IsEmailVerified = table.Column<bool>(type: "bit", nullable: false),
+                    EmailVerificationTokenHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EmailVerificationTokenExpiry = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MemberEmailVerificationStatus", x => x.MemberID);
+                    table.ForeignKey(
+                        name: "FK_MemberEmailVerificationStatus_Member_MemberID",
+                        column: x => x.MemberID,
+                        principalTable: "Member",
+                        principalColumn: "MemberID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "MemberHeadPicture",
                 columns: table => new
                 {
@@ -443,6 +463,24 @@ namespace LifetimeLiveHouse.Access.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "MemberPhoneVerificationStatus",
+                columns: table => new
+                {
+                    MemberID = table.Column<long>(type: "bigint", nullable: false),
+                    IsPhoneVerified = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MemberPhoneVerificationStatus", x => x.MemberID);
+                    table.ForeignKey(
+                        name: "FK_MemberPhoneVerificationStatus_Member_MemberID",
+                        column: x => x.MemberID,
+                        principalTable: "Member",
+                        principalColumn: "MemberID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "MemberPicture",
                 columns: table => new
                 {
@@ -454,25 +492,6 @@ namespace LifetimeLiveHouse.Access.Migrations
                     table.PrimaryKey("PK_MemberPicture", x => x.Picture);
                     table.ForeignKey(
                         name: "FK_MemberPicture_Member_MemberID",
-                        column: x => x.MemberID,
-                        principalTable: "Member",
-                        principalColumn: "MemberID",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "MemberVerificationStatus",
-                columns: table => new
-                {
-                    MemberID = table.Column<long>(type: "bigint", nullable: false),
-                    PhoneVerificationStatus = table.Column<bool>(type: "bit", nullable: false),
-                    EmailVerificationStatus = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_MemberVerificationStatus", x => x.MemberID);
-                    table.ForeignKey(
-                        name: "FK_MemberVerificationStatus_Member_MemberID",
                         column: x => x.MemberID,
                         principalTable: "Member",
                         principalColumn: "MemberID",
@@ -1019,13 +1038,16 @@ namespace LifetimeLiveHouse.Access.Migrations
                 name: "MemberAccount");
 
             migrationBuilder.DropTable(
+                name: "MemberEmailVerificationStatus");
+
+            migrationBuilder.DropTable(
                 name: "MemberHeadPicture");
 
             migrationBuilder.DropTable(
-                name: "MemberPicture");
+                name: "MemberPhoneVerificationStatus");
 
             migrationBuilder.DropTable(
-                name: "MemberVerificationStatus");
+                name: "MemberPicture");
 
             migrationBuilder.DropTable(
                 name: "News");

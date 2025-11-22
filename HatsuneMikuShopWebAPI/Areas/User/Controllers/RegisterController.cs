@@ -1,54 +1,51 @@
-﻿//using LifetimeLiveHouse.Access.Data;
-//using LifetimeLiveHouse.Models;
-//using LifetimeLiveHouseWebAPI.DTOs.Users;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.EntityFrameworkCore;
+﻿using LifetimeLiveHouseWebAPI.DTOs.Users;
+using LifetimeLiveHouseWebAPI.Modules.User.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
-//namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
-//{
-//    [Area("User")]
-//    [Route("api/[controller]")]
-//    [ApiController]
-//    public class RegisterController : ControllerBase
-//    {
-//        private readonly LifetimeLiveHouseSysDBContext _context;
+namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
+{
+    [Area("User")]
+    [Route("api/[controller]")]
+    [ApiController]
+    public class RegisterController(IMemberRegisterServices memberRegister) : ControllerBase
+    {
+        private readonly IMemberRegisterServices _memberRegister = memberRegister;
 
-//        public RegisterController(LifetimeLiveHouseSysDBContext context)
-//        {
-//            _context = context;
-//        }
+        [HttpPost("register")]
+        public async Task<IActionResult> Register(MemberRegisterDTO dto)
+        {
+            var result = await _memberRegister.RegisterAsync(dto);
+            if (result.Result is BadRequestObjectResult badReq)
+            {
+                return badReq;
+            }
+            return Ok(new { Message = "註冊成功", Name = result.Value });
+        }
+        [HttpPost("sendValidationSMS")]
+        public async Task<ActionResult<string>> SendValidationSMS(UserPhoneNumberDTO dto)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
-//        [HttpPost("register-full")]
-//        public async Task<ActionResult> PostUserFullRegister(MemberRegisterDTO input)
-//        {
-//            // 檢查 Email / 手機
-//            if (await _context.MemberAccount.AnyAsync(u => u.Email == input.Email))
-//                return Unauthorized("信箱已被註冊");
-//            if (await _context.Member.AnyAsync(u => u.CellphoneNumber == input.CellphoneNumber))
-//                return Unauthorized("手機號碼已被註冊");
+            try
+            {
+                return await _memberRegister.SendVerificationSMSAsync(dto.CellphoneNumber);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+        [HttpPost("verify-email")]
+        public async Task<ActionResult<string>> VerifyEmail([FromQuery] string token)
+        {
+            return await _memberRegister.VerifyEmailAsync(token);
+        }
 
-//            var user = ConvertToUser(new MemberRegisterDTO
-//            {
-//                Name = input.Name,
-//                Password = input.Password,
-//                Birthday = input.Birthday,
-//                Sex = input.Sex
-//            });
+        [HttpPost("verify-phone")]
+        public async Task<ActionResult<string>> VerifyPhone([FromBody] VerifyPhoneDTO dto)
+        {
+            return await _memberRegister.VerifyPhoneAsync(dto.MemberId, dto.Code);
+        }
+    }
 
-//            var userAccount = new MemberAccount
-//            {
-//                Email = input.Email,
-//                Password = user.Password,
-//                Member = user
-//            };
-
-//            _context.Member.Add(user);
-//            _context.MemberAccount.Add(userAccount);
-
-//            await _context.SaveChangesAsync();
-
-//            return Ok("完整會員註冊成功");
-//        }
-        
-//    }
-//}
+}
