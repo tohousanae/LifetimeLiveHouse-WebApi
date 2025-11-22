@@ -4,8 +4,12 @@
 https://github.com/tohousanae/am3buger-vue
 
 ## 使用案例圖
+<img width="1004" height="496" alt="image" src="https://github.com/user-attachments/assets/dcd1dde9-d22b-4665-b629-67e7f96455cb" />
+<img width="1004" height="933" alt="image" src="https://github.com/user-attachments/assets/a871bf28-7a94-4883-8eca-7c759fcf448b" />
+<img width="1004" height="414" alt="image" src="https://github.com/user-attachments/assets/1d3b5d3b-7470-448c-a64b-fdcf06b432f9" />
 
 ## 資料庫關聯圖
+
 ## API操作示範
 ### 會員功能
 #### 登入
