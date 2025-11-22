@@ -1,9 +1,11 @@
 # 
 
-## 前端部分
-
+## 前端網頁部分
 https://github.com/tohousanae/am3buger-vue
 
+## 使用案例圖
+
+## 資料庫
 ## API操作示範
 ### 會員功能
 #### 登入
