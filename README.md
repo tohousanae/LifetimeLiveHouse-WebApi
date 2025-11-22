@@ -5,7 +5,7 @@ https://github.com/tohousanae/am3buger-vue
 
 ## 使用案例圖
 
-## 資料庫
+## 資料庫關聯圖
 ## API操作示範
 ### 會員功能
 #### 登入
