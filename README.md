@@ -7,6 +7,13 @@ https://github.com/tohousanae/am3buger-vue
 <img width="1004" height="496" alt="image" src="https://github.com/user-attachments/assets/dcd1dde9-d22b-4665-b629-67e7f96455cb" />
 <img width="1004" height="933" alt="image" src="https://github.com/user-attachments/assets/a871bf28-7a94-4883-8eca-7c759fcf448b" />
 <img width="1004" height="414" alt="image" src="https://github.com/user-attachments/assets/1d3b5d3b-7470-448c-a64b-fdcf06b432f9" />
+<img width="1004" height="496" alt="image" src="https://github.com/user-attachments/assets/ae232d77-3b93-431e-a65f-138ce153ba96" />
+<img width="1004" height="735" alt="image" src="https://github.com/user-attachments/assets/f1373f19-09f5-4f36-9b80-f8cd253a8a56" />
+<img width="1004" height="659" alt="image" src="https://github.com/user-attachments/assets/38f440ce-3b99-43d8-bd0d-4aeb21c86816" />
+<img width="1004" height="559" alt="image" src="https://github.com/user-attachments/assets/ea5df24f-43ca-460a-b07d-edaabe5c8d3b" />
+<img width="1004" height="738" alt="image" src="https://github.com/user-attachments/assets/33d0c7a2-d1af-4835-9891-f5e22b70d9fe" />
+<img width="1004" height="738" alt="image" src="https://github.com/user-attachments/assets/b8bd4e72-2759-418f-a01c-91f1e7e9ddc7" />
+
 
 ## 資料庫關聯圖
 
