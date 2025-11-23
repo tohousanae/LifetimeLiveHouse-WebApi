@@ -14,9 +14,8 @@ https://github.com/tohousanae/am3buger-vue
 <img width="1004" height="738" alt="image" src="https://github.com/user-attachments/assets/33d0c7a2-d1af-4835-9891-f5e22b70d9fe" />
 <img width="1004" height="738" alt="image" src="https://github.com/user-attachments/assets/b8bd4e72-2759-418f-a01c-91f1e7e9ddc7" />
 
-## ER圖
-
-## 資料庫關聯圖
+## ER圖(請點開大圖觀看)
+<img width="4844" height="2567" alt="Er圖-第一階段開發" src="https://github.com/user-attachments/assets/0696c97c-cd04-4442-a2ca-4b86e80fcf69" />
 
 ## API操作示範
 ### 會員功能
