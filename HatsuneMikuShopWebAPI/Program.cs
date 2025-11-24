@@ -10,7 +10,7 @@ using NETCore.MailKit.Infrastructure.Internal;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ª`¤JDBContext
+// æ³¨å…¥DBContext
 builder.Services.AddDbContext<LifetimeLiveHouseSysDBContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("LifetimeLiveHouseSysDBConnection")));
 
@@ -32,7 +32,7 @@ builder.Services.AddMailKit(config =>
     });
 });
 
-// ¦í¤JªA°È
+// ä½å…¥æœå‹™
 builder.Services.AddScoped<IForgetPasswordService, ForgetPasswordService>();
 builder.Services.AddScoped<IMemberRegisterServices, MemberRegisterServices>();
 builder.Services.AddScoped<IMemberLoginService, MemberLoginService>();
@@ -43,10 +43,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// ¥[¤J¥»¾÷¤À´²¦¡°O¾ĞÅé§Ö¨úªA°È
+// åŠ å…¥æœ¬æ©Ÿåˆ†æ•£å¼è¨˜æ†¶é«”å¿«å–æœå‹™
 builder.Services.AddDistributedMemoryCache();
 
-// ¥[¤Jredis¤À´²¦¡§Ö¨úªA°È
+// åŠ å…¥redisåˆ†æ•£å¼å¿«å–æœå‹™
 //builder.Services.AddSingleton<IConnectionMultiplexer>(
 //    ConnectionMultiplexer.Connect(
 //        new ConfigurationOptions()
@@ -60,7 +60,7 @@ builder.Services.AddDistributedMemoryCache();
 builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
     opt.TokenLifespan = TimeSpan.FromHours(2));
 
-//¸ó°ì¦s¨ú¬Fµ¦
+//è·¨åŸŸå­˜å–æ”¿ç­–
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("MyCorsPolicy", policy =>
@@ -71,7 +71,7 @@ builder.Services.AddCors(options =>
 });
 
 
-// cookieÅçÃÒ¹w³]³]©w
+// cookieé©—è­‰é è¨­è¨­å®š
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = "MemberLogin";
@@ -80,12 +80,12 @@ builder.Services.AddAuthentication(options =>
     {
         //options.LoginPath = "/api/auth/login";
         //options.LogoutPath = "/api/auth/logout";
-        //¥H¤W¨â±ø¦bweb api·í¤¤¨S¥Î¡A¦]¬°web api¤£·|­«·s¾É¦V
+        //ä»¥ä¸Šå…©æ¢åœ¨web apiç•¶ä¸­æ²’ç”¨ï¼Œå› ç‚ºweb apiä¸æœƒé‡æ–°å°å‘
         options.ExpireTimeSpan = TimeSpan.FromHours(8);
-        options.Cookie.HttpOnly = true; // ¸T¤î JavaScript ¦s¨ú Cookie¨¾XSS§ğÀ»¡C
-        options.Cookie.SameSite = SameSiteMode.None; // ¶}©ñ«eºİ¸ó°ì¦s¨úcookie
-        options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // ±j¨îÂsÄı¾¹¶È¦b HTTPS ³s½u¤U¶Ç°e¸Ó Cookie¡C
-        options.SlidingExpiration = true; // ¦Û°Ê©µªø¦³®Ä®É¶¡
+        options.Cookie.HttpOnly = true; // ç¦æ­¢ JavaScript å­˜å– Cookieé˜²XSSæ”»æ“Šã€‚
+        options.Cookie.SameSite = SameSiteMode.None; // é–‹æ”¾å‰ç«¯è·¨åŸŸå­˜å–cookie
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // å¼·åˆ¶ç€è¦½å™¨åƒ…åœ¨ HTTPS é€£ç·šä¸‹å‚³é€è©² Cookieã€‚
+        options.SlidingExpiration = true; // è‡ªå‹•å»¶é•·æœ‰æ•ˆæ™‚é–“
     });
 builder.Services.AddApplicationInsightsTelemetry();
 
@@ -94,39 +94,39 @@ builder.Services.AddApplicationInsightsTelemetry();
 //    .AddEntityFrameworkStores<IdentityDbContext>()
 //    .AddDefaultTokenProviders();
 
-//// µù¥UToken¹L´Á®É¶¡¬°2¤p®É
+//// è¨»å†ŠTokenéæœŸæ™‚é–“ç‚º2å°æ™‚
 //builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
 //    opt.TokenLifespan = TimeSpan.FromHours(2));
 
-// twilio³]©w¸j©w
+// twilioè¨­å®šç¶å®š
 builder.Services.Configure<TwilioOptions>(builder.Configuration.GetSection("Twilio"));
 builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<TwilioOptions>>().Value);
 
 var app = builder.Build();
 
-// --------------- ¦b Build ¤§«áªì©l¤Æ Twilio ---------------
+// --------------- åœ¨ Build ä¹‹å¾Œåˆå§‹åŒ– Twilio ---------------
 var twilioOpts = app.Services.GetRequiredService<TwilioOptions>();
 
-// ¦b¶}µo¼Ò¦¡¨Ï¥Î¯µ±KºŞ²z­û³]©w
+// åœ¨é–‹ç™¼æ¨¡å¼ä½¿ç”¨ç§˜å¯†ç®¡ç†å“¡è¨­å®š
 if (builder.Environment.IsDevelopment())
 {
     builder.Configuration.AddUserSecrets<Program>();
-    // °»¿ù¥Î¡G¦L¥X¬O§_¦³³]©w¡]¤Á¤Å¦L¥X§¹¾ã AuthToken ¨ì¥Í²£ log¡^
+    // åµéŒ¯ç”¨ï¼šå°å‡ºæ˜¯å¦æœ‰è¨­å®šï¼ˆåˆ‡å‹¿å°å‡ºå®Œæ•´ AuthToken åˆ°ç”Ÿç”¢ logï¼‰
     Console.WriteLine($"[DEBUG] Twilio AccountSid set? {!string.IsNullOrWhiteSpace(twilioOpts.AccountSid)}");
     Console.WriteLine($"[DEBUG] Twilio AuthToken set? {!string.IsNullOrWhiteSpace(twilioOpts.AuthToken)}");
     Console.WriteLine($"[DEBUG] Twilio VerifyServiceSid set? {!string.IsNullOrWhiteSpace(twilioOpts.VerifyServiceSid)}");
 
     if (string.IsNullOrWhiteSpace(twilioOpts.AccountSid) || string.IsNullOrWhiteSpace(twilioOpts.AuthToken))
     {
-        // ¶}µo¶¥¬q¥i¥Hª½±µ¥á¨Ò¥~¡A´£¿ô¯Ê¤Ö³]©w
-        throw new InvalidOperationException("Twilio AccountSid ©Î AuthToken ¥¼³]©w¡C½ĞÀË¬d appsettings / user-secrets / environment variables¡C");
+        // é–‹ç™¼éšæ®µå¯ä»¥ç›´æ¥ä¸Ÿä¾‹å¤–ï¼Œæé†’ç¼ºå°‘è¨­å®š
+        throw new InvalidOperationException("Twilio AccountSid æˆ– AuthToken æœªè¨­å®šã€‚è«‹æª¢æŸ¥ appsettings / user-secrets / environment variablesã€‚");
     }
 }
 
-// ©I¥sªì©l¤Æ¡]³o·|³]©w TwilioClient ªº¥ş°ì»{ÃÒ¡^
+// å‘¼å«åˆå§‹åŒ–ï¼ˆé€™æœƒè¨­å®š TwilioClient çš„å…¨åŸŸèªè­‰ï¼‰
 Twilio.TwilioClient.Init(twilioOpts.AccountSid, twilioOpts.AuthToken);
-//1.3.4 ¦bProgram.cs¼¶¼g±Ò¥ÎInitializerªºµ{¦¡
-//°õ¦æ±M®×®É¦Û°Ê¸ü¤Jªì©l¸ê®Æ
+//1.3.4 åœ¨Program.csæ’°å¯«å•Ÿç”¨Initializerçš„ç¨‹å¼
+//åŸ·è¡Œå°ˆæ¡ˆæ™‚è‡ªå‹•è¼‰å…¥åˆå§‹è³‡æ–™
 using (var scope = app.Services.CreateScope())
 {
     var service = scope.ServiceProvider;
@@ -139,7 +139,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        // ¥[¤Jswagger request durationÅã¥Ü
+        // åŠ å…¥swagger request durationé¡¯ç¤º
         c.DisplayRequestDuration();
     });
 
@@ -148,7 +148,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.MapSwagger().RequireAuthorization();
 
-//¹ê°È¤WAPI¨Ã¤£·|»İ­nÅã¥ÜÀRºAÀÉ®×¡A¦]¬°API³q±`¬O´£¨Ñµ¹«eºİ¨Ï¥Îªº¡A«eºİ·|¦³¦Û¤vªºÀRºAÀÉ®×³B²z¤è¦¡
+//å¯¦å‹™ä¸ŠAPIä¸¦ä¸æœƒéœ€è¦é¡¯ç¤ºéœæ…‹æª”æ¡ˆï¼Œå› ç‚ºAPIé€šå¸¸æ˜¯æä¾›çµ¦å‰ç«¯ä½¿ç”¨çš„ï¼Œå‰ç«¯æœƒæœ‰è‡ªå·±çš„éœæ…‹æª”æ¡ˆè™•ç†æ–¹å¼
 //app.UseStaticFiles();
 
 app.UseAuthorization();
