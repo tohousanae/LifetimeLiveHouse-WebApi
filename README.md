@@ -72,3 +72,4 @@ https://github.com/tohousanae/am3buger-vue
 
 ## 參考引用資料
 1. https://ithelp.ithome.com.tw/articles/10307773
+2. https://github.com/tohousanae/LifetimeLiveHouse-WebApi/blob/main/HatsuneMikuShopWebAPI/Areas/User/Controllers/HomeController.cs
