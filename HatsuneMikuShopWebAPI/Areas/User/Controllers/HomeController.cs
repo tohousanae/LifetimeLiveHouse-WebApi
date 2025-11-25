@@ -91,3 +91,7 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
 //C# — 封裝性 Public vs Private https://medium.com/jason%E7%9A%84%E5%89%8D%E7%AB%AF%E4%B9%8B%E8%B7%AF/c-%E5%B0%81%E8%A3%9D%E6%80%A7-public-vs-private-76549e407a6d
 
 // 流程圖製作教學 https://www.thingsaboutweb.dev/zh-TW/posts/flowchart-introduction
+
+// readme.md 文件撰寫範例參考：
+// 1. https://github.com/hsiangfeng/README-Example-Template
+// 2. https://github.com/joechen0730/Resume?tab=readme-ov-file
