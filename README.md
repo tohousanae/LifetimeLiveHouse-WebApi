@@ -1,5 +1,3 @@
-# 
-
 ## 前端網頁部分
 https://github.com/tohousanae/am3buger-vue
 
