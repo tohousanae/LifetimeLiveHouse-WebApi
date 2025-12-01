@@ -4,7 +4,7 @@ https://github.com/tohousanae/am3buger-vue
 ## 發想與製作動機
 假設我是一個Livehouse新系統的開發團隊，而這個Livehouse要與世界計畫、BandDream少女音樂派對這兩個音樂主題遊戲長期連動作為宣傳，因此這個系統的要求除了要有基本的練團室/樂器租借功能外，還要有讓廠商與個人舉辦活動、周邊商品販賣、前述兩個ACG遊戲的日/台服官方資訊推播，讓使用者除了使用本系統租借練團室或樂器外，也能夠在這裡獲得第一手的世界計畫/BandDream官方資訊，讓本網站除了具有商品販賣、練團室樂器租借功能、舉辦活動外，也能有整理並放送世界計畫/BandDream官方資訊的功能，減少使用者要去多個網站查詢前述兩個作品官方資訊的負擔。
 
-當然，實際上我會想做這套系統是因為看了Mygo動畫裡面椎名立希在Livehouse登記練團時間時，店員操作Livehouse RiNG的POS機時想到的，乾脆做一個ACG作品主題的Livehouse系統出來好了，能夠在家裡就用電腦或手機預約好練團室多方便阿。
+當然，實際上我會想做這套系統是因為看了Mygo動畫裡面椎名立希在Livehouse登記練團時間時，店員操作Livehouse RiNG的POS機時想到的，乾脆做一個ACG作品主題的Livehouse系統出來好了，能夠在家裡就用電腦或手機預約好練團室多方便阿，畢竟Livehouse練團室租借的系統在業界似乎相當少見，就連yamaha或是一些其他業者不是使用電話預約就是用社群軟體傳訊息預約。
 ## 使用案例圖
 <img width="1004" height="496" alt="image" src="https://github.com/user-attachments/assets/dcd1dde9-d22b-4665-b629-67e7f96455cb" />
 <img width="1004" height="933" alt="image" src="https://github.com/user-attachments/assets/a871bf28-7a94-4883-8eca-7c759fcf448b" />
