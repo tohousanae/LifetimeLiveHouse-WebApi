@@ -11,7 +11,7 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
     {
         private readonly IMemberRegisterServices _memberRegister = memberRegister;
 
-        [HttpPost("register")]
+        [HttpPost("postRegisterMember")]
         public async Task<IActionResult> Register(MemberRegisterDTO dto)
         {
             var result = await _memberRegister.RegisterAsync(dto);

@@ -65,8 +65,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("MyCorsPolicy", policy =>
     {
-        //policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
-        policy.WithOrigins("http://localhost:5173").WithHeaders("*").WithMethods("*").AllowCredentials();
+        policy.WithOrigins("https://localhost:5173")
+              .AllowAnyHeader()   // 改用這個
+              .AllowAnyMethod()   // 改用這個
+              .AllowCredentials();
     });
 });
 
@@ -150,6 +152,8 @@ app.MapSwagger().RequireAuthorization();
 
 //實務上API並不會需要顯示靜態檔案，因為API通常是提供給前端使用的，前端會有自己的靜態檔案處理方式
 //app.UseStaticFiles();
+
+app.UseCors("MyCorsPolicy");
 
 app.UseAuthorization();
 

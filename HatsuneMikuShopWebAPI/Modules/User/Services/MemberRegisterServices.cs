@@ -49,17 +49,17 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
                     return new BadRequestObjectResult("信箱已被註冊");
                 }
 
-                else if (await _context.Member.AnyAsync(m => m.CellphoneNumber == dto.CellphoneNumber))
-                {
-                    return new BadRequestObjectResult("手機號碼已被註冊");
-                }
+                //else if (await _context.Member.AnyAsync(m => m.CellphoneNumber == dto.CellphoneNumber))
+                //{
+                //    return new BadRequestObjectResult("手機號碼已被註冊");
+                //}
                 else {
                     // 新增 Member
                     var member = new Member
                     {
                         Name = dto.Name,
                         Birthday = dto.Birthday,
-                        CellphoneNumber = dto.CellphoneNumber
+                        //CellphoneNumber = dto.CellphoneNumber
                     };
                     _context.Member.Add(member);
                     await _context.SaveChangesAsync();

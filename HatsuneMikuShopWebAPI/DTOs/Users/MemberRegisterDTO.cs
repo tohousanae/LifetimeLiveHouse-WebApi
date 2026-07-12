@@ -14,8 +14,8 @@ namespace LifetimeLiveHouseWebAPI.DTOs.Users
         [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd hh:mm:ss}")]
         public DateTime Birthday { get; set; }   // 生日
 
-        [StringLength(20)]
-        public string CellphoneNumber { get; set; } = null!;   // 手機號碼
+        //[StringLength(20)]
+        //public string CellphoneNumber { get; set; } = null!;   // 手機號碼
 
 
         // MemberAccount
