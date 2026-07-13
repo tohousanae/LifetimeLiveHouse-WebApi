@@ -1,0 +1,59 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace LifetimeLiveHouseWebAPI.Models;
+
+public partial class Member
+{
+    public long MemberID { get; set; }
+
+    public string Name { get; set; } = null!;
+
+    public DateTime CreatedDate { get; set; }
+
+    public DateTime Birthday { get; set; }
+
+    public decimal Cash { get; set; }
+
+    public string? CellphoneNumber { get; set; }
+
+    public int MemberPoint { get; set; }
+
+    public string StatusCode { get; set; } = null!;
+
+    public virtual ICollection<Cart> Cart { get; set; } = new List<Cart>();
+
+    public virtual ICollection<Coupon> Coupon { get; set; } = new List<Coupon>();
+
+    public virtual ICollection<Event> Event { get; set; } = new List<Event>();
+
+    public virtual ICollection<Instrument> Instrument { get; set; } = new List<Instrument>();
+
+    public virtual ICollection<Live> Live { get; set; } = new List<Live>();
+
+    public virtual ICollection<LoginRecord> LoginRecord { get; set; } = new List<LoginRecord>();
+
+    public virtual ICollection<MemberAccount> MemberAccount { get; set; } = new List<MemberAccount>();
+
+    public virtual MemberEmailVerificationStatus? MemberEmailVerificationStatus { get; set; }
+
+    public virtual MemberHeadPicture? MemberHeadPicture { get; set; }
+
+    public virtual MemberPhoneVerificationStatus? MemberPhoneVerificationStatus { get; set; }
+
+    public virtual ICollection<MemberPicture> MemberPicture { get; set; } = new List<MemberPicture>();
+
+    public virtual ICollection<Notification> Notification { get; set; } = new List<Notification>();
+
+    public virtual ICollection<Order> Order { get; set; } = new List<Order>();
+
+    public virtual ICollection<PasswordResetToken> PasswordResetToken { get; set; } = new List<PasswordResetToken>();
+
+    public virtual ICollection<RegisteredEvent> RegisteredEvent { get; set; } = new List<RegisteredEvent>();
+
+    public virtual ICollection<RehearsalStudio> RehearsalStudio { get; set; } = new List<RehearsalStudio>();
+
+    public virtual Seat? Seat { get; set; }
+
+    public virtual MemberStatus StatusCodeNavigation { get; set; } = null!;
+}
