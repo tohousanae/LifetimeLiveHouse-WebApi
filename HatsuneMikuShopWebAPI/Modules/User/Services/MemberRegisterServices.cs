@@ -5,13 +5,17 @@ using LifetimeLiveHouseWebAPI.DTOs.Users;
 using LifetimeLiveHouseWebAPI.Modules.User.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NETCore.MailKit.Core;
+using System;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Twilio.Exceptions;
 using Twilio.Rest.Verify.V2.Service;
-using Twilio.Types;
-using Microsoft.Extensions.Logging;
 
 namespace LifetimeLiveHouseWebAPI.Modules.User.Services
 {
@@ -39,88 +43,127 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
 
         public async Task<ActionResult<string>> RegisterAsync(MemberRegisterDTO dto)
         {
-            using var transaction = await _context.Database.BeginTransactionAsync();
-
             try
             {
-                // 檢查信箱／手機是否已被註冊
-                if (await _context.MemberAccount.AnyAsync(a => a.Email == dto.Email))
+                // 1. 檢查信箱是否已被註冊 (使用 AsNoTracking 提升查詢效能)
+                if (await _context.MemberAccount.AsNoTracking().AnyAsync(a => a.Email == dto.Email))
                 {
                     return new BadRequestObjectResult("信箱已被註冊");
                 }
 
-                //else if (await _context.Member.AnyAsync(m => m.CellphoneNumber == dto.CellphoneNumber))
-                //{
-                //    return new BadRequestObjectResult("手機號碼已被註冊");
-                //}
-                else {
-                    // 新增 Member
-                    var member = new Member
+                // 2. 密碼使用 BCrypt 雜湊 (放進 Task.Run 避免阻塞主執行緒)
+                var passwordHash = await Task.Run(() => BCrypt.Net.BCrypt.HashPassword(dto.Password, 10));
+
+                // 3. Email Token 改用 SHA256 雜湊 (運算極快，不到 1 毫秒)
+                var plainTokenString = TokenGeneratorHelper.GeneratePassword(100);
+                var tokenHash = HashStringSHA256(plainTokenString);
+
+                // 4. 新增 Member (第 1 次資料庫寫入，為了取得自動遞增的 MemberID)
+                var member = new Member
+                {
+                    Name = dto.Name,
+                    Birthday = dto.Birthday
+                };
+                _context.Member.Add(member);
+                await _context.SaveChangesAsync();
+
+                // 5. 批次新增所有關聯資料
+                var account = new MemberAccount
+                {
+                    MemberID = member.MemberID,
+                    Email = dto.Email,
+                    Password = passwordHash
+                };
+                _context.MemberAccount.Add(account);
+
+                var emailVer = new MemberEmailVerificationStatus
+                {
+                    MemberID = member.MemberID,
+                    IsEmailVerified = false,
+                    EmailVerificationTokenExpiry = DateTime.Now.AddHours(24),
+                    EmailVerificationTokenHash = tokenHash // 存入 SHA256 Hash
+                };
+                _context.MemberEmailVerificationStatus.Add(emailVer);
+
+                var phoneVer = new MemberPhoneVerificationStatus
+                {
+                    MemberID = member.MemberID,
+                    IsPhoneVerified = false
+                };
+                _context.MemberPhoneVerificationStatus.Add(phoneVer);
+
+                // 第 2 次資料庫寫入 (完成所有關聯綁定)
+                await _context.SaveChangesAsync();
+
+                // 6. 組合帶有 MemberID 的 Token (解決驗證時的效能災難)
+                var combinedToken = $"{member.MemberID}:{plainTokenString}";
+                var emailVerifyLink = $"{_frontendBaseUrl}/verify-email?token={Uri.EscapeDataString(combinedToken)}";
+
+                var body = $@"
+                <p>您好 {dto.Name}：</p>
+                <p>請點擊以下連結完成信箱驗證：</p>
+                <p><a href='{emailVerifyLink}'>{emailVerifyLink}</a></p>
+                <p>此連結將在 24 小時後失效。</p>";
+
+                // 7. 背景發送 Email (Fire-and-forget)，讓前端瞬間收到「註冊成功」回應，不用等 SMTP 伺服器
+                _ = Task.Run(async () =>
+                {
+                    try
                     {
-                        Name = dto.Name,
-                        Birthday = dto.Birthday,
-                        //CellphoneNumber = dto.CellphoneNumber
-                    };
-                    _context.Member.Add(member);
-                    await _context.SaveChangesAsync();
-
-                    // 新增 MemberAccount
-                    var account = new MemberAccount
+                        await _emailService.SendAsync(dto.Email, "會員註冊 – 信箱驗證", body, true);
+                    }
+                    catch (Exception ex)
                     {
-                        MemberID = member.MemberID,
-                        Email = dto.Email,
-                        Password = BCrypt.Net.BCrypt.HashPassword(dto.Password)
-                    };
-                    _context.MemberAccount.Add(account);
-                    await _context.SaveChangesAsync();
+                        _logger?.LogError(ex, "Failed to send registration email to {Email}", dto.Email);
+                    }
+                });
 
-                    // 新增 EmailVerificationStatus
-                    var emailVer = new MemberEmailVerificationStatus
-                    {
-                        MemberID = member.MemberID,
-                        IsEmailVerified = false,
-                        EmailVerificationTokenExpiry = DateTime.Now.AddHours(24)
-
-                    };
-                    _context.MemberEmailVerificationStatus.Add(emailVer);
-
-                    // 新增 PhoneVerificationStatus
-                    var phoneVer = new MemberPhoneVerificationStatus
-                    {
-                        MemberID = member.MemberID,
-                        IsPhoneVerified = false
-                    };
-                    _context.MemberPhoneVerificationStatus.Add(phoneVer);
-
-                    await _context.SaveChangesAsync();
-
-                    // 產生 token 更新 EmailVerificationStatus
-                    var plainToken = TokenGeneratorHelper.GeneratePassword(100);
-                    emailVer.EmailVerificationTokenHash = BCrypt.Net.BCrypt.HashPassword(plainToken);
-                    _context.MemberEmailVerificationStatus.Update(emailVer);
-
-                    await _context.SaveChangesAsync();
-
-                    // 發送驗證信
-                    var emailVerifyLink = $"{_frontendBaseUrl}/verify-email?token={Uri.EscapeDataString(plainToken)}";
-                    var body = $@"
-                    <p>您好 {dto.Name}：</p>
-                    <p>請點擊以下連結完成信箱驗證：</p>
-                    <p><a href='{emailVerifyLink}'>{emailVerifyLink}</a></p>
-                    <p>此連結將在 24 小時後失效。</p>";
-                    await _emailService.SendAsync(dto.Email, "會員註冊 – 信箱驗證", body, true);
-
-                    await transaction.CommitAsync();
-
-                    return dto.Name;  // 或回傳成功訊息或 memberId
-                }
+                return dto.Name;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                await transaction.RollbackAsync();
-                // 可記錄異常
-                throw;
+                _logger?.LogError(ex, "RegisterAsync Error");
+                // 在正式環境建議不要直接把 ex.ToString() 傳給前端，這裡保留方便你開發除錯
+                return new BadRequestObjectResult(ex.ToString());
             }
+        }
+
+        public async Task<ActionResult<string>> VerifyEmailAsync(string token)
+        {
+            token = Uri.UnescapeDataString(token);
+
+            // 1. 拆解 Token，取得 MemberID (格式：MemberID:RandomToken)
+            var parts = token.Split(':');
+            if (parts.Length != 2 || !long.TryParse(parts[0], out long memberId))
+            {
+                return new BadRequestObjectResult("無效的驗證連結格式");
+            }
+
+            var plainTokenString = parts[1];
+
+            // 2. 利用 MemberID 精準抓取單一筆資料 (時間複雜度 O(1))
+            var account = await _context.MemberEmailVerificationStatus
+                .FirstOrDefaultAsync(t => t.MemberID == memberId && t.EmailVerificationTokenExpiry > DateTime.Now);
+
+            if (account == null)
+            {
+                return new BadRequestObjectResult("驗證連結無效或已過期");
+            }
+
+            // 3. 將前端傳來的 token 再次進行 SHA256 雜湊比對
+            var expectedHash = HashStringSHA256(plainTokenString);
+            if (account.EmailVerificationTokenHash != expectedHash)
+            {
+                return new BadRequestObjectResult("驗證連結無效");
+            }
+
+            // 4. 驗證成功，更新狀態
+            account.IsEmailVerified = true;
+            account.EmailVerificationTokenHash = null;
+            account.EmailVerificationTokenExpiry = null;
+
+            await _context.SaveChangesAsync();
+            return new OkObjectResult("信箱驗證成功！");
         }
 
         public async Task<ActionResult<string>> SendVerificationSMSAsync(string phoneNumber)
@@ -128,40 +171,15 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
             if (string.IsNullOrWhiteSpace(phoneNumber))
                 return new BadRequestObjectResult("phoneNumber is required.");
 
-            // 1. 標準化國際電話
-            string NormalizePhone(string raw)
-            {
-                // 保留數字與 +
-                string cleaned = new string(raw.Where(c => char.IsDigit(c) || c == '+').ToArray());
+            var normalized = NormalizePhoneNumber(phoneNumber);
 
-                // 特殊處理台灣 09xxxxxxxx
-                if (cleaned.StartsWith("09") && cleaned.Length >= 10)
-                    return "+886" + cleaned.Substring(1);
-
-                // 若是台灣 9xxxxxxxx
-                if (cleaned.Length == 9 && cleaned.StartsWith("9"))
-                    return "+886" + cleaned;
-
-                // 若是 + 開頭，視為國際格式
-                if (cleaned.StartsWith("+"))
-                    return cleaned;
-
-                // 若是未加 + 的國際格式，例如 8869xxxxxxx → 加上 +
-                if (Regex.IsMatch(cleaned, @"^\d{8,15}$"))
-                    return "+" + cleaned;
-
-                return cleaned;
-            }
-
-            var normalized = NormalizePhone(phoneNumber);
-
-            // 2. 必須符合 E.164 格式：+國碼 + 最少8碼
+            // 必須符合 E.164 格式
             if (!Regex.IsMatch(normalized, @"^\+\d{8,15}$"))
             {
-                return new BadRequestObjectResult($"Invalid phone number format: '{normalized}'. Phone must be in E.164 format (e.g., +886912345678).");
+                return new BadRequestObjectResult($"Invalid phone number format: '{normalized}'.");
             }
 
-            // 3. 檢查帳號是否存在
+            // 檢查帳號與驗證狀態
             var account = await _context.Member
                 .AsNoTracking()
                 .Where(a => a.CellphoneNumber == normalized || a.CellphoneNumber == phoneNumber)
@@ -176,12 +194,10 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
             if (account == null)
                 return new NotFoundObjectResult("此手機號碼尚未註冊");
 
-            // 4. 檢查是否已驗證
             if (account.IsPhoneVerified)
                 return new BadRequestObjectResult("此手機號碼已驗證過");
 
             var serviceSid = _twilioOpts.VerifyServiceSid;
-
             if (string.IsNullOrWhiteSpace(serviceSid))
                 return new StatusCodeResult(500);
 
@@ -203,54 +219,22 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
             }
             catch (ApiException tex)
             {
+                _logger?.LogError(tex, "Twilio API error");
                 return new ObjectResult(new
                 {
                     error = "Twilio API error",
                     twilioStatus = tex.Status,
-                    twilioCode = tex.Code,
-                    message = tex.Message,
-                    moreInfo = tex.MoreInfo
+                    message = tex.Message
                 })
-                {
-                    StatusCode = 502
-                };
+                { StatusCode = 502 };
             }
             catch (Exception ex)
             {
-                return new ObjectResult(new
-                {
-                    error = "伺服器錯誤",
-                    message = ex.Message
-                })
-                {
-                    StatusCode = 500
-                };
+                _logger?.LogError(ex, "伺服器錯誤");
+                return new ObjectResult(new { error = "伺服器錯誤", message = ex.Message }) { StatusCode = 500 };
             }
         }
 
-        public async Task<ActionResult<string>> VerifyEmailAsync(string token)
-        {
-            token = Uri.UnescapeDataString(token); // 先解 URI
-
-            // 因為 token 是隨機字串，所以需逐筆比對（BCrypt 雜湊不可逆）
-            var validTokens = await _context.MemberEmailVerificationStatus
-                .Where(t => t.EmailVerificationTokenExpiry > DateTime.Now)
-                .ToListAsync();
-
-            MemberEmailVerificationStatus? account = validTokens.FirstOrDefault(t => BCrypt.Net.BCrypt.Verify(token, t.EmailVerificationTokenHash));
-
-            if (account == null)
-                return new BadRequestObjectResult("驗證連結無效");
-
-            account.IsEmailVerified = true;
-            account.EmailVerificationTokenHash = null;
-            account.EmailVerificationTokenExpiry = null;
-
-            await _context.SaveChangesAsync();
-            return new OkObjectResult("信箱驗證成功！");
-        }
-
-        // Verify Phone
         public async Task<ActionResult<string>> VerifyPhoneAsync(long memberId, string code)
         {
             if (memberId <= 0 || string.IsNullOrWhiteSpace(code))
@@ -278,27 +262,14 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
                 if (string.IsNullOrWhiteSpace(account.CellphoneNumber))
                     return new BadRequestObjectResult("會員尚未設定手機號碼");
 
-                // 若 DB 內的號碼不是 E.164 格式，視情況先 normalize（可抽成 function）
-                string NormalizePhone(string raw)
-                {
-                    var cleaned = new string(raw.Where(c => char.IsDigit(c) || c == '+').ToArray());
-                    if (cleaned.StartsWith("09") && cleaned.Length >= 10)
-                        return "+886" + cleaned.Substring(1);
-                    if (cleaned.StartsWith("+"))
-                        return cleaned;
-                    if (Regex.IsMatch(cleaned, @"^\d{8,15}$"))
-                        return "+" + cleaned;
-                    return cleaned;
-                }
-
-                var toNumber = NormalizePhone(account.CellphoneNumber);
+                var toNumber = NormalizePhoneNumber(account.CellphoneNumber);
 
                 if (!Regex.IsMatch(toNumber, @"^\+\d{8,15}$"))
-                    return new BadRequestObjectResult("儲存在資料庫的手機號碼格式錯誤，請聯絡客服或重新輸入手機號碼");
+                    return new BadRequestObjectResult("儲存在資料庫的手機號碼格式錯誤");
 
                 var serviceSid = _twilioOpts?.VerifyServiceSid;
                 if (string.IsNullOrWhiteSpace(serviceSid))
-                    return new ObjectResult("VerifyServiceSid 未設定，請檢查系統設定") { StatusCode = 500 };
+                    return new ObjectResult("VerifyServiceSid 未設定") { StatusCode = 500 };
 
                 VerificationCheckResource verificationCheck;
                 try
@@ -311,16 +282,8 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
                 }
                 catch (ApiException tex)
                 {
-                    _logger?.LogError(tex, "Twilio ApiException during verification check for member {MemberId}", memberId);
-                    return new ObjectResult(new
-                    {
-                        error = "Twilio API error",
-                        twilioStatus = tex.Status,
-                        twilioCode = tex.Code,
-                        message = tex.Message,
-                        moreInfo = tex.MoreInfo
-                    })
-                    { StatusCode = 502 };
+                    _logger?.LogError(tex, "Twilio ApiException");
+                    return new ObjectResult(new { error = "Twilio API error", message = tex.Message }) { StatusCode = 502 };
                 }
 
                 if (verificationCheck == null)
@@ -328,24 +291,42 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
 
                 if (verificationCheck.Status == "approved")
                 {
+                    // 使用 ExecuteUpdateAsync 直接在 DB 執行 Update，效能極佳
                     await _context.MemberPhoneVerificationStatus
                         .Where(s => s.MemberID == memberId)
                         .ExecuteUpdateAsync(s => s.SetProperty(p => p.IsPhoneVerified, true));
 
                     return new OkObjectResult("手機驗證成功！");
                 }
-                else
-                {
-                    return new BadRequestObjectResult("驗證碼無效或已過期");
-                }
+
+                return new BadRequestObjectResult("驗證碼無效或已過期");
             }
             catch (Exception ex)
             {
-                _logger?.LogError(ex, "Unexpected error during phone verification for member {MemberId}", memberId);
+                _logger?.LogError(ex, "Unexpected error during phone verification");
                 return new ObjectResult(new { error = "Internal server error", message = ex.Message }) { StatusCode = 500 };
             }
         }
+
+        // ================= 工具方法 =================
+
+        // 極速 SHA256 雜湊 (取代用在 Token 的 BCrypt)
+        private static string HashStringSHA256(string input)
+        {
+            using var sha256 = SHA256.Create();
+            var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(input));
+            return Convert.ToBase64String(bytes);
+        }
+
+        // 正規化電話號碼
+        private static string NormalizePhoneNumber(string raw)
+        {
+            string cleaned = new string(raw.Where(c => char.IsDigit(c) || c == '+').ToArray());
+            if (cleaned.StartsWith("09") && cleaned.Length >= 10) return "+886" + cleaned.Substring(1);
+            if (cleaned.Length == 9 && cleaned.StartsWith("9")) return "+886" + cleaned;
+            if (cleaned.StartsWith("+")) return cleaned;
+            if (Regex.IsMatch(cleaned, @"^\d{8,15}$")) return "+" + cleaned;
+            return cleaned;
+        }
     }
 }
-
-
