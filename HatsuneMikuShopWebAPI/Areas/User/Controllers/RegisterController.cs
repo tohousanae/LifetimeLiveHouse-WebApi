@@ -1,10 +1,12 @@
 ﻿using LifetimeLiveHouseWebAPI.DTOs.Users;
 using LifetimeLiveHouseWebAPI.Modules.User.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
 {
     [Area("User")]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class RegisterController(IMemberRegisterServices memberRegister) : ControllerBase
