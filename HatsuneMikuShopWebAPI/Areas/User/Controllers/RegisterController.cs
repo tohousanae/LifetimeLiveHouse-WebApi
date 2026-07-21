@@ -6,13 +6,13 @@ using Microsoft.AspNetCore.Mvc;
 namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
 {
     [Area("User")]
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class RegisterController(IMemberRegisterServices memberRegister) : ControllerBase
     {
         private readonly IMemberRegisterServices _memberRegister = memberRegister;
 
+        [Authorize]
         [HttpPost("postRegisterMember")]
         public async Task<IActionResult> Register(MemberRegisterDTO dto)
         {
@@ -23,31 +23,31 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
             }
             return Ok(new { Message = "註冊成功", Name = result.Value });
         }
-        [HttpPost("sendValidationSMS")]
-        public async Task<ActionResult<string>> SendValidationSMS(UserPhoneNumberDTO dto)
-        {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+        //[HttpPost("sendValidationSMS")]
+        //public async Task<ActionResult<string>> SendValidationSMS(UserPhoneNumberDTO dto)
+        //{
+        //    if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            try
-            {
-                return await _memberRegister.SendVerificationSMSAsync(dto.CellphoneNumber);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-        }
+        //    try
+        //    {
+        //        return await _memberRegister.SendVerificationSMSAsync(dto.CellphoneNumber);
+        //    }
+        //    catch (InvalidOperationException ex)
+        //    {
+        //        return BadRequest(new { message = ex.Message });
+        //    }
+        //}
         [HttpPost("verify-email")]
         public async Task<ActionResult<string>> VerifyEmail([FromQuery] string token)
         {
             return await _memberRegister.VerifyEmailAsync(token);
         }
 
-        [HttpPost("verify-phone")]
-        public async Task<ActionResult<string>> VerifyPhone([FromBody] VerifyPhoneDTO dto)
-        {
-            return await _memberRegister.VerifyPhoneAsync(dto.MemberId, dto.Code);
-        }
+        //[HttpPost("verify-phone")]
+        //public async Task<ActionResult<string>> VerifyPhone([FromBody] VerifyPhoneDTO dto)
+        //{
+        //    return await _memberRegister.VerifyPhoneAsync(dto.MemberId, dto.Code);
+        //}
     }
 
 }
