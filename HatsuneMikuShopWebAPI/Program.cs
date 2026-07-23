@@ -65,7 +65,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("MyCorsPolicy", policy =>
     {
-        policy.WithOrigins("https://localhost:5173")
+        policy.WithOrigins("https://livetimelivehouse.sakuyaonline.uk")
               .AllowAnyHeader()   // 改用這個
               .AllowAnyMethod()   // 改用這個
               .AllowCredentials();
