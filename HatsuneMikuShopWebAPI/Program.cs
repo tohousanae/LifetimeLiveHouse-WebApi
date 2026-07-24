@@ -147,7 +147,9 @@ if (app.Environment.IsDevelopment())
 
 }
 
-app.UseHttpsRedirection();
+// 【架構設定】外部 HTTPS 加密已交由 Cloudflare Tunnel 處理 (SSL Offloading)
+// 本機端僅需專注監聽 HTTP 流量，故停用 HTTPS 重新導向以避免無窮迴圈 (Infinite Redirect Loop)
+//app.UseHttpsRedirection();
 app.MapSwagger().RequireAuthorization();
 
 //實務上API並不會需要顯示靜態檔案，因為API通常是提供給前端使用的，前端會有自己的靜態檔案處理方式
