@@ -58,5 +58,5 @@ public partial class Event
 
     public virtual Store Store { get; set; } = null!;
 
-    public virtual EventStatus EventStatus { get; set;} = null!;
+    public virtual EventStatus EventStatus { get; set; } = null!;
 }

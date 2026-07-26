@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace LifetimeLiveHouseWebAPI.Models;
+﻿namespace LifetimeLiveHouseWebAPI.Models;
 
 public partial class AttendanceRecord
 {

@@ -7,7 +7,7 @@ public class ShippingMethod
     [StringLength(1)]
     [Column(TypeName = "nchar")]
     public string ShippingMethodCode { get; set; } = null!;
-    
+
     [StringLength(10)]
     public string Method { get; set; } = null!;
 

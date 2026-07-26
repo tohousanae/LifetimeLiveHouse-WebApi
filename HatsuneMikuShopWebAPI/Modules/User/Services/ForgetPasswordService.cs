@@ -1,11 +1,11 @@
-﻿using LifetimeLiveHouse.Access.Data;
+﻿using Common.Helpers;
+using LifetimeLiveHouse.Access.Data;
 using LifetimeLiveHouse.Models;
 using LifetimeLiveHouseWebAPI.DTOs.Users;
-using Common.Helpers;
-using Microsoft.EntityFrameworkCore;
-using NETCore.MailKit.Core;
 using LifetimeLiveHouseWebAPI.Modules.User.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using NETCore.MailKit.Core;
 
 namespace LifetimeLiveHouseWebAPI.Modules.User.Services
 {

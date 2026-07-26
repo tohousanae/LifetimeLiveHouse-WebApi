@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using LifetimeLiveHouse.Access.Data;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
-using LifetimeLiveHouse.Access.Data;
 namespace LifetimeLiveHouseWebAPI.Areas.Admin.Controllers
 {
     // 查詢時須限制一次撈出的筆數，避免一次撈出過多資料導致效能問題

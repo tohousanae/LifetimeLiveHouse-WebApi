@@ -16,7 +16,7 @@ public class OrderDetail
     public decimal Price { get; set; }
 
     [Range(0, int.MaxValue)]
-    public int Count{ get; set; }
+    public int Count { get; set; }
 
     [StringLength(50)]
     public string? ShippingAddress { get; set; }

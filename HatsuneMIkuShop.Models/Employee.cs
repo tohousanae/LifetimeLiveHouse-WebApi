@@ -64,7 +64,7 @@ public partial class Employee
     public virtual ICollection<AttendanceRecord> AttendanceRecords { get; set; } = new List<AttendanceRecord>();
 
     public virtual EmployeeAccount EmployeeAccount { get; set; } = null!;
-    
+
     public virtual ICollection<Order>? Orders { get; set; } = new List<Order>();
 
     public virtual Store Store { get; set; } = null!;

@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using LifetimeLiveHouse.Models;
+using Microsoft.AspNetCore.Mvc;
 using StackExchange.Redis;
-using LifetimeLiveHouse.Models;
 
 namespace LifetimeLiveHouseWebAPI.Areas.Admin.Controllers
 {

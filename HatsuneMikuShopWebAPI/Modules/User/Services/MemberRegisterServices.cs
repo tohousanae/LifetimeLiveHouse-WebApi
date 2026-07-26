@@ -5,17 +5,11 @@ using LifetimeLiveHouseWebAPI.DTOs.Users;
 using LifetimeLiveHouseWebAPI.Modules.User.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NETCore.MailKit.Core;
-using System;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Twilio.Exceptions;
 using Twilio.Rest.Verify.V2.Service;
 
