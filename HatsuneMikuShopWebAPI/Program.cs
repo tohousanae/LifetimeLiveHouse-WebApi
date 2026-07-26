@@ -93,7 +93,13 @@ builder.Services.AddAuthentication(options =>
         options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // 強制瀏覽器僅在 HTTPS 連線下傳送該 Cookie。
         options.SlidingExpiration = true; // 自動延長有效時間
     });
-builder.Services.AddApplicationInsightsTelemetry();
+
+// 👉 將 Azure 監控設定移到這裡 (必須在 Build 之前)
+// 只有在非開發環境 (例如 Production) 才啟用 Application Insights
+if (!builder.Environment.IsDevelopment())
+{
+    builder.Services.AddApplicationInsightsTelemetry();
+}
 
 ////builder.Services
 //    .AddIdentity<MemberAccount, IdentityRole>()
@@ -149,12 +155,6 @@ if (app.Environment.IsDevelopment())
         c.DisplayRequestDuration();
     });
 
-}
-
-// 只有在非開發環境 (例如 Production) 才啟用 Application Insights
-if (!builder.Environment.IsDevelopment())
-{
-    builder.Services.AddApplicationInsightsTelemetry();
 }
 // 【架構設定】外部 HTTPS 加密已交由 Cloudflare Tunnel 處理 (SSL Offloading)
 // 本機端僅需專注監聽 HTTP 流量，故停用 HTTPS 重新導向以避免無窮迴圈 (Infinite Redirect Loop)
