@@ -10,13 +10,17 @@ using NETCore.MailKit.Infrastructure.Internal;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 注入DBContext
+// 根據目前執行環境，自動決定要用哪一組連線字串
+var connectionString = builder.Environment.IsDevelopment()
+    ? builder.Configuration.GetConnectionString("LifetimeLiveHouseSysDBConnection") // 本機開發用
+    : builder.Configuration.GetConnectionString("AzureCloudConnection");            // 正式發佈用
+
+// 注入 DBContext 並套用剛剛決定的連線字串
 builder.Services.AddDbContext<LifetimeLiveHouseSysDBContext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("LifetimeLiveHouseSysDBConnection")));
+    options.UseSqlServer(connectionString));
 
 builder.Services.AddDbContext<LifetimeLiveHouseSysDBContext2>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("LifetimeLiveHouseSysDBConnection")));
-
+    options.UseSqlServer(connectionString));
 
 builder.Services.AddMailKit(config =>
 {
@@ -147,6 +151,11 @@ if (app.Environment.IsDevelopment())
 
 }
 
+// 只有在非開發環境 (例如 Production) 才啟用 Application Insights
+if (!builder.Environment.IsDevelopment())
+{
+    builder.Services.AddApplicationInsightsTelemetry();
+}
 // 【架構設定】外部 HTTPS 加密已交由 Cloudflare Tunnel 處理 (SSL Offloading)
 // 本機端僅需專注監聽 HTTP 流量，故停用 HTTPS 重新導向以避免無窮迴圈 (Infinite Redirect Loop)
 //app.UseHttpsRedirection();
