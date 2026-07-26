@@ -1,5 +1,4 @@
-﻿
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
 using LifetimeLiveHouse.Access.Data;
@@ -33,31 +32,31 @@ namespace LifetimeLiveHouseWebAPI.Areas.Admin.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProducts(int id)
         {
-            // Read through，優先從快取讀取商品資料，若快取無資料則從資料庫讀取並更新快取
             string cacheKey = $"Product_{id}";
 
-            // 1. 先從 Redis 拿資料
             var cachedProduct = await _cacheDb.StringGetAsync(cacheKey);
             if (cachedProduct.HasValue)
             {
-                // Redis 裡存的是字串，需反序列化回 Product 物件
-                var product = System.Text.Json.JsonSerializer.Deserialize<Product>(cachedProduct);
-                return Ok(product + "來源為快取"); // 修正：使用 Ok() 包裝返回的物件
+                var product = System.Text.Json.JsonSerializer.Deserialize<Product>(cachedProduct.ToString());
+                if (product == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(new { Source = "cache", Product = product });
             }
             else
             {
-                // 2. Redis 沒資料，從資料庫拿
                 var productFromDb = await _context.Product.FindAsync(id);
                 if (productFromDb == null)
                 {
                     return NotFound();
                 }
 
-                // 3. 寫回 Redis
                 var serializedProduct = System.Text.Json.JsonSerializer.Serialize(productFromDb);
-                await _cacheDb.StringSetAsync(cacheKey, serializedProduct/*, TimeSpan.FromHours(24) 過期時間*/); 
+                await _cacheDb.StringSetAsync(cacheKey, serializedProduct/*, TimeSpan.FromHours(24)*/);
 
-                return Ok(productFromDb + "來源為資料庫"); // 修正：使用 Ok() 包裝返回的物件
+                return Ok(new { Source = "database", Product = productFromDb });
             }
         }
 
