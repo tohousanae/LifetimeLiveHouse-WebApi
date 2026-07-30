@@ -34,7 +34,8 @@
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
       "environmentVariables": {
         "ASPNETCORE_HTTPS_PORTS": "8081",
-        "ASPNETCORE_HTTP_PORTS": "8080"
+        "ASPNETCORE_HTTP_PORTS": "8080",
+        "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "sslPort": 32769, // 👈 把 HTTPS 的對外 Port 釘死在這裡！
       "httpPort": 32770, // 👈 把 HTTP 的對外 Port 也釘死在這裡！
