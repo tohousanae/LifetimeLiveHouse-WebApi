@@ -1,0 +1,42 @@
+name: 自動打包與部署 (CI/CD)
+
+# 觸發條件：只有推送到 main 或 develop 分支才會啟動
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 1. 取得最新程式碼
+        uses: actions/checkout@v4
+
+      - name: 🔑 2. 登入 Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: 🏷️ 3. 判斷分支並指派對應標籤 (Tag)
+        id: determine_tag
+        run: |
+          # 如果推送的是 main 分支，標籤設為 latest (正式版)
+          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            echo "IMAGE_TAG=latest" >> $GITHUB_ENV
+          # 否則 (develop 分支)，標籤設為 dev (測試版)
+          else
+            echo "IMAGE_TAG=dev" >> $GITHUB_ENV
+          fi
+
+      - name: 🐳 4. 編譯打包並推送到 Docker Hub
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          # ⚠️ 請把 livehouse-api 換成你的專案名稱
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/livehouse-api:${{ env.IMAGE_TAG }}11451
