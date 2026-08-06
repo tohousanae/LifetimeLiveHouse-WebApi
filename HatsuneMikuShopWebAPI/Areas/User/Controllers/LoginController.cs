@@ -29,7 +29,7 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
             {
                 return BadRequest(new { message = ex.Message });
             }
-            
+
         }
 
         [HttpPost("logout")]

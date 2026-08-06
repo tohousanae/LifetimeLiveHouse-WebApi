@@ -10,13 +10,20 @@ using NETCore.MailKit.Infrastructure.Internal;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 注入DBContext
+// 根據目前執行環境，自動決定要用哪一組連線字串
+//var connectionString = builder.Environment.IsDevelopment()
+//    ? builder.Configuration.GetConnectionString("LifetimeLiveHouseSysDBConnection") // 本機開發用
+//    : builder.Configuration.GetConnectionString("AzureCloudConnection");            // 正式發佈用
+
+// TODO: 尚未申請 Azure SQL，暫時強制使用本機連線字串，之後有雲端主機再改回 IsDevelopment() 判斷
+var connectionString = builder.Configuration.GetConnectionString("LifetimeLiveHouseSysDBConnection");
+
+// 注入 DBContext 並套用剛剛決定的連線字串
 builder.Services.AddDbContext<LifetimeLiveHouseSysDBContext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("LifetimeLiveHouseSysDBConnection")));
+    options.UseSqlServer(connectionString));
 
 builder.Services.AddDbContext<LifetimeLiveHouseSysDBContext2>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("LifetimeLiveHouseSysDBConnection")));
-
+    options.UseSqlServer(connectionString));
 
 builder.Services.AddMailKit(config =>
 {
@@ -25,7 +32,7 @@ builder.Services.AddMailKit(config =>
         Server = "smtp.gmail.com",
         Port = 587,
         SenderName = "Lifetime LiveHouse",
-        SenderEmail = "saigyoujiyuyukoth@gmail.com",
+        SenderEmail = "livetimelivehouse@sakuyaonline.uk",
         Account = "saigyoujiyuyukoth@gmail.com",
         Password = "sobi nwxj kusx wuss",
         Security = true
@@ -65,8 +72,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("MyCorsPolicy", policy =>
     {
-        //policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
-        policy.WithOrigins("http://localhost:5173").WithHeaders("*").WithMethods("*").AllowCredentials();
+        policy.WithOrigins("https://livetimelivehouse.sakuyaonline.uk")
+              .AllowAnyHeader()   // 改用這個
+              .AllowAnyMethod()   // 改用這個
+              .AllowCredentials();
     });
 });
 
@@ -87,7 +96,13 @@ builder.Services.AddAuthentication(options =>
         options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // 強制瀏覽器僅在 HTTPS 連線下傳送該 Cookie。
         options.SlidingExpiration = true; // 自動延長有效時間
     });
-builder.Services.AddApplicationInsightsTelemetry();
+
+// 👉 將 Azure 監控設定移到這裡 (必須在 Build 之前)
+// 只有在非開發環境 (例如 Production) 才啟用 Application Insights
+if (!builder.Environment.IsDevelopment())
+{
+    builder.Services.AddApplicationInsightsTelemetry();
+}
 
 ////builder.Services
 //    .AddIdentity<MemberAccount, IdentityRole>()
@@ -144,12 +159,15 @@ if (app.Environment.IsDevelopment())
     });
 
 }
-
-app.UseHttpsRedirection();
+// 【架構設定】外部 HTTPS 加密已交由 Cloudflare Tunnel 處理 (SSL Offloading)
+// 本機端僅需專注監聽 HTTP 流量，故停用 HTTPS 重新導向以避免無窮迴圈 (Infinite Redirect Loop)
+//app.UseHttpsRedirection();
 app.MapSwagger().RequireAuthorization();
 
 //實務上API並不會需要顯示靜態檔案，因為API通常是提供給前端使用的，前端會有自己的靜態檔案處理方式
 //app.UseStaticFiles();
+
+app.UseCors("MyCorsPolicy");
 
 app.UseAuthorization();
 

@@ -1,6 +1,5 @@
 ﻿using LifetimeLiveHouseWebAPI.DTOs.Users;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace LifetimeLiveHouseWebAPI.Modules.User.Interfaces
 {

@@ -1,4 +1,5 @@
 ﻿namespace LifetimeLiveHouse.Models;
+
 public partial class TwilioOptions
 {
     public string AccountSid { get; set; } = null!;

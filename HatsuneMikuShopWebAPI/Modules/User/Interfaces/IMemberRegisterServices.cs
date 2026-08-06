@@ -1,5 +1,4 @@
-﻿using LifetimeLiveHouse.Models;
-using LifetimeLiveHouseWebAPI.DTOs.Users;
+﻿using LifetimeLiveHouseWebAPI.DTOs.Users;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LifetimeLiveHouseWebAPI.Modules.User.Interfaces
@@ -9,9 +8,9 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Interfaces
         Task<ActionResult<string>> RegisterAsync(MemberRegisterDTO dto);
 
         Task<ActionResult<string>> SendVerificationSMSAsync(string phoneNumber);
- 
+
         Task<ActionResult<string>> VerifyEmailAsync(string token);
-        
+
         Task<ActionResult<string>> VerifyPhoneAsync(long memberId, string code);
     }
 }

@@ -1,5 +1,4 @@
-﻿using Common.Helpers;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LifetimeLiveHouse.Models
@@ -8,7 +7,7 @@ namespace LifetimeLiveHouse.Models
     {
         [Key]
         [ForeignKey("Member")]
-        public long MemberID { get; set; } 
+        public long MemberID { get; set; }
 
         public bool IsEmailVerified { get; set; } = false;
 

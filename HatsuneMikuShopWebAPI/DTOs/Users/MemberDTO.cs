@@ -5,6 +5,6 @@ namespace LifetimeLiveHouseWebAPI.DTOs.Users
 {
     public class MemberDTO
     {
-       
+
     }
 }
