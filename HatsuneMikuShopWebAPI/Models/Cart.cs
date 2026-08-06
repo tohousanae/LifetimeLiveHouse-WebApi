@@ -1,0 +1,16 @@
+﻿namespace LifetimeLiveHouseWebAPI.Models;
+
+public partial class Cart
+{
+    public long CartID { get; set; }
+
+    public long ProductID { get; set; }
+
+    public long MemberID { get; set; }
+
+    public int Count { get; set; }
+
+    public virtual Member Member { get; set; } = null!;
+
+    public virtual Product Product { get; set; } = null!;
+}

@@ -36,7 +36,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./Dockerfile
+          file: ./HatsuneMikuShopWebApi/Dockerfile
           push: true
           # ⚠️ 請把 livehouse-api 換成你的專案名稱
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/livehouse-api:${{ env.IMAGE_TAG }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/lifetime-livehouse-api:${{ env.IMAGE_TAG }}

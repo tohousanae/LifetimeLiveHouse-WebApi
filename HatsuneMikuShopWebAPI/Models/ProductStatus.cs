@@ -1,0 +1,10 @@
+﻿namespace LifetimeLiveHouseWebAPI.Models;
+
+public partial class ProductStatus
+{
+    public string StatusCode { get; set; } = null!;
+
+    public string Status { get; set; } = null!;
+
+    public virtual ICollection<Product> Product { get; set; } = new List<Product>();
+}
