@@ -10,12 +10,6 @@ using NETCore.MailKit.Infrastructure.Internal;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 根據目前執行環境，自動決定要用哪一組連線字串
-//var connectionString = builder.Environment.IsDevelopment()
-//    ? builder.Configuration.GetConnectionString("LifetimeLiveHouseSysDBConnection") // 本機開發用
-//    : builder.Configuration.GetConnectionString("AzureCloudConnection");            // 正式發佈用
-
-// TODO: 尚未申請 Azure SQL，暫時強制使用本機連線字串，之後有雲端主機再改回 IsDevelopment() 判斷
 var connectionString = builder.Configuration.GetConnectionString("LifetimeLiveHouseSysDBConnection");
 
 // 注入 DBContext 並套用剛剛決定的連線字串
@@ -25,17 +19,19 @@ builder.Services.AddDbContext<LifetimeLiveHouseSysDBContext>(options =>
 builder.Services.AddDbContext<LifetimeLiveHouseSysDBContext2>(options =>
     options.UseSqlServer(connectionString));
 
+// 改寫 MailKit 註冊邏輯
 builder.Services.AddMailKit(config =>
 {
     config.UseMailKit(new MailKitOptions()
     {
-        Server = "smtp.gmail.com",
-        Port = 587,
-        SenderName = "Lifetime LiveHouse",
-        SenderEmail = "livetimelivehouse@sakuyaonline.uk",
-        Account = "saigyoujiyuyukoth@gmail.com",
-        Password = "sobi nwxj kusx wuss",
-        Security = true
+        Server = builder.Configuration["MailKit:Server"],
+        Port = int.Parse(builder.Configuration["MailKit:Port"] ?? "587"),
+        SenderName = builder.Configuration["MailKit:SenderName"],
+        SenderEmail = builder.Configuration["MailKit:SenderEmail"],
+        Account = builder.Configuration["MailKit:Account"],
+        // 關鍵：密碼從組態(環境變數)動態載入
+        Password = builder.Configuration["MailKit:Password"],
+        Security = bool.Parse(builder.Configuration["MailKit:Security"] ?? "true")
     });
 });
 
