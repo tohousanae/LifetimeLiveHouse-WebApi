@@ -109,6 +109,9 @@ if (!builder.Environment.IsDevelopment())
 //builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
 //    opt.TokenLifespan = TimeSpan.FromHours(2));
 
+// 註冊自訂的 OAuth2 寄信服務
+builder.Services.AddScoped<EmailService>();
+
 // twilio設定綁定
 builder.Services.Configure<TwilioOptions>(builder.Configuration.GetSection("Twilio"));
 builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<TwilioOptions>>().Value);

@@ -12,7 +12,8 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
     {
         private readonly IMemberRegisterServices _memberRegister = memberRegister;
 
-        [Authorize]
+        // 💡 修正 1：移除 [Authorize]，加上 [AllowAnonymous] 允許未登入訪客註冊
+        [AllowAnonymous]
         [HttpPost("postRegisterMember")]
         public async Task<IActionResult> Register(MemberRegisterDTO dto)
         {
@@ -23,6 +24,14 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
             }
             return Ok(new { Message = "註冊成功", Name = result.Value });
         }
+
+        // 💡 修正 2：改為 HttpGet，符合點擊連結帶 Token 的驗證情境
+        [HttpGet("verify-email")]
+        public async Task<ActionResult<string>> VerifyEmail([FromQuery] string token)
+        {
+            return await _memberRegister.VerifyEmailAsync(token);
+        }
+
         //[HttpPost("sendValidationSMS")]
         //public async Task<ActionResult<string>> SendValidationSMS(UserPhoneNumberDTO dto)
         //{
@@ -37,11 +46,6 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
         //        return BadRequest(new { message = ex.Message });
         //    }
         //}
-        [HttpPost("verify-email")]
-        public async Task<ActionResult<string>> VerifyEmail([FromQuery] string token)
-        {
-            return await _memberRegister.VerifyEmailAsync(token);
-        }
 
         //[HttpPost("verify-phone")]
         //public async Task<ActionResult<string>> VerifyPhone([FromBody] VerifyPhoneDTO dto)
@@ -49,5 +53,4 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
         //    return await _memberRegister.VerifyPhoneAsync(dto.MemberId, dto.Code);
         //}
     }
-
 }
