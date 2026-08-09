@@ -46,13 +46,13 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
         {
             try
             {
-                // 1. 檢查信箱是否已被註冊 (AsNoTracking 提升查詢效能)[cite: 1]
+                // 1. 檢查信箱是否已被註冊 (AsNoTracking 提升查詢效能)
                 if (await _context.MemberAccount.AsNoTracking().AnyAsync(a => a.Email == dto.Email))
                 {
                     return new BadRequestObjectResult("信箱已被註冊");
                 }
 
-                // 2. 密碼使用 BCrypt 雜湊 (放進 Task.Run 避免阻塞主執行緒)[cite: 1]
+                // 2. 密碼使用 BCrypt 雜湊 (放進 Task.Run 避免阻塞主執行緒)
                 var passwordHash = await Task.Run(() => BCrypt.Net.BCrypt.HashPassword(dto.Password, 10));
 
                 // 3. 產生 Token 並雜湊
@@ -70,7 +70,7 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
                         Name = dto.Name,
                         Birthday = dto.Birthday,
 
-                        // 直接掛載實體模型的導覽屬性[cite: 2]
+                        // 直接掛載實體模型的導覽屬性
                         MemberEmailVerificationStatus = new MemberEmailVerificationStatus
                         {
                             IsEmailVerified = false,
@@ -88,7 +88,7 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
                 _context.MemberAccount.Add(account);
                 await _context.SaveChangesAsync();
 
-                // 從剛寫入完成的實體中直接取得 EF Core 填入的自動遞增 ID[cite: 3]
+                // 從剛寫入完成的實體中直接取得 EF Core 填入的自動遞增 ID
                 var combinedToken = $"{account.Member.MemberID}:{plainTokenString}";
                 var emailVerifyLink = $"{_frontendBaseUrl}/verify-email?token={Uri.EscapeDataString(combinedToken)}";
 
@@ -105,8 +105,10 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
                     try
                     {
                         using var scope = _scopeFactory.CreateScope();
-                        var emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
-                        await emailService.SendAsync(dto.Email, "會員註冊 – 信箱驗證", body, true);
+                        // 替換為新的 OAuth 2.0 寄信服務
+                        var emailService = scope.ServiceProvider.GetRequiredService<EmailService>();
+                        // 改用新的 SendEmailAsync 方法
+                        await emailService.SendEmailAsync(dto.Email, "會員註冊 – 信箱驗證", body);
                     }
                     catch (Exception ex)
                     {
@@ -135,7 +137,7 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
 
             var expectedHash = HashStringSHA256(parts[1]);
 
-            // 優化：直接在資料庫端執行驗證與更新，消滅 SELECT 至應用程式的 I/O 成本與記憶體分配[cite: 1]
+            // 優化：直接在資料庫端執行驗證與更新，消滅 SELECT 至應用程式的 I/O 成本與記憶體分配
             var rowsAffected = await _context.MemberEmailVerificationStatus
                 .Where(t => t.MemberID == memberId
                          && t.EmailVerificationTokenExpiry > DateTime.Now
@@ -170,7 +172,7 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
                 .Where(a => a.CellphoneNumber == normalized || a.CellphoneNumber == phoneNumber)
                 .Select(a => new
                 {
-                    // 根據 Member 模型的關聯抓取驗證狀態[cite: 2]
+                    // 根據 Member 模型的關聯抓取驗證狀態
                     IsPhoneVerified = a.MemberPhoneVerificationStatus != null && a.MemberPhoneVerificationStatus.IsPhoneVerified
                 })
                 .FirstOrDefaultAsync();
@@ -251,7 +253,7 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
 
                 if (verificationCheck?.Status == "approved")
                 {
-                    // 優化：直接使用 ExecuteUpdateAsync 在 DB 執行 Update，效能極佳[cite: 1]
+                    // 優化：直接使用 ExecuteUpdateAsync 在 DB 執行 Update，效能極佳
                     await _context.MemberPhoneVerificationStatus
                         .Where(s => s.MemberID == memberId)
                         .ExecuteUpdateAsync(s => s.SetProperty(p => p.IsPhoneVerified, true));
