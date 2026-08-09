@@ -93,22 +93,6 @@ builder.Services.AddAuthentication(options =>
         options.SlidingExpiration = true; // 自動延長有效時間
     });
 
-// 👉 將 Azure 監控設定移到這裡 (必須在 Build 之前)
-// 只有在非開發環境 (例如 Production) 才啟用 Application Insights
-if (!builder.Environment.IsDevelopment())
-{
-    builder.Services.AddApplicationInsightsTelemetry();
-}
-
-////builder.Services
-//    .AddIdentity<MemberAccount, IdentityRole>()
-//    .AddEntityFrameworkStores<IdentityDbContext>()
-//    .AddDefaultTokenProviders();
-
-//// 註冊Token過期時間為2小時
-//builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
-//    opt.TokenLifespan = TimeSpan.FromHours(2));
-
 // 註冊自訂的 OAuth2 寄信服務
 builder.Services.AddScoped<EmailService>();
 
