@@ -10,12 +10,14 @@ using NETCore.MailKit.Core;
 namespace LifetimeLiveHouseWebAPI.Modules.User.Services
 {
     public class ForgetPasswordService(
-        LifetimeLiveHouseSysDBContext context,
-        IEmailService emailService,
-        IConfiguration config) : IForgetPasswordService
+            LifetimeLiveHouseSysDBContext context,
+            IServiceScopeFactory scopeFactory,   // 改用 ScopeFactory，取代 NETCore.MailKit 的 IEmailService
+            IConfiguration config,
+            ILogger<ForgetPasswordService>? logger = null) : IForgetPasswordService
     {
         private readonly LifetimeLiveHouseSysDBContext _context = context;
-        private readonly IEmailService _emailService = emailService; // 假設你已有這個服務
+        private readonly IServiceScopeFactory _scopeFactory = scopeFactory;
+        private readonly ILogger<ForgetPasswordService>? _logger = logger;
         private readonly string _frontendBaseUrl = config["FrontendBaseUrl"] ?? "https://example.com";
 
         public async Task<ActionResult<string>> SendForgotPasswordEmailAsync(ForgotPasswordDto dto)
@@ -25,7 +27,6 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
 
             if (user != null)
             {
-
                 var plainToken = TokenGeneratorHelper.GeneratePassword(100);
                 var prt = new PasswordResetToken
                 {
@@ -35,15 +36,23 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
                 _context.PasswordResetToken.Add(prt);
                 await _context.SaveChangesAsync();
 
-                // 建立重設連結
                 string resetLink = $"{_frontendBaseUrl}/reset-password?token={Uri.EscapeDataString(plainToken)}";
+                var body = $"請在1小時內點擊以下連結以重設您的密碼：<br/><a href=\"{resetLink}\">{resetLink}</a>";
 
-                await _emailService.SendAsync(
-                    user.Email,
-                    "重設密碼通知",
-                    $"請在1小時內點擊以下連結以重設您的密碼：<br/><a href=\"{resetLink}\">{resetLink}</a>",
-                    isHtml: true
-                );
+                // 與 MemberRegisterServices 相同做法：用獨立 Scope 呼叫自訂 OAuth2 EmailService
+                _ = Task.Run(async () =>
+                {
+                    try
+                    {
+                        using var scope = _scopeFactory.CreateScope();
+                        var emailService = scope.ServiceProvider.GetRequiredService<EmailService>();
+                        await emailService.SendEmailAsync(user.Email, "重設密碼通知", body);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger?.LogError(ex, "Failed to send forgot-password email to {Email}", user.Email);
+                    }
+                });
             }
 
             return responseMsg;
