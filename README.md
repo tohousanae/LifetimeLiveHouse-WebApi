@@ -19,6 +19,9 @@ https://github.com/tohousanae/am3buger-vue
 ## ER圖(請點開大圖觀看)
 <img width="4844" height="2567" alt="Er圖-第一階段開發" src="https://github.com/user-attachments/assets/875ef389-1961-4ba7-84db-f51a89e88ba8" />
 
+## 流程圖(請點開大圖觀看)
+
+
 ## 資料庫圖表(請點開大圖觀看)
 <img width="2377" height="4905" alt="資料庫圖表" src="https://github.com/user-attachments/assets/69e9eacc-1762-4bce-a45f-d67771ae4aea" />
 
@@ -76,6 +79,9 @@ https://github.com/tohousanae/am3buger-vue
 1. .net core 8
 2. c#
 3. SQL Server
+
+## 使用案例圖、ER圖、流程圖製作軟體
+1. Software Ideas Modeler
 
 ## 參考引用資料
 1. https://ithelp.ithome.com.tw/articles/10307773
