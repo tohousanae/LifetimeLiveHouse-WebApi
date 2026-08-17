@@ -5,12 +5,12 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Interfaces
 {
     public interface IMemberRegisterServices
     {
-        Task<ActionResult<string>> RegisterAsync(MemberRegisterDTO dto);
+        Task<ActionResult<string>> RegisterAsync(MemberRegisterDTO dto, string? redirectUrl = null);
 
-        Task<ActionResult<string>> SendVerificationSMSAsync(string phoneNumber);
+        //Task<ActionResult<string>> SendVerificationSMSAsync(string phoneNumber);
 
-        Task<ActionResult<string>> VerifyEmailAsync(string token);
+        //Task<ActionResult<string>> VerifyEmailAsync(string token);
 
-        Task<ActionResult<string>> VerifyPhoneAsync(long memberId, string code);
+        //Task<ActionResult<string>> VerifyPhoneAsync(long memberId, string code);
     }
 }

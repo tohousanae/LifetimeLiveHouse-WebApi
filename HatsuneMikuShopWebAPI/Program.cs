@@ -63,14 +63,18 @@ builder.Services.AddDistributedMemoryCache();
 builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
     opt.TokenLifespan = TimeSpan.FromHours(2));
 
-//跨域存取政策
+// 1. 讀取前端網址變數 (若沒設定，預設給正式站網址作為保底)
+var frontendBaseUrl = builder.Configuration["FrontendBaseUrl"] ?? "https://livetimelivehouse.sakuyaonline.uk";
+
+// 2. 跨域存取政策
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("MyCorsPolicy", policy =>
     {
-        policy.WithOrigins("https://livetimelivehouse.sakuyaonline.uk")
-              .AllowAnyHeader()   // 改用這個
-              .AllowAnyMethod()   // 改用這個
+        // 3. 注入環境變數網址
+        policy.WithOrigins(frontendBaseUrl)
+              .AllowAnyHeader()
+              .AllowAnyMethod()
               .AllowCredentials();
     });
 });

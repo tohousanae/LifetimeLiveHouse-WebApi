@@ -18,7 +18,7 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
         private readonly LifetimeLiveHouseSysDBContext _context = context;
         private readonly IServiceScopeFactory _scopeFactory = scopeFactory;
         private readonly ILogger<ForgetPasswordService>? _logger = logger;
-        private readonly string _frontendBaseUrl = config["FrontendBaseUrl"] ?? "https://example.com";
+        private readonly string _frontendBaseUrl = config["FrontendBaseUrl"] ?? "https://livetimelivehouse.sakuyaonline.uk";
 
         public async Task<ActionResult<string>> SendForgotPasswordEmailAsync(ForgotPasswordDto dto)
         {

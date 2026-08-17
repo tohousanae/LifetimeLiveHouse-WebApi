@@ -39,11 +39,12 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
             if (user.StatusCode == "1")
                 return new UnauthorizedObjectResult("該帳號已停權，請檢察您的電子郵件");
 
-            if (!user.IsPhoneVerified)
-                return new UnauthorizedObjectResult("未完成手機號碼驗證");
+            // 
+            //if (!user.IsPhoneVerified)
+            //    return new UnauthorizedObjectResult("未完成手機號碼驗證");
 
-            if (!user.IsEmailVerified)
-                return new UnauthorizedObjectResult("未完成電子郵件驗證");
+            //if (!user.IsEmailVerified)
+            //    return new UnauthorizedObjectResult("未完成電子郵件驗證");
 
             var claims = new List<Claim>
             {
