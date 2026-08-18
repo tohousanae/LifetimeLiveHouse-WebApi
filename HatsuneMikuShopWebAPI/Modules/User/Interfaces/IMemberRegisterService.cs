@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LifetimeLiveHouseWebAPI.Modules.User.Interfaces
 {
-    public interface IMemberRegisterServices
+    public interface IMemberRegisterService
     {
         Task<ActionResult<string>> RegisterAsync(MemberRegisterDTO dto, string? redirectUrl = null);
 

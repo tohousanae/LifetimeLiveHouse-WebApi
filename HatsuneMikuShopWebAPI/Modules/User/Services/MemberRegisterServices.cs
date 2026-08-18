@@ -14,7 +14,7 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
         LifetimeLiveHouseSysDBContext context,
         IConfiguration config,
         IServiceScopeFactory scopeFactory,
-        ILogger<MemberRegisterService>? logger = null) : IMemberRegisterServices
+        ILogger<MemberRegisterService>? logger = null) : IMemberRegisterService
     {
         private readonly LifetimeLiveHouseSysDBContext _context = context;
         private readonly string _frontendBaseUrl = config["FrontendBaseUrl"] ?? "https://example.com";

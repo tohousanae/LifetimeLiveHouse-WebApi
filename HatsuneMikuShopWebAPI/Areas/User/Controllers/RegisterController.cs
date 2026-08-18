@@ -8,9 +8,9 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
     [Area("User")]
     [Route("api/[controller]")]
     [ApiController]
-    public class RegisterController(IMemberRegisterServices memberRegister) : ControllerBase
+    public class RegisterController(IMemberRegisterService memberRegister) : ControllerBase
     {
-        private readonly IMemberRegisterServices _memberRegister = memberRegister;
+        private readonly IMemberRegisterService _memberRegister = memberRegister;
 
         // 💡 修正 1：移除 [Authorize]，加上 [AllowAnonymous] 允許未登入訪客註冊
         [AllowAnonymous]
