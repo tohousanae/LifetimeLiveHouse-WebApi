@@ -1,4 +1,5 @@
 ﻿using LifetimeLiveHouse.Access.Data;
+using LifetimeLiveHouse.Models;
 using LifetimeLiveHouseWebAPI.Modules.User.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
