@@ -14,7 +14,7 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
 
         public async Task<ActionResult<string>> LoginAsync(LoginDTO loginDto, HttpContext httpContext)
         {
-            if (loginDto == null || string.IsNullOrEmpty(loginDto.Email) || string.IsNullOrEmpty(loginDto.Password))
+            if (loginDto == null || string.IsNullOrWhiteSpace(loginDto.Email) || string.IsNullOrWhiteSpace(loginDto.Password))
                 return new UnauthorizedObjectResult("請輸入帳號和密碼");
 
             var user = await _context.MemberAccount
@@ -27,24 +27,17 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
                     u.Password,
                     u.Member.StatusCode,
                     u.Member.Name,
-                    u.Member.MemberEmailVerificationStatus.IsEmailVerified,
-                    u.Member.MemberPhoneVerificationStatus.IsPhoneVerified
+                    IsEmailVerified = u.Member.MemberEmailVerificationStatus != null && u.Member.MemberEmailVerificationStatus.IsEmailVerified,
+                    IsPhoneVerified = u.Member.MemberPhoneVerificationStatus != null && u.Member.MemberPhoneVerificationStatus.IsPhoneVerified
                 })
                 .FirstOrDefaultAsync();
 
             if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.Password))
                 return new UnauthorizedObjectResult("帳號或密碼錯誤，請重新輸入");
 
-            // 停權、信箱手機驗證檢查
+            // 💡 停權檢查：檢查關聯表 Member 的 StatusCode 欄位 (0為正常，1為停權)
             if (user.StatusCode == "1")
-                return new UnauthorizedObjectResult("該帳號已停權，請檢察您的電子郵件");
-
-            // 
-            //if (!user.IsPhoneVerified)
-            //    return new UnauthorizedObjectResult("未完成手機號碼驗證");
-
-            //if (!user.IsEmailVerified)
-            //    return new UnauthorizedObjectResult("未完成電子郵件驗證");
+                return new UnauthorizedObjectResult("該帳號已遭停權，請聯絡客服人員");
 
             var claims = new List<Claim>
             {

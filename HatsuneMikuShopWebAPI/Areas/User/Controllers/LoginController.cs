@@ -2,41 +2,30 @@
 using LifetimeLiveHouseWebAPI.Modules.User.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
 namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
 {
     [Area("User")]
     [Route("api/[controller]")]
     [ApiController]
-    public class LoginController : ControllerBase
+    public class LoginController(IMemberLoginService loginService) : ControllerBase
     {
-        private readonly IMemberLoginService _loginService;
+        private readonly IMemberLoginService _loginService = loginService;
 
-        public LoginController(IMemberLoginService loginService)
-        {
-            _loginService = loginService;
-        }
-
+        // 🔑 登入
+        [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<ActionResult<string>> PostUserLogin(LoginDTO memberAccount)
+        public async Task<ActionResult<string>> PostUserLogin([FromBody] LoginDTO memberAccount)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
-
-            try
-            {
-                return await _loginService.LoginAsync(memberAccount, HttpContext);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-
+            return await _loginService.LoginAsync(memberAccount, HttpContext);
         }
 
-        [HttpPost("logout")]
+        // 🚪 登出
         [Authorize]
+        [HttpPost("logout")]
         public async Task<ActionResult<string>> Logout()
         {
-
             return await _loginService.LogoutAsync(HttpContext);
         }
     }

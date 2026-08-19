@@ -40,6 +40,13 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
                     {
                         Name = dto.Name,
                         Birthday = dto.Birthday,
+
+                        // 💡 嚴格對齊資料字典的預設值
+                        StatusCode = "0",               // 預設 0：正常狀態
+                        CreatedDate = DateTime.Now,     // 創建日期
+                        Cash = 0,                       // 儲值金預設 0
+                        MemberPoint = 0,                // 回饋點數預設 0
+
                         MemberEmailVerificationStatus = new MemberEmailVerificationStatus
                         {
                             IsEmailVerified = false,

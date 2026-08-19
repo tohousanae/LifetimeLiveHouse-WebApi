@@ -1,9 +1,9 @@
-﻿using MailKit.Net.Smtp;
-using MailKit.Security;
-using MimeKit;
-using Google.Apis.Auth.OAuth2;
+﻿using Google.Apis.Auth.OAuth2;
 using Google.Apis.Auth.OAuth2.Flows;
 using Google.Apis.Auth.OAuth2.Responses;
+using MailKit.Net.Smtp;
+using MailKit.Security;
+using MimeKit;
 
 public class EmailService
 {

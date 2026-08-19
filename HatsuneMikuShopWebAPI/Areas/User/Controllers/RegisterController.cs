@@ -8,49 +8,50 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
     [Area("User")]
     [Route("api/[controller]")]
     [ApiController]
-    public class RegisterController(IMemberRegisterService memberRegister) : ControllerBase
+    public class RegisterController(
+        IMemberRegisterService registerService,
+        IMemberVerificationService verificationService) : ControllerBase
     {
-        private readonly IMemberRegisterService _memberRegister = memberRegister;
+        private readonly IMemberRegisterService _registerService = registerService;
+        private readonly IMemberVerificationService _verificationService = verificationService;
 
-        // 💡 修正 1：移除 [Authorize]，加上 [AllowAnonymous] 允許未登入訪客註冊
+        // 📝 註冊帳號 (允許未登入客訪問)
         [AllowAnonymous]
         [HttpPost("postRegisterMember")]
-        public async Task<IActionResult> Register(MemberRegisterDTO dto)
+        public async Task<IActionResult> Register(MemberRegisterDTO dto, [FromQuery] string? redirectUrl = null)
         {
-            var result = await _memberRegister.RegisterAsync(dto);
-            if (result.Result is BadRequestObjectResult badReq)
-            {
-                return badReq;
-            }
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var result = await _registerService.RegisterAsync(dto, redirectUrl);
+
+            // 若回傳型態為 BadRequest，直接回傳錯誤訊息
+            if (result.Result is BadRequestObjectResult badReq) return badReq;
+
             return Ok(new { Message = "註冊成功", Name = result.Value });
         }
 
-        // 💡 修正 2：改為 HttpGet，符合點擊連結帶 Token 的驗證情境
+        // ✉️ 信箱連結驗證 (使用 GET 接住前端或信件跳轉)
+        [AllowAnonymous]
         [HttpGet("verify-email")]
-        public async Task<ActionResult<string>> VerifyEmail([FromQuery] string token)
+        public async Task<ActionResult<object>> VerifyEmail([FromQuery] string token)
         {
-            return await _memberRegister.VerifyEmailAsync(token);
+            return await _verificationService.VerifyEmailAsync(token);
         }
 
-        //[HttpPost("sendValidationSMS")]
-        //public async Task<ActionResult<string>> SendValidationSMS(UserPhoneNumberDTO dto)
-        //{
-        //    if (!ModelState.IsValid) return BadRequest(ModelState);
+        // 📱 發送手機簡訊驗證碼
+        [HttpPost("sendValidationSMS")]
+        public async Task<ActionResult<string>> SendValidationSMS([FromBody] UserPhoneNumberDTO dto)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            return await _verificationService.SendVerificationSMSAsync(dto.CellphoneNumber);
+        }
 
-        //    try
-        //    {
-        //        return await _memberRegister.SendVerificationSMSAsync(dto.CellphoneNumber);
-        //    }
-        //    catch (InvalidOperationException ex)
-        //    {
-        //        return BadRequest(new { message = ex.Message });
-        //    }
-        //}
-
-        //[HttpPost("verify-phone")]
-        //public async Task<ActionResult<string>> VerifyPhone([FromBody] VerifyPhoneDTO dto)
-        //{
-        //    return await _memberRegister.VerifyPhoneAsync(dto.MemberId, dto.Code);
-        //}
+        // 📱 驗證手機簡訊碼
+        [HttpPost("verify-phone")]
+        public async Task<ActionResult<string>> VerifyPhone([FromBody] VerifyPhoneDTO dto)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            return await _verificationService.VerifyPhoneAsync(dto.MemberId, dto.Code);
+        }
     }
 }

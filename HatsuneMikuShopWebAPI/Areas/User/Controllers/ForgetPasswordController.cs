@@ -1,20 +1,19 @@
 ﻿using LifetimeLiveHouseWebAPI.DTOs.Users;
 using LifetimeLiveHouseWebAPI.Modules.User.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
 {
+    [Area("User")]
     [Route("api/[controller]")]
     [ApiController]
-    public class ForgetPasswordController : ControllerBase
+    [AllowAnonymous] // 忘記密碼全程不需登入
+    public class ForgetPasswordController(IForgetPasswordService service) : ControllerBase
     {
-        private readonly IForgetPasswordService _service;
+        private readonly IForgetPasswordService _service = service;
 
-        public ForgetPasswordController(IForgetPasswordService service)
-        {
-            _service = service;
-        }
-
+        // 📧 發送重設密碼信件
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto)
         {
@@ -30,7 +29,8 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
-        // 使用者點忘記密碼連結驗證token
+
+        // 🔍 使用者點擊連結後，驗證 Token 是否有效
         [HttpPost("valid-token")]
         public async Task<IActionResult> ValidResetPasswordToken([FromBody] ValidResetPasswordTokenDto dto)
         {
@@ -47,7 +47,7 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
             }
         }
 
-        // 使用者點送出忘記密碼表單驗證token
+        // 💾 送出新密碼表單，執行密碼覆寫
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto dto)
         {
