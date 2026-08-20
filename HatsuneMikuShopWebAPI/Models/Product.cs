@@ -1,4 +1,7 @@
-﻿namespace LifetimeLiveHouseWebAPI.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace LifetimeLiveHouseWebAPI.Models;
 
 public partial class Product
 {
@@ -21,6 +24,8 @@ public partial class Product
     public DateTime CreatedDate { get; set; }
 
     public string CateID { get; set; } = null!;
+
+    public long Inventory { get; set; }
 
     public virtual ICollection<Cart> Cart { get; set; } = new List<Cart>();
 

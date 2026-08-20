@@ -1,4 +1,7 @@
-﻿namespace LifetimeLiveHouseWebAPI.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace LifetimeLiveHouseWebAPI.Models;
 
 public partial class PayType
 {
