@@ -37,8 +37,10 @@ builder.Services.AddMailKit(config =>
 
 // 住入服務
 builder.Services.AddScoped<IForgetPasswordService, ForgetPasswordService>();
-builder.Services.AddScoped<IMemberRegisterService, MemberRegisterService>();
 builder.Services.AddScoped<IMemberLoginService, MemberLoginService>();
+builder.Services.AddScoped<IMemberProfileService, MemberProfileService>();
+builder.Services.AddScoped<IMemberRegisterService, MemberRegisterService>();
+builder.Services.AddScoped<IMemberVerificationService, MemberVerificationService>();
 
 builder.Services.AddControllers();
 
