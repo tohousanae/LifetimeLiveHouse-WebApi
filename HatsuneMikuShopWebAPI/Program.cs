@@ -1,7 +1,7 @@
 using LifetimeLiveHouse.Access.Data;
-using LifetimeLiveHouse.Models;
+//using LifetimeLiveHouse.Models;
 using LifetimeLiveHouseWebAPI.Modules.User.Interfaces;
-using LifetimeLiveHouseWebAPI.Modules.User.Services;
+//using LifetimeLiveHouseWebAPI.Modules.User.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -36,11 +36,11 @@ builder.Services.AddMailKit(config =>
 });
 
 // 住入服務
-builder.Services.AddScoped<IForgetPasswordService, ForgetPasswordService>();
-builder.Services.AddScoped<IMemberLoginService, MemberLoginService>();
-builder.Services.AddScoped<IMemberProfileService, MemberProfileService>();
-builder.Services.AddScoped<IMemberRegisterService, MemberRegisterService>();
-builder.Services.AddScoped<IMemberVerificationService, MemberVerificationService>();
+//builder.Services.AddScoped<IForgetPasswordService, ForgetPasswordService>();
+//builder.Services.AddScoped<IMemberLoginService, MemberLoginService>();
+//builder.Services.AddScoped<IMemberProfileService, MemberProfileService>();
+//builder.Services.AddScoped<IMemberRegisterService, MemberRegisterService>();
+//builder.Services.AddScoped<IMemberVerificationService, MemberVerificationService>();
 
 builder.Services.AddControllers();
 
@@ -89,9 +89,6 @@ builder.Services.AddAuthentication(options =>
 })
     .AddCookie("MemberLogin", options =>
     {
-        //options.LoginPath = "/api/auth/login";
-        //options.LogoutPath = "/api/auth/logout";
-        //以上兩條在web api當中沒用，因為web api不會重新導向
         options.ExpireTimeSpan = TimeSpan.FromHours(8);
         options.Cookie.HttpOnly = true; // 禁止 JavaScript 存取 Cookie防XSS攻擊。
         options.Cookie.SameSite = SameSiteMode.None; // 開放前端跨域存取cookie
@@ -103,39 +100,39 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddScoped<EmailService>();
 
 // twilio設定綁定
-builder.Services.Configure<TwilioOptions>(builder.Configuration.GetSection("Twilio"));
-builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<TwilioOptions>>().Value);
+//builder.Services.Configure<TwilioOptions>(builder.Configuration.GetSection("Twilio"));
+//builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<TwilioOptions>>().Value);
 
 var app = builder.Build();
 
 // --------------- 在 Build 之後初始化 Twilio ---------------
-var twilioOpts = app.Services.GetRequiredService<TwilioOptions>();
+//var twilioOpts = app.Services.GetRequiredService<TwilioOptions>();
 
 // 在開發模式使用秘密管理員設定
 if (builder.Environment.IsDevelopment())
 {
-    builder.Configuration.AddUserSecrets<Program>();
-    // 偵錯用：印出是否有設定（切勿印出完整 AuthToken 到生產 log）
-    Console.WriteLine($"[DEBUG] Twilio AccountSid set? {!string.IsNullOrWhiteSpace(twilioOpts.AccountSid)}");
-    Console.WriteLine($"[DEBUG] Twilio AuthToken set? {!string.IsNullOrWhiteSpace(twilioOpts.AuthToken)}");
-    Console.WriteLine($"[DEBUG] Twilio VerifyServiceSid set? {!string.IsNullOrWhiteSpace(twilioOpts.VerifyServiceSid)}");
+    //builder.Configuration.AddUserSecrets<Program>();
+    //// 偵錯用：印出是否有設定（切勿印出完整 AuthToken 到生產 log）
+    //Console.WriteLine($"[DEBUG] Twilio AccountSid set? {!string.IsNullOrWhiteSpace(twilioOpts.AccountSid)}");
+    //Console.WriteLine($"[DEBUG] Twilio AuthToken set? {!string.IsNullOrWhiteSpace(twilioOpts.AuthToken)}");
+    //Console.WriteLine($"[DEBUG] Twilio VerifyServiceSid set? {!string.IsNullOrWhiteSpace(twilioOpts.VerifyServiceSid)}");
 
-    if (string.IsNullOrWhiteSpace(twilioOpts.AccountSid) || string.IsNullOrWhiteSpace(twilioOpts.AuthToken))
-    {
-        // 開發階段可以直接丟例外，提醒缺少設定
-        throw new InvalidOperationException("Twilio AccountSid 或 AuthToken 未設定。請檢查 appsettings / user-secrets / environment variables。");
-    }
+    //if (string.IsNullOrWhiteSpace(twilioOpts.AccountSid) || string.IsNullOrWhiteSpace(twilioOpts.AuthToken))
+    //{
+    //    // 開發階段可以直接丟例外，提醒缺少設定
+    //    throw new InvalidOperationException("Twilio AccountSid 或 AuthToken 未設定。請檢查 appsettings / user-secrets / environment variables。");
+    //}
 }
 
 // 呼叫初始化（這會設定 TwilioClient 的全域認證）
-Twilio.TwilioClient.Init(twilioOpts.AccountSid, twilioOpts.AuthToken);
+//Twilio.TwilioClient.Init(twilioOpts.AccountSid, twilioOpts.AuthToken);
 //1.3.4 在Program.cs撰寫啟用Initializer的程式
 //執行專案時自動載入初始資料
 using (var scope = app.Services.CreateScope())
 {
     var service = scope.ServiceProvider;
 
-    SeedData.Initialize(service);
+    //SeedData.Initialize(service);
 }
 
 if (app.Environment.IsDevelopment())

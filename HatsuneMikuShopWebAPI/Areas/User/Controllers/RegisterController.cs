@@ -30,12 +30,15 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
             return Ok(new { Message = "註冊成功", Name = result.Value });
         }
 
-        // ✉️ 信箱連結驗證 (使用 GET 接住前端或信件跳轉)
+        // ✉️ 信箱連結驗證 (改用 POST 與 Body 接收，徹底隱藏 Token)
         [AllowAnonymous]
-        [HttpGet("verify-email")]
-        public async Task<ActionResult<object>> VerifyEmail([FromQuery] string token)
+        [HttpPost("verify-email")]
+        public async Task<ActionResult<object>> VerifyEmail([FromBody] VerifyEmailDto dto)
         {
-            return await _verificationService.VerifyEmailAsync(token);
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            // 從 dto.Token 取出驗證碼傳給 Service
+            return await _verificationService.VerifyEmailAsync(dto.Token);
         }
 
         // 📱 發送手機簡訊驗證碼
