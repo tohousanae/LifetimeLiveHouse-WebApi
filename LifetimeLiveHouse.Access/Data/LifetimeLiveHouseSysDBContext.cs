@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using LifetimeLiveHouse.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace LifetimeLiveHouse.Access.Data;
+namespace LifetimeLiveHouse.Models.LifetimeLiveHouse.Access.Data;
 
 public partial class LifetimeLiveHouseSysDBContext : DbContext
 {
