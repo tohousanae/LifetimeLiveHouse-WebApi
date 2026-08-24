@@ -16,8 +16,8 @@ var connectionString = builder.Configuration.GetConnectionString("LifetimeLiveHo
 builder.Services.AddDbContext<LifetimeLiveHouseSysDBContext>(options =>
     options.UseSqlServer(connectionString));
 
-builder.Services.AddDbContext<LifetimeLiveHouseSysDBContext2>(options =>
-    options.UseSqlServer(connectionString));
+//builder.Services.AddDbContext<LifetimeLiveHouseSysDBContext2>(options =>
+//    options.UseSqlServer(connectionString));
 
 // 改寫 MailKit 註冊邏輯
 builder.Services.AddMailKit(config =>
