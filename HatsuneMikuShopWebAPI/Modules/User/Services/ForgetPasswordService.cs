@@ -19,7 +19,7 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
         private readonly ILogger<ForgetPasswordService>? _logger = logger;
         // 1. 讀取前端網址變數 (若沒設定，預設給正式站網址作為保底)
         private readonly string _frontendBaseUrl = config["FrontendBaseUrl"] ?? "https://livetimelivehouse.sakuyaonline.uk";
-        
+
         public async Task<ActionResult<string>> SendForgotPasswordEmailAsync(ForgotPasswordDto dto)
         {
             var user = await _context.MemberAccount.SingleOrDefaultAsync(u => u.Email == dto.Email);

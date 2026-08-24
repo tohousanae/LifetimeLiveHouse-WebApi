@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using LifetimeLiveHouse.Models;
+﻿using LifetimeLiveHouse.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace LifetimeLiveHouse.Access.Data;

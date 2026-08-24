@@ -1,3 +1,5 @@
+using LifetimeLiveHouse.Access.Data;
+using LifetimeLiveHouse.Models.CustomModel;
 using LifetimeLiveHouseWebAPI.Modules.User.Interfaces;
 using LifetimeLiveHouseWebAPI.Modules.User.Services;
 using Microsoft.AspNetCore.Identity;
@@ -5,8 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using NETCore.MailKit.Extensions;
 using NETCore.MailKit.Infrastructure.Internal;
-using LifetimeLiveHouse.Access.Data;
-using LifetimeLiveHouse.Models.CustomModel;
 
 var builder = WebApplication.CreateBuilder(args);
 

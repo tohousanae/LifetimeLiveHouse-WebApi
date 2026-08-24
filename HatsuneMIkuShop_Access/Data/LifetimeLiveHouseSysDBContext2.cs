@@ -1,5 +1,4 @@
-﻿using LifetimeLiveHouse.Access.Data;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace LifetimeLiveHouse.Access.Data;
 
