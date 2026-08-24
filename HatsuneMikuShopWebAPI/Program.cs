@@ -19,22 +19,6 @@ builder.Services.AddDbContext<LifetimeLiveHouseSysDBContext>(options =>
 //builder.Services.AddDbContext<LifetimeLiveHouseSysDBContext2>(options =>
 //    options.UseSqlServer(connectionString));
 
-// 改寫 MailKit 註冊邏輯
-builder.Services.AddMailKit(config =>
-{
-    config.UseMailKit(new MailKitOptions()
-    {
-        Server = builder.Configuration["MailKit:Server"],
-        Port = int.Parse(builder.Configuration["MailKit:Port"] ?? "587"),
-        SenderName = builder.Configuration["MailKit:SenderName"],
-        SenderEmail = builder.Configuration["MailKit:SenderEmail"],
-        Account = builder.Configuration["MailKit:Account"],
-        // 關鍵：密碼從組態(環境變數)動態載入
-        Password = builder.Configuration["MailKit:Password"],
-        Security = bool.Parse(builder.Configuration["MailKit:Security"] ?? "true")
-    });
-});
-
 // 住入服務
 builder.Services.AddScoped<IForgetPasswordService, ForgetPasswordService>();
 builder.Services.AddScoped<IMemberLoginService, MemberLoginService>();
