@@ -16,8 +16,8 @@ var connectionString = builder.Configuration.GetConnectionString("LifetimeLiveHo
 builder.Services.AddDbContext<LifetimeLiveHouseSysDBContext>(options =>
     options.UseSqlServer(connectionString));
 
-//builder.Services.AddDbContext<LifetimeLiveHouseSysDBContext2>(options =>
-//    options.UseSqlServer(connectionString));
+builder.Services.AddDbContext<LifetimeLiveHouseSysDBContext2>(options =>
+    options.UseSqlServer(connectionString));
 
 // 住入服務
 builder.Services.AddScoped<IForgetPasswordService, ForgetPasswordService>();
