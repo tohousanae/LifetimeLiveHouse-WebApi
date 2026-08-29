@@ -8,19 +8,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LifetimeLiveHouseWebAPI.Modules.User.Services
 {
+    // 💡 1. 在建構子注入 IWebHostEnvironment env 來判斷環境
     public class ForgetPasswordService(
             LifetimeLiveHouseSysDBContext context,
             IServiceScopeFactory scopeFactory,
             IConfiguration config,
+            IWebHostEnvironment env,
             ILogger<ForgetPasswordService>? logger = null) : IForgetPasswordService
     {
         private readonly LifetimeLiveHouseSysDBContext _context = context;
         private readonly IServiceScopeFactory _scopeFactory = scopeFactory;
+        private readonly IWebHostEnvironment _env = env; // 💡 2. 接收環境變數
         private readonly ILogger<ForgetPasswordService>? _logger = logger;
-        // 1. 讀取前端網址變數 (若沒設定，預設給正式站網址作為保底)
         private readonly string _frontendBaseUrl = config["FrontendBaseUrl"] ?? "https://livetimelivehouse.sakuyaonline.uk";
 
-        public async Task<ActionResult<string>> SendForgotPasswordEmailAsync(ForgotPasswordDto dto)
+        public async Task<string> SendForgotPasswordEmailAsync(ForgotPasswordDto dto)
         {
             var user = await _context.MemberAccount.SingleOrDefaultAsync(u => u.Email == dto.Email);
             var responseMsg = "如果該信箱有註冊，我們已發送重設密碼信件，請檢查信件，若未收到郵件請檢查您的垃圾信件夾。";
@@ -29,7 +31,6 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
             {
                 var plainToken = TokenGeneratorHelper.GeneratePassword(100);
 
-                // 💡 嚴格對齊 PasswordResetToken 的所有欄位
                 var prt = new PasswordResetToken
                 {
                     MemberID = user.MemberID,
@@ -45,19 +46,33 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
                 string resetLink = $"{_frontendBaseUrl}/reset-password?token={Uri.EscapeDataString(plainToken)}";
                 var body = $"請在1小時內點擊以下連結以重設您的密碼：<br/><a href=\"{resetLink}\">{resetLink}</a>";
 
-                _ = Task.Run(async () =>
+                // 💡 3. 根據環境決定寄信策略
+                if (_env.IsDevelopment())
                 {
-                    try
+                    // 【開發/偵錯模式】直接等待寄信完成 (不包 try-catch)。
+                    // 只要 Google 驗證失敗，會立刻拋出例外，API 請求會直接得到 500 錯誤！
+                    using var scope = _scopeFactory.CreateScope();
+                    var emailService = scope.ServiceProvider.GetRequiredService<EmailService>();
+                    await emailService.SendEmailAsync(user.Email, "重設密碼通知", body);
+                }
+                else
+                {
+                    // 【正式環境模式】丟進背景 Task.Run 執行。
+                    // 不阻塞主執行緒，失敗時只記錄 Log，保護系統不會因為寄信失敗而中斷[cite: 20]。
+                    _ = Task.Run(async () =>
                     {
-                        using var scope = _scopeFactory.CreateScope();
-                        var emailService = scope.ServiceProvider.GetRequiredService<EmailService>();
-                        await emailService.SendEmailAsync(user.Email, "重設密碼通知", body);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger?.LogError(ex, "發送重設密碼信件失敗 {Email}", user.Email);
-                    }
-                });
+                        try
+                        {
+                            using var scope = _scopeFactory.CreateScope();
+                            var emailService = scope.ServiceProvider.GetRequiredService<EmailService>();
+                            await emailService.SendEmailAsync(user.Email, "重設密碼通知", body);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger?.LogError(ex, "發送重設密碼信件失敗 {Email}", user.Email);
+                        }
+                    });
+                }
             }
 
             return responseMsg;
@@ -103,7 +118,6 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
 
             user.Password = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
 
-            // 💡 更新使用狀態與使用時間
             prt.Used = true;
             prt.UsedAt = DateTime.Now;
 
@@ -113,7 +127,6 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
 
         public async Task CleanupExpiredTokensAsync()
         {
-            // 利用 ExecuteDeleteAsync 極速刪除過期資料 (不占記憶體)
             await _context.PasswordResetToken
                 .Where(t => t.ExpiresAt < DateTime.Now || t.Used)
                 .ExecuteDeleteAsync();

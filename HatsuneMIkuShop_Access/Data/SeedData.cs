@@ -37,7 +37,7 @@ public static class SeedData
         var member1 = new Member
         {
             Name = "林小明",
-            Birthday = DateTime.Parse("1900-01-01"),
+            Birthday = DateTime.Parse("1990-01-01"),
             CellphoneNumber = "0912345678",
             //StatusCode = "0", 預設值已在模型設定
             Cash = 1000,

@@ -5,7 +5,7 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Interfaces
 {
     public interface IForgetPasswordService
     {
-        Task<ActionResult<string>> SendForgotPasswordEmailAsync(ForgotPasswordDto dto);
+        Task<string> SendForgotPasswordEmailAsync(ForgotPasswordDto dto);
 
         Task<string> ResetPasswordAsync(ResetPasswordDto dto);
 
