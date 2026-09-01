@@ -80,7 +80,7 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
 
         public async Task<string> ValidResetPasswordTokenAsync(ValidResetPasswordTokenDto dto)
         {
-            await CleanupExpiredTokensAsync();
+            //await CleanupExpiredTokensAsync();
 
             dto.InputToken = Uri.UnescapeDataString(dto.InputToken);
 
