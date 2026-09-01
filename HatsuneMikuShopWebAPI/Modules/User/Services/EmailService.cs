@@ -41,10 +41,24 @@ public class EmailService
 
             accessToken = await credential.GetAccessTokenForRequestAsync();
 
-            // 💡 將新的 Token 寫入 Redis，設定 60 分鐘過期
+            // 💡 將新的 Token 寫入 Redis，設定 50 分鐘過期
+
+            /* 將快取失效時間設定為剛好 1 小時（60 分鐘）會引發問題，
+             * 主要原因在於 Google Access Token 的運作機制與網路環境的不可預測性：
+             * Google Token 的生命週期極限：Google 發行的 Access Token 官方有效期限就是嚴格的 60 分鐘，
+             * 多一秒都不行。零容錯的緩衝空間：如果你將快取時間也設為 60 分鐘，
+             * 當快取用到最後幾秒（例如第 59 分鐘又 50 秒）才被讀出來，
+             * 經過網路傳輸的延遲、或是伺服器之間的微小時間差（Clock Drift），
+             * 當它送到 Google 伺服器時，Google 計算已經超過 60 分鐘。  
+             * SMTP 驗證失敗：Google 的郵件伺服器只要發現 Token 逾時哪怕一瞬間，
+             * 就會直接拒絕 AuthenticateAsync 驗證，導致整封註冊驗證信寄不出去。
+             * 因此，實務上才會將快取時間刻意縮短（例如設為 50 分鐘），
+             * 讓系統在 Token 快過期前提前 10 分鐘向 Google 重新申請一張全新的，
+             * 確保每次拿去寄信的 Token 都是絕對安全且未過期的狀態
+             */
             var options = new DistributedCacheEntryOptions
             {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(60)
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(50)
             };
             await _cache.SetStringAsync(cacheKey, accessToken, options);
         }
