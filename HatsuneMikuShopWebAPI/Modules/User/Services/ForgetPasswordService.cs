@@ -3,40 +3,48 @@ using LifetimeLiveHouse.Access.Data;
 using LifetimeLiveHouse.Models;
 using LifetimeLiveHouseWebAPI.DTOs.Users;
 using LifetimeLiveHouseWebAPI.Modules.User.Interfaces;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace LifetimeLiveHouseWebAPI.Modules.User.Services
 {
-    // 💡 1. 在建構子注入 IWebHostEnvironment env 來判斷環境
     public class ForgetPasswordService(
             LifetimeLiveHouseSysDBContext context,
             IServiceScopeFactory scopeFactory,
             IConfiguration config,
             IWebHostEnvironment env,
+            IDistributedCache cache, // 💡 注入 Redis 快取
             ILogger<ForgetPasswordService>? logger = null) : IForgetPasswordService
     {
         private readonly LifetimeLiveHouseSysDBContext _context = context;
         private readonly IServiceScopeFactory _scopeFactory = scopeFactory;
-        private readonly IWebHostEnvironment _env = env; // 💡 2. 接收環境變數
+        private readonly IWebHostEnvironment _env = env;
+        private readonly IDistributedCache _cache = cache;
         private readonly ILogger<ForgetPasswordService>? _logger = logger;
         private readonly string _frontendBaseUrl = config["FrontendBaseUrl"] ?? "https://livetimelivehouse.sakuyaonline.uk";
 
         public async Task<string> SendForgotPasswordEmailAsync(ForgotPasswordDto dto)
         {
+            // 💡 Redis 防刷機制：檢查該信箱是否在 60 秒內已經發送過
+            var rateLimitKey = $"ForgetPwd_RateLimit_{dto.Email}";
+            var isLocked = await _cache.GetStringAsync(rateLimitKey);
+            if (!string.IsNullOrEmpty(isLocked))
+                throw new InvalidOperationException("發送過於頻繁，請於 60 秒後再試。");
+
             var user = await _context.MemberAccount.SingleOrDefaultAsync(u => u.Email == dto.Email);
             var responseMsg = "如果該信箱有註冊，我們已發送重設密碼信件，請檢查信件，若未收到郵件請檢查您的垃圾信件夾。";
 
             if (user != null)
             {
                 var plainToken = TokenGeneratorHelper.GeneratePassword(100);
-
                 var prt = new PasswordResetToken
                 {
                     MemberID = user.MemberID,
-                    TokenHash = BCrypt.Net.BCrypt.HashPassword(plainToken),
-                    CreatedAt = DateTime.Now,
-                    ExpiresAt = DateTime.Now.AddHours(1),
+                    TokenHash = ComputeSha256Hash(plainToken),
+                    CreatedAt = DateTime.UtcNow,
+                    ExpiresAt = DateTime.UtcNow.AddHours(1),
                     Used = false
                 };
 
@@ -46,19 +54,14 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
                 string resetLink = $"{_frontendBaseUrl}/reset-password?token={Uri.EscapeDataString(plainToken)}";
                 var body = $"請在1小時內點擊以下連結以重設您的密碼：<br/><a href=\"{resetLink}\">{resetLink}</a>";
 
-                // 💡 3. 根據環境決定寄信策略
                 if (_env.IsDevelopment())
                 {
-                    // 【開發/偵錯模式】直接等待寄信完成 (不包 try-catch)。
-                    // 只要 Google 驗證失敗，會立刻拋出例外，API 請求會直接得到 500 錯誤！
                     using var scope = _scopeFactory.CreateScope();
                     var emailService = scope.ServiceProvider.GetRequiredService<EmailService>();
                     await emailService.SendEmailAsync(user.Email, "重設密碼通知", body);
                 }
                 else
                 {
-                    // 【正式環境模式】丟進背景 Task.Run 執行。
-                    // 不阻塞主執行緒，失敗時只記錄 Log，保護系統不會因為寄信失敗而中斷[cite: 20]。
                     _ = Task.Run(async () =>
                     {
                         try
@@ -75,22 +78,25 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
                 }
             }
 
+            // 💡 成功執行後，在 Redis 寫入鎖定標記，維持 60 秒
+            await _cache.SetStringAsync(rateLimitKey, "1", new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(60)
+            });
+
             return responseMsg;
         }
 
         public async Task<string> ValidResetPasswordTokenAsync(ValidResetPasswordTokenDto dto)
         {
-            //await CleanupExpiredTokensAsync();
-
             dto.InputToken = Uri.UnescapeDataString(dto.InputToken);
+            var inputHash = ComputeSha256Hash(dto.InputToken);
 
-            var validTokens = await _context.PasswordResetToken
-                .Where(t => !t.Used && t.ExpiresAt > DateTime.Now)
-                .ToListAsync();
+            // 優化：利用 SHA256 讓資料庫直接進行 O(1) 篩選，不再將所有 Token 拉回記憶體
+            var isValid = await _context.PasswordResetToken
+                .AnyAsync(t => t.TokenHash == inputHash && !t.Used && t.ExpiresAt > DateTime.UtcNow);
 
-            PasswordResetToken? prt = validTokens.FirstOrDefault(t => BCrypt.Net.BCrypt.Verify(dto.InputToken, t.TokenHash));
-
-            if (prt == null)
+            if (!isValid)
                 throw new InvalidOperationException("驗證連結無效或已過期。");
 
             return "Token 有效";
@@ -103,11 +109,11 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
             if (dto.NewPassword != dto.ConfirmPassword)
                 throw new InvalidOperationException("密碼與確認密碼不一致。");
 
-            var validTokens = await _context.PasswordResetToken
-                .Where(t => !t.Used && t.ExpiresAt > DateTime.Now)
-                .ToListAsync();
+            var inputHash = ComputeSha256Hash(dto.InputToken);
 
-            PasswordResetToken? prt = validTokens.FirstOrDefault(t => BCrypt.Net.BCrypt.Verify(dto.InputToken, t.TokenHash));
+            // 優化：直接從資料庫精準鎖定該筆 Token
+            var prt = await _context.PasswordResetToken
+                .FirstOrDefaultAsync(t => t.TokenHash == inputHash && !t.Used && t.ExpiresAt > DateTime.UtcNow);
 
             if (prt == null)
                 throw new InvalidOperationException("驗證連結無效或已過期。");
@@ -116,10 +122,11 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
             if (user == null)
                 throw new InvalidOperationException("使用者不存在。");
 
+            // 使用者的登入密碼維持使用 BCrypt 進行高強度雜湊
             user.Password = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
 
             prt.Used = true;
-            prt.UsedAt = DateTime.Now;
+            prt.UsedAt = DateTime.UtcNow; // 修正為 UTC
 
             await _context.SaveChangesAsync();
             return "密碼已重設成功。";
@@ -128,8 +135,15 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
         public async Task CleanupExpiredTokensAsync()
         {
             await _context.PasswordResetToken
-                .Where(t => t.ExpiresAt < DateTime.Now || t.Used)
+                .Where(t => t.ExpiresAt < DateTime.UtcNow || t.Used) // 修正為 UTC
                 .ExecuteDeleteAsync();
+        }
+
+        // 獨立的 SHA256 雜湊輔助方法 (專門用於一次性 Token)
+        private static string ComputeSha256Hash(string rawData)
+        {
+            var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(rawData));
+            return Convert.ToHexString(bytes).ToLowerInvariant();
         }
     }
 }

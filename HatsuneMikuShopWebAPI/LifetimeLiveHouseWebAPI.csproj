@@ -19,17 +19,17 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.11" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.2" />
     <PackageReference Include="NETCore.MailKit" Version="2.1.0" />
     <PackageReference Include="NuGet.Packaging" Version="7.9.0" />
     <PackageReference Include="NuGet.Protocol" Version="7.9.0" />
-    <PackageReference Include="StackExchange.Redis" Version="3.1.13" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.3" />
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="10.2.3" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="10.2.3" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.2.3" />
-    <PackageReference Include="Twilio" Version="7.14.9" />
+    <PackageReference Include="Twilio" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,4 +43,10 @@
     <ProjectReference Include="..\HatsuneMIkuShop_Access\LifetimeLiveHouse.Access.csproj" />
   </ItemGroup>
 
+	<!-- 💡 在每次建置與啟動前，自動檢查並啟動 Redis 容器 -->
+	<Target Name="EnsureRedisIsRunning" BeforeTargets="Build">
+		<Message Importance="high" Text="正在檢查並啟動本機 Redis 容器..." />
+		<!-- 邏輯：先嘗試啟動已存在的 local-redis，如果失敗 (代表還沒建立)，就執行 docker run 建立一個新的 -->
+		<Exec Command="docker start local-redis || docker run -d --name local-redis -p 6379:6379 redis:alpine" IgnoreExitCode="true" />
+	</Target>
 </Project>

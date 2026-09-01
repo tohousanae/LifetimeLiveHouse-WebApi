@@ -5,8 +5,6 @@ using LifetimeLiveHouseWebAPI.Modules.User.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using NETCore.MailKit.Extensions;
-using NETCore.MailKit.Infrastructure.Internal;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,18 +30,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// 加入本機分散式記憶體快取服務
-builder.Services.AddDistributedMemoryCache();
-
-// 加入redis分散式快取服務
-//builder.Services.AddSingleton<IConnectionMultiplexer>(
-//    ConnectionMultiplexer.Connect(
-//        new ConfigurationOptions()
-//        {
-//            EndPoints = { { "localhost", 6379 } }
-//        }
-//    )
-// );
+// 註冊 Redis 分散式快取
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    // 💡 絕對不要在程式碼裡寫死預設值，一律交給環境變數或組態檔決定
+    options.Configuration = builder.Configuration.GetConnectionString("RedisConnection");
+    options.InstanceName = "LifetimeLiveHouse_";
+});
 
 //
 builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>

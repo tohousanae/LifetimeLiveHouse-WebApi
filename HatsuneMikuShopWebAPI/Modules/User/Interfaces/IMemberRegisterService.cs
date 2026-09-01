@@ -5,12 +5,6 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Interfaces
 {
     public interface IMemberRegisterService
     {
-        Task<ActionResult<string>> RegisterAsync(MemberRegisterDTO dto, string? redirectUrl = null);
-
-        //Task<ActionResult<string>> SendVerificationSMSAsync(string phoneNumber);
-
-        //Task<ActionResult<string>> VerifyEmailAsync(string token);
-
-        //Task<ActionResult<string>> VerifyPhoneAsync(long memberId, string code);
+        Task<string> RegisterAsync(MemberRegisterDTO dto, string? redirectUrl = null);
     }
 }
