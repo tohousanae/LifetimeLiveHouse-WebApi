@@ -1,4 +1,6 @@
-﻿using LifetimeLiveHouse.Models;
+﻿using System;
+using System.Collections.Generic;
+using LifetimeLiveHouse.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace LifetimeLiveHouse.Access.Data;
@@ -268,7 +270,8 @@ public partial class LifetimeLiveHouseSysDBContext : DbContext
             entity.Property(e => e.Name).HasMaxLength(40);
             entity.Property(e => e.StatusCode)
                 .HasMaxLength(1)
-                .IsFixedLength();
+                .IsFixedLength()
+                .HasDefaultValueSql("((0))", "DF_Member_StatusCode");
 
             entity.HasOne(d => d.StatusCodeNavigation).WithMany(p => p.Member).HasForeignKey(d => d.StatusCode);
         });
