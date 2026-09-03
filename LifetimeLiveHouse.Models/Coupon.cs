@@ -15,6 +15,12 @@ public partial class Coupon
 
     public long MemberID { get; set; }
 
+    public DateTime GetCouponDate { get; set; }
+
+    public DateTime ExpiresAt { get; set; }
+
+    public bool Used { get; set; }
+
     public virtual Member Member { get; set; } = null!;
 
     public virtual Product Product { get; set; } = null!;

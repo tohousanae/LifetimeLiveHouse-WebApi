@@ -129,6 +129,7 @@ public partial class LifetimeLiveHouseSysDBContext : DbContext
             entity.HasIndex(e => e.ProductID, "IX_Coupon_ProductID");
 
             entity.Property(e => e.Discount).HasColumnType("money");
+            entity.Property(e => e.GetCouponDate).HasDefaultValueSql("(getutcdate())", "DF_Coupon_GetDate");
             entity.Property(e => e.cDesc).HasMaxLength(200);
 
             entity.HasOne(d => d.Member).WithMany(p => p.Coupon).HasForeignKey(d => d.MemberID);
@@ -256,6 +257,7 @@ public partial class LifetimeLiveHouseSysDBContext : DbContext
 
             entity.HasIndex(e => e.MemberID, "IX_LoginRecord_MemberID");
 
+            entity.Property(e => e.LoginDate).HasDefaultValueSql("(getutcdate())", "DF_LoginRecord_LoginDate");
             entity.Property(e => e.Record).HasMaxLength(200);
 
             entity.HasOne(d => d.Member).WithMany(p => p.LoginRecord).HasForeignKey(d => d.MemberID);
@@ -267,6 +269,7 @@ public partial class LifetimeLiveHouseSysDBContext : DbContext
 
             entity.Property(e => e.Cash).HasColumnType("money");
             entity.Property(e => e.CellphoneNumber).HasMaxLength(20);
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("(getutcdate())", "DF_Member_CreatedDate");
             entity.Property(e => e.Name).HasMaxLength(40);
             entity.Property(e => e.StatusCode)
                 .HasMaxLength(1)
@@ -293,6 +296,7 @@ public partial class LifetimeLiveHouseSysDBContext : DbContext
             entity.HasKey(e => e.MemberID);
 
             entity.Property(e => e.MemberID).ValueGeneratedNever();
+            entity.Property(e => e.EmailVerificationTokenExpiry).HasDefaultValueSql("(dateadd(hour,(24),getutcdate()))", "DF_MemberEmailVerificationStatus_EmailVerificationTokenExpiry");
 
             entity.HasOne(d => d.Member).WithOne(p => p.MemberEmailVerificationStatus).HasForeignKey<MemberEmailVerificationStatus>(d => d.MemberID);
         });
@@ -342,6 +346,7 @@ public partial class LifetimeLiveHouseSysDBContext : DbContext
         {
             entity.Property(e => e.Author).HasMaxLength(10);
             entity.Property(e => e.NewsTitle).HasMaxLength(40);
+            entity.Property(e => e.PostDate).HasDefaultValueSql("(getutcdate())", "DF_News_PostDate");
         });
 
         modelBuilder.Entity<Notification>(entity =>
@@ -364,6 +369,7 @@ public partial class LifetimeLiveHouseSysDBContext : DbContext
             entity.HasIndex(e => e.StatusCode, "IX_Order_StatusCode");
 
             entity.Property(e => e.Note).HasMaxLength(200);
+            entity.Property(e => e.OrderDate).HasDefaultValueSql("(getutcdate())", "DF_Order_OrderDate");
             entity.Property(e => e.PayCode)
                 .HasMaxLength(2)
                 .IsFixedLength();
@@ -417,6 +423,9 @@ public partial class LifetimeLiveHouseSysDBContext : DbContext
         {
             entity.HasIndex(e => e.MemberID, "IX_PasswordResetToken_MemberID");
 
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getutcdate())", "DF_PasswordResetToken_CreatedAt");
+            entity.Property(e => e.ExpiresAt).HasDefaultValueSql("(dateadd(hour,(1),getutcdate()))", "DF_PasswordResetToken_ExpiresAt");
+
             entity.HasOne(d => d.Member).WithMany(p => p.PasswordResetToken).HasForeignKey(d => d.MemberID);
         });
 
@@ -440,6 +449,7 @@ public partial class LifetimeLiveHouseSysDBContext : DbContext
             entity.Property(e => e.CateID)
                 .HasMaxLength(5)
                 .IsFixedLength();
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("(getutcdate())", "DF_Product_CreatedDate");
             entity.Property(e => e.Description).HasMaxLength(200);
             entity.Property(e => e.Photo).HasMaxLength(50);
             entity.Property(e => e.Pricing).HasColumnType("money");
@@ -529,6 +539,7 @@ public partial class LifetimeLiveHouseSysDBContext : DbContext
         modelBuilder.Entity<Store>(entity =>
         {
             entity.Property(e => e.Address).HasMaxLength(50);
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("(getutcdate())", "DF_Store_CreatedDate");
             entity.Property(e => e.RentFeePerHour).HasColumnType("money");
             entity.Property(e => e.StoreName).HasMaxLength(40);
             entity.Property(e => e.sTel).HasMaxLength(20);
