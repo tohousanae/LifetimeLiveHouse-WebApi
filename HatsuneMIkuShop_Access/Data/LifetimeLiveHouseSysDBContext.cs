@@ -129,7 +129,7 @@ public partial class LifetimeLiveHouseSysDBContext : DbContext
             entity.HasIndex(e => e.ProductID, "IX_Coupon_ProductID");
 
             entity.Property(e => e.Discount).HasColumnType("money");
-            entity.Property(e => e.GetCouponDate).HasDefaultValueSql("(getutcdate())", "DF_Coupon_GetDate");
+            //entity.Property(e => e.GetCouponDate).HasDefaultValueSql("(getutcdate())", "DF_Coupon_GetDate");
             entity.Property(e => e.cDesc).HasMaxLength(200);
 
             entity.HasOne(d => d.Member).WithMany(p => p.Coupon).HasForeignKey(d => d.MemberID);
