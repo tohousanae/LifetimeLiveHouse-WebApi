@@ -2,6 +2,7 @@ using LifetimeLiveHouse.Access.Data;
 using LifetimeLiveHouse.Models.CustomModel;
 using LifetimeLiveHouseWebAPI.Modules.User.Interfaces;
 using LifetimeLiveHouseWebAPI.Modules.User.Services;
+using LifetimeLiveHouseWebAPI.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -23,6 +24,8 @@ builder.Services.AddScoped<IMemberLoginService, MemberLoginService>();
 builder.Services.AddScoped<IMemberProfileService, MemberProfileService>();
 builder.Services.AddScoped<IMemberRegisterService, MemberRegisterService>();
 builder.Services.AddScoped<IMemberVerificationService, MemberVerificationService>();
+// 註冊 Token 清理背景排程
+builder.Services.AddHostedService<TokenCleanupBackgroundService>();
 
 builder.Services.AddControllers();
 
