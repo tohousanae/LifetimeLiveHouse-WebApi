@@ -74,7 +74,7 @@ builder.Services.AddAuthentication(options =>
         //以上兩條在web api當中沒用，因為web api不會重新導向
         options.ExpireTimeSpan = TimeSpan.FromHours(8);
         options.Cookie.HttpOnly = true; // 禁止 JavaScript 存取 Cookie防XSS攻擊。
-        options.Cookie.SameSite = SameSiteMode.Lax; // 開放前端跨域存取cookie，正式環境
+        options.Cookie.SameSite = SameSiteMode.None; // 開放前端跨域存取cookie，前後端分離部署架構(如前端為vue3)需要另外實作防CSRF防偽權杖，不然前後端分離網站會無法串接API
         options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // 強制瀏覽器僅在 HTTPS 連線下傳送該 Cookie。
         options.SlidingExpiration = true; // 自動延長有效時間
     });
