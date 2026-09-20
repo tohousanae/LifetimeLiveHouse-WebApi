@@ -29,6 +29,13 @@ builder.Services.AddHostedService<TokenCleanupBackgroundService>();
 
 builder.Services.AddControllers();
 
+// 加入 CSRF 防禦服務，設定前端回傳時使用的 Header 名稱
+builder.Services.AddAntiforgery(options =>
+{
+    options.HeaderName = "X-XSRF-TOKEN";
+    // 預設發送給前端的 Cookie 名稱為 XSRF-TOKEN，Vue Axios 預設會去抓這個名字
+});
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
