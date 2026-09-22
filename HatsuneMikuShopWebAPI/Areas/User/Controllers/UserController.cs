@@ -32,6 +32,7 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
             return result.Result is NotFoundObjectResult notFound ? notFound : Ok(((OkObjectResult)result.Result!).Value);
         }
 
+        [ValidateAntiForgeryToken]
         // ✍️ 更新個人檔案 (根據規格，已移除性別欄位)
         [HttpPut("profile")]
         public async Task<IActionResult> UpdateProfile([FromBody] MemberUpdateDTO dto)

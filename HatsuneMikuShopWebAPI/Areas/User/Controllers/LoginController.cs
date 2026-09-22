@@ -12,6 +12,7 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
     {
         private readonly IMemberLoginService _loginService = loginService;
 
+        [ValidateAntiForgeryToken]
         // 🔑 登入
         [AllowAnonymous]
         [HttpPost("login")]
@@ -21,6 +22,7 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
             return await _loginService.LoginAsync(memberAccount, HttpContext);
         }
 
+        [ValidateAntiForgeryToken]
         // 🚪 登出
         [Authorize]
         [HttpPost("logout")]

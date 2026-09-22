@@ -13,6 +13,7 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
     {
         private readonly IForgetPasswordService _service = service;
 
+        [ValidateAntiForgeryToken]
         // 📧 發送重設密碼信件
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto)
@@ -30,6 +31,7 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
             }
         }
 
+        [ValidateAntiForgeryToken]
         // 🔍 使用者點擊連結後，驗證 Token 是否有效
         [HttpPost("valid-token")]
         public async Task<IActionResult> ValidResetPasswordToken([FromBody] ValidResetPasswordTokenDto dto)
@@ -47,6 +49,7 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
             }
         }
 
+        [ValidateAntiForgeryToken]
         // 💾 送出新密碼表單，執行密碼覆寫
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto dto)

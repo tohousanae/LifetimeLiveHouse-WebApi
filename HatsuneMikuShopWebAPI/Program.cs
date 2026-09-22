@@ -6,6 +6,7 @@ using LifetimeLiveHouseWebAPI.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Antiforgery; // 👇 新增：引入 Antiforgery 命名空間
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,7 +49,6 @@ builder.Services.AddStackExchangeRedisCache(options =>
     options.InstanceName = "LifetimeLiveHouse_";
 });
 
-//
 builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
     opt.TokenLifespan = TimeSpan.FromHours(2));
 
@@ -147,6 +147,28 @@ app.UseCors("MyCorsPolicy");
 // 💡 必須在 UseAuthorization 之前加上這行，Cookie 驗證才會生效！
 app.UseAuthentication();
 app.UseAuthorization();
+
+// 👇 新增第二段：加入自訂 Middleware，發送 CSRF Token 到前端的 Cookie 中
+// 必須放在 UseCors 與 UseAuthorization 之後，MapControllers 之前
+app.Use(next => context =>
+{
+    var antiforgery = app.Services.GetRequiredService<IAntiforgery>();
+    var tokens = antiforgery.GetAndStoreTokens(context);
+
+    if (tokens.RequestToken != null)
+    {
+        // 將 Token 寫入前端可讀取的 Cookie (注意：不能設為 HttpOnly，且跨域需設為 SameSite=None)
+        context.Response.Cookies.Append("XSRF-TOKEN", tokens.RequestToken,
+            new CookieOptions()
+            {
+                HttpOnly = false, // 必須為 false，讓 Vue / Axios 可以用 JavaScript 讀取到
+                SameSite = SameSiteMode.None,
+                Secure = app.Environment.IsDevelopment() ? false : true // 配合 HTTP/HTTPS 動態切換
+            });
+    }
+
+    return next(context);
+});
 
 app.MapControllers();
 
