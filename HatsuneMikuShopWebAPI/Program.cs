@@ -146,7 +146,6 @@ app.UseCors("MyCorsPolicy");
 
 // 💡 必須在 UseAuthorization 之前加上這行，Cookie 驗證才會生效！
 app.UseAuthentication();
-app.UseAuthorization();
 
 // 👇 新增第二段：加入自訂 Middleware，發送 CSRF Token 到前端的 Cookie 中
 // 必須放在 UseCors 與 UseAuthorization 之後，MapControllers 之前
@@ -163,13 +162,15 @@ app.Use(next => context =>
             {
                 HttpOnly = false, // 必須為 false，讓 Vue / Axios 可以用 JavaScript 讀取到
                 SameSite = SameSiteMode.None,
-                Secure = app.Environment.IsDevelopment() ? false : true // 配合 HTTP/HTTPS 動態切換
+                Secure = true // 強制瀏覽器僅在 HTTPS 連線下傳送該 Cookie。
             });
     }
 
     return next(context);
 });
 
+// 2. 檢查權限 (如果沒權限會回傳 401，但此時 Response 已經順利塞入 CSRF Cookie 了！)
+app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
