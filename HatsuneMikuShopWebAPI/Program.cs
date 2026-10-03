@@ -81,8 +81,10 @@ builder.Services.AddAuthentication(options =>
         //以上兩條在web api當中沒用，因為web api不會重新導向
         options.ExpireTimeSpan = TimeSpan.FromHours(8);
         options.Cookie.HttpOnly = true; // 禁止 JavaScript 存取 Cookie防XSS攻擊。
-        options.Cookie.SameSite = SameSiteMode.None; // 開放前端跨域存取cookie，前後端分離部署架構(如前端為vue3)需要另外實作防CSRF防偽權杖，不然前後端分離網站會無法串接API
-        options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // 強制瀏覽器僅在 HTTPS 連線下傳送該 Cookie。
+        // 💡 動態切換：開發環境用 Lax (允許 localhost 跨 port 傳遞)，正式環境用 None (允許跨網域)
+        options.Cookie.SameSite = builder.Environment.IsDevelopment() ? SameSiteMode.Lax : SameSiteMode.None;
+        // 💡 動態切換：開發環境不強制 HTTPS，正式環境強制
+        options.Cookie.SecurePolicy = builder.Environment.IsDevelopment() ? CookieSecurePolicy.SameAsRequest : CookieSecurePolicy.Always;
         options.SlidingExpiration = true; // 自動延長有效時間
     });
 
@@ -156,12 +158,14 @@ app.Use(next => context =>
 
     if (tokens.RequestToken != null)
     {
+        var isDev = app.Environment.IsDevelopment();
         // 將 Token 寫入前端可讀取的 Cookie (注意：不能設為 HttpOnly，且跨域需設為 SameSite=None)
         context.Response.Cookies.Append("XSRF-TOKEN", tokens.RequestToken,
             new CookieOptions()
             {
                 HttpOnly = false, // 必須為 false，讓 Vue / Axios 可以用 JavaScript 讀取到
-                SameSite = SameSiteMode.None,
+                // 💡 動態切換 SameSite
+                SameSite = isDev ? SameSiteMode.Lax : SameSiteMode.None,
                 Secure = true // 強制瀏覽器僅在 HTTPS 連線下傳送該 Cookie。
             });
     }
