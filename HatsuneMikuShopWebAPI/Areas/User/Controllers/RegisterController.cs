@@ -15,7 +15,6 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
         private readonly IMemberRegisterService _registerService = registerService;
         private readonly IMemberVerificationService _verificationService = verificationService;
 
-        [ValidateAntiForgeryToken]
         // 📝 註冊帳號 (允許未登入客訪問)
         [AllowAnonymous]
         [HttpPost("postRegisterMember")]
@@ -43,9 +42,9 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
             }
         }
 
-        [ValidateAntiForgeryToken]
         // ✉️ 信箱連結驗證 (改用 POST 與 Body 接收，徹底隱藏 Token)
         [AllowAnonymous]
+        [Authorize] // 必須登入才能存取
         [HttpPost("verify-email")]
         public async Task<ActionResult<object>> VerifyEmail([FromBody] VerifyEmailDto dto)
         {
@@ -55,8 +54,8 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
             return await _verificationService.VerifyEmailAsync(dto.Token);
         }
 
-        [ValidateAntiForgeryToken]
         // 📱 發送手機簡訊驗證碼
+        [Authorize] // 必須登入才能存取
         [HttpPost("sendValidationSMS")]
         public async Task<ActionResult<string>> SendValidationSMS([FromBody] UserPhoneNumberDTO dto)
         {
@@ -64,8 +63,8 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
             return await _verificationService.SendVerificationSMSAsync(dto.CellphoneNumber);
         }
 
-        [ValidateAntiForgeryToken]
         // 📱 驗證手機簡訊碼
+        [Authorize] // 必須登入才能存取
         [HttpPost("verify-phone")]
         public async Task<ActionResult<string>> VerifyPhone([FromBody] VerifyPhoneDTO dto)
         {

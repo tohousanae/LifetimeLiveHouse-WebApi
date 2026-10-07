@@ -166,7 +166,7 @@ app.Use(next => context =>
                 HttpOnly = false, // 必須為 false，讓 Vue / Axios 可以用 JavaScript 讀取到
                 // 💡 動態切換 SameSite
                 SameSite = isDev ? SameSiteMode.Lax : SameSiteMode.None,
-                Secure = true // 強制瀏覽器僅在 HTTPS 連線下傳送該 Cookie。
+                Secure = !isDev // 強制瀏覽器在部署環境時僅在 HTTPS 連線下傳送該 Cookie。
             });
     }
 
