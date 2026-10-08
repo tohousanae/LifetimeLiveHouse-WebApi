@@ -44,7 +44,6 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
 
         // ✉️ 信箱連結驗證 (改用 POST 與 Body 接收，徹底隱藏 Token)
         [AllowAnonymous]
-        [Authorize] // 必須登入才能存取
         [HttpPost("verify-email")]
         public async Task<ActionResult<object>> VerifyEmail([FromBody] VerifyEmailDto dto)
         {
