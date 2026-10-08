@@ -14,6 +14,7 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
 
         // 🔑 登入
         [AllowAnonymous]
+        [IgnoreAntiforgeryToken]
         [HttpPost("login")]
         public async Task<ActionResult<string>> PostUserLogin([FromBody] LoginDTO memberAccount)
         {

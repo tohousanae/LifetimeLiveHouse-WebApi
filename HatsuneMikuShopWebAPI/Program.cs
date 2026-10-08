@@ -28,7 +28,13 @@ builder.Services.AddScoped<IMemberVerificationService, MemberVerificationService
 // 註冊 Token 清理背景排程
 builder.Services.AddHostedService<TokenCleanupBackgroundService>();
 
-builder.Services.AddControllers();
+//builder.Services.AddControllers();
+// 改為註冊全域 Filter
+builder.Services.AddControllers(options =>
+{
+    // 自動套用到專案中的每一個 Controller 與 Action
+    options.Filters.Add<GlobalAntiforgeryFilter>();
+});
 
 // 加入 CSRF 防禦服務，設定前端回傳時使用的 Header 名稱
 builder.Services.AddAntiforgery(options =>

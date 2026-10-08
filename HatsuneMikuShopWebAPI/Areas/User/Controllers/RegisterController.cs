@@ -17,6 +17,7 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
 
         // 📝 註冊帳號 (允許未登入客訪問)
         [AllowAnonymous]
+        [IgnoreAntiforgeryToken]
         [HttpPost("postRegisterMember")]
         public async Task<IActionResult> Register(MemberRegisterDTO dto, [FromQuery] string? redirectUrl = null)
         {
@@ -44,6 +45,7 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
 
         // ✉️ 信箱連結驗證 (改用 POST 與 Body 接收，徹底隱藏 Token)
         [AllowAnonymous]
+        [IgnoreAntiforgeryToken]
         [HttpPost("verify-email")]
         public async Task<ActionResult<object>> VerifyEmail([FromBody] VerifyEmailDto dto)
         {

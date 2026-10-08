@@ -9,6 +9,7 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [AllowAnonymous] // 忘記密碼全程不需登入
+    [IgnoreAntiforgeryToken]
     public class ForgetPasswordController(IForgetPasswordService service) : ControllerBase
     {
         private readonly IForgetPasswordService _service = service;
