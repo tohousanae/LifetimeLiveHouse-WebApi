@@ -1,8 +1,11 @@
-﻿using LifetimeLiveHouse.Access.Data;
+﻿using Common.Helpers;
+using LifetimeLiveHouse.Access.Data;
+using LifetimeLiveHouse.Models;
 using LifetimeLiveHouse.Models.CustomModel;
 using LifetimeLiveHouseWebAPI.Modules.User.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
 using System.Security.Cryptography;
 using System.Text;
@@ -16,11 +19,19 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
     public partial class MemberVerificationService(
         LifetimeLiveHouseSysDBContext context,
         IOptions<TwilioOptions> twilioOptions,
+        IServiceScopeFactory scopeFactory,
+        IConfiguration config,
+        IWebHostEnvironment env,
+        IDistributedCache cache, // 💡 注入 Redis 快取
         ILogger<MemberVerificationService>? logger = null) : IMemberVerificationService
     {
         private readonly LifetimeLiveHouseSysDBContext _context = context;
         private readonly TwilioOptions _twilioOpts = twilioOptions.Value;
         private readonly ILogger<MemberVerificationService>? _logger = logger;
+        private readonly IServiceScopeFactory _scopeFactory = scopeFactory;
+        private readonly IWebHostEnvironment _env = env;
+        private readonly IDistributedCache _cache = cache;
+        private readonly IConfiguration _config = config;
 
         // 優化：正規表達式源碼生成 (編譯期預先編譯，消滅執行期解析 CPU 耗時)
         [GeneratedRegex(@"^\+\d{8,15}$", RegexOptions.Compiled)]
@@ -222,6 +233,74 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
             if (PhoneNumberRegex().IsMatch(cleaned)) return "+" + cleaned;
 
             return cleaned;
+        }
+
+        // 💡 請確保在建構子中注入 IDistributedCache _cache, IConfiguration config, IServiceScopeFactory scopeFactory, IWebHostEnvironment env
+        public async Task<string> ResendEmailVerificationAsync(long memberId)
+        {
+            var cacheKey = $"EmailVerify_CD_{memberId}";
+            if (await _cache.GetStringAsync(cacheKey) != null)
+                throw new InvalidOperationException("發送過於頻繁，請於 60 秒後再試。");
+
+            var account = await _context.MemberAccount
+                .Include(a => a.Member).ThenInclude(m => m.MemberEmailVerificationStatus)
+                .FirstOrDefaultAsync(a => a.MemberID == memberId)
+                ?? throw new InvalidOperationException("帳號不存在");
+
+            if (account.Member.MemberEmailVerificationStatus?.IsEmailVerified == true)
+                throw new InvalidOperationException("您的信箱已經驗證過了");
+
+            // 1. 重用原本的 Token 生成邏輯
+            var plainTokenString = TokenGeneratorHelper.GeneratePassword(100);
+            var tokenHash = HashStringSHA256(plainTokenString);
+
+            account.Member.MemberEmailVerificationStatus ??= new MemberEmailVerificationStatus();
+            account.Member.MemberEmailVerificationStatus.EmailVerificationTokenHash = tokenHash;
+            account.Member.MemberEmailVerificationStatus.EmailVerificationTokenExpiry = DateTime.UtcNow.AddHours(24);
+            await _context.SaveChangesAsync();
+
+            // 2. 組合驗證信內容
+            var _frontendBaseUrl = _config["FrontendBaseUrl"] ?? "https://livetimelivehouse.sakuyaonline.uk";
+            var combinedToken = $"{memberId}:{plainTokenString}";
+            var emailVerifyLink = $"{_frontendBaseUrl}/verify-email?token={Uri.EscapeDataString(combinedToken)}";
+            var body = $"<p>您好 {account.Member.Name}：</p><p>請點擊以下連結完成信箱驗證：</p><p><a href='{emailVerifyLink}'>{emailVerifyLink}</a></p>";
+
+            // 3. 發送郵件 (重用 EmailService)
+            _ = Task.Run(async () =>
+            {
+                using var scope = _scopeFactory.CreateScope();
+                var emailService = scope.ServiceProvider.GetRequiredService<EmailService>();
+                await emailService.SendEmailAsync(account.Email, "會員中心 – 重新發送驗證信", body);
+            });
+
+            // 4. 寫入 Redis 冷卻時間 60 秒
+            await _cache.SetStringAsync(cacheKey, "1", new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(60) });
+            return "驗證信已發送，請至信箱查收";
+        }
+
+        public async Task<string> SendPhoneVerificationForCurrentMemberAsync(long memberId)
+        {
+            var cacheKey = $"PhoneVerify_CD_{memberId}";
+            if (await _cache.GetStringAsync(cacheKey) != null)
+                throw new InvalidOperationException("發送過於頻繁，請於 60 秒後再試。");
+
+            var account = await _context.Member.AsNoTracking()
+                .Select(a => new { a.MemberID, a.CellphoneNumber, IsPhoneVerified = a.MemberPhoneVerificationStatus != null && a.MemberPhoneVerificationStatus.IsPhoneVerified })
+                .FirstOrDefaultAsync(a => a.MemberID == memberId)
+                ?? throw new InvalidOperationException("帳號不存在");
+
+            if (account.IsPhoneVerified) throw new InvalidOperationException("您的手機號碼已經驗證過了");
+            if (string.IsNullOrWhiteSpace(account.CellphoneNumber)) throw new InvalidOperationException("請先在下方表單填寫並儲存您的手機號碼");
+
+            var normalized = NormalizePhoneNumber(account.CellphoneNumber);
+            if (!PhoneNumberRegex().IsMatch(normalized)) throw new InvalidOperationException("儲存的手機號碼格式不正確");
+
+            // 重用 Twilio 發送邏輯
+            var verification = await VerificationResource.CreateAsync(to: normalized, channel: "sms", pathServiceSid: _twilioOpts.VerifyServiceSid);
+
+            // 寫入 Redis 冷卻時間 60 秒
+            await _cache.SetStringAsync(cacheKey, "1", new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(60) });
+            return "驗證碼已透過簡訊發送至您的手機";
         }
     }
 }
