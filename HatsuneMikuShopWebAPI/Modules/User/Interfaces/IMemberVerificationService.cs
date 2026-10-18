@@ -7,5 +7,7 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Interfaces
         Task<ActionResult<object>> VerifyEmailAsync(string token); // 回傳 Object 以支援前端 JSON 解析
         Task<ActionResult<string>> SendVerificationSMSAsync(string phoneNumber);
         Task<ActionResult<string>> VerifyPhoneAsync(long memberId, string code);
+        Task<string> ResendEmailVerificationAsync(long memberId);
+        Task<string> SendPhoneVerificationForCurrentMemberAsync(long memberId);
     }
 }

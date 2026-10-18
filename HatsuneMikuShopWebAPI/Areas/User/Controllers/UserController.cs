@@ -10,9 +10,10 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize] // 🔒 加上此標籤，確保只有已登入的 Member 才能存取
-    public class UserController(IMemberProfileService profileService) : ControllerBase
+    public class UserController(IMemberProfileService profileService, IMemberVerificationService verificationService) : ControllerBase
     {
         private readonly IMemberProfileService _profileService = profileService;
+        private readonly IMemberVerificationService _verificationService = verificationService;
 
         // 內部共用方法：從使用者的 Cookie/Token 解析出 MemberID
         private long GetCurrentMemberId()
@@ -43,6 +44,37 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
 
             var result = await _profileService.UpdateMemberProfileAsync(memberId, dto);
             return result.Result is BadRequestObjectResult badReq ? badReq : Ok(new { Message = ((OkObjectResult)result.Result!).Value });
+        }
+        [HttpPost("send-email-verification")]
+        public async Task<IActionResult> SendEmailVerification()
+        {
+            var memberId = long.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            try
+            {
+                var msg = await _verificationService.ResendEmailVerificationAsync(memberId);
+                return Ok(new { message = msg });
+            }
+            catch (InvalidOperationException ex) { return BadRequest(new { message = ex.Message }); }
+        }
+
+        [HttpPost("send-phone-verification")]
+        public async Task<IActionResult> SendPhoneVerification()
+        {
+            var memberId = long.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            try
+            {
+                var msg = await _verificationService.SendPhoneVerificationForCurrentMemberAsync(memberId);
+                return Ok(new { message = msg });
+            }
+            catch (InvalidOperationException ex) { return BadRequest(new { message = ex.Message }); }
+        }
+
+        [HttpPost("verify-phone-code")]
+        public async Task<IActionResult> VerifyPhoneCode([FromBody] VerifyPhoneDTO dto)
+        {
+            // 強制從登入憑證抓 ID，不理會前端傳來的 MemberId，徹底防範越權漏洞 (IDOR)
+            var memberId = long.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            return Ok(new { message = await _verificationService.VerifyPhoneAsync(memberId, dto.Code) });
         }
     }
 }
