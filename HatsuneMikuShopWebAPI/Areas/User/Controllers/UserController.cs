@@ -48,7 +48,7 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
         [HttpPost("send-email-verification")]
         public async Task<IActionResult> SendEmailVerification()
         {
-            var memberId = long.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            var memberId = long.Parse(HttpContext.User.FindFirst(ClaimTypes.Sid)!.Value);
             try
             {
                 var msg = await _verificationService.ResendEmailVerificationAsync(memberId);
@@ -60,7 +60,7 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
         [HttpPost("send-phone-verification")]
         public async Task<IActionResult> SendPhoneVerification()
         {
-            var memberId = long.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            var memberId = long.Parse(HttpContext.User.FindFirst(ClaimTypes.Sid)!.Value);
             try
             {
                 var msg = await _verificationService.SendPhoneVerificationForCurrentMemberAsync(memberId);
@@ -73,7 +73,7 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
         public async Task<IActionResult> VerifyPhoneCode([FromBody] VerifyPhoneDTO dto)
         {
             // 強制從登入憑證抓 ID，不理會前端傳來的 MemberId，徹底防範越權漏洞 (IDOR)
-            var memberId = long.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            var memberId = long.Parse(HttpContext.User.FindFirst(ClaimTypes.Sid)!.Value);
             return Ok(new { message = await _verificationService.VerifyPhoneAsync(memberId, dto.Code) });
         }
     }
