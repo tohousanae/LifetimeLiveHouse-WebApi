@@ -208,7 +208,7 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
         private static string HashStringSHA256(string input)
         {
             var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(input));
-            return Convert.ToBase64String(bytes);
+            return Convert.ToHexString(bytes).ToLowerInvariant(); // 💡 統一使用 HexString 避開 Base64 比對失敗問題
         }
 
         // 優化：利用 stackalloc 消除 LINQ 產生的陣列與字串垃圾 (降低 GC 回收頻率)
