@@ -66,7 +66,8 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
             // 優化：直接在資料庫端執行驗證與更新，消滅 SELECT 至應用程式的 I/O 成本與記憶體分配
             var rowsAffected = await _context.MemberEmailVerificationStatus
                 .Where(t => t.MemberID == memberId
-                         && t.EmailVerificationTokenExpiry > DateTime.Now
+                         // 👇 必須改成 UtcNow
+                         && t.EmailVerificationTokenExpiry > DateTime.UtcNow
                          && t.EmailVerificationTokenHash == expectedHash)
                 .ExecuteUpdateAsync(s => s
                     .SetProperty(p => p.IsEmailVerified, true)
@@ -250,8 +251,8 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
             if (account.Member.MemberEmailVerificationStatus?.IsEmailVerified == true)
                 throw new InvalidOperationException("您的信箱已經驗證過了");
 
-            // 1. 重用原本的 Token 生成邏輯
-            var plainTokenString = TokenGeneratorHelper.GeneratePassword(100);
+            // 1. 👇 徹底移除 TokenGeneratorHelper，改用這個絕對安全的 Hex 亂數產生方式：
+            var plainTokenString = Convert.ToHexString(RandomNumberGenerator.GetBytes(32)).ToLowerInvariant();
             var tokenHash = HashStringSHA256(plainTokenString);
 
             account.Member.MemberEmailVerificationStatus ??= new MemberEmailVerificationStatus();
