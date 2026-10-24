@@ -43,7 +43,11 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
             if (memberId == 0) return Unauthorized("無法辨識使用者身分");
 
             var result = await _profileService.UpdateMemberProfileAsync(memberId, dto);
-            return result.Result is BadRequestObjectResult badReq ? badReq : Ok(new { Message = ((OkObjectResult)result.Result!).Value });
+
+            // 💡 修正回傳：直接吐出 Service 組合好的 Object
+            return result.Result is BadRequestObjectResult badReq
+                ? badReq
+                : Ok(((OkObjectResult)result.Result!).Value);
         }
         [HttpPost("send-email-verification")]
         public async Task<IActionResult> SendEmailVerification()

@@ -6,6 +6,6 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Interfaces
     public interface IMemberProfileService
     {
         Task<ActionResult<object>> GetMemberProfileAsync(long memberId);
-        Task<ActionResult<string>> UpdateMemberProfileAsync(long memberId, MemberUpdateDTO dto);
+        Task<ActionResult<object>> UpdateMemberProfileAsync(long memberId, MemberUpdateDTO dto);
     }
 }

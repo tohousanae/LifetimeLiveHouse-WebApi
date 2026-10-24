@@ -4,6 +4,10 @@ namespace LifetimeLiveHouseWebAPI.DTOs.Users
 {
     public class MemberUpdateDTO
     {
+        // 💡 新增信箱欄位，並加上必填與格式驗證
+        [Required(ErrorMessage = "信箱不能為空")]
+        [EmailAddress(ErrorMessage = "信箱格式錯誤")]
+        [StringLength(30, ErrorMessage = "信箱長度最多 30 字元")]
         public string Email { get; set; } = null!; // 💡 確保有加入這一行
 
         [Required(ErrorMessage = "會員名稱不能為空")]
