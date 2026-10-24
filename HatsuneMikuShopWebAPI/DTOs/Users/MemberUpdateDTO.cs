@@ -4,6 +4,8 @@ namespace LifetimeLiveHouseWebAPI.DTOs.Users
 {
     public class MemberUpdateDTO
     {
+        public string Email { get; set; } = null!; // 💡 確保有加入這一行
+
         [Required(ErrorMessage = "會員名稱不能為空")]
         [StringLength(40, MinimumLength = 1, ErrorMessage = "會員名稱長度必須在 1 到 40 字元之間")]
         public string Name { get; set; } = null!;
