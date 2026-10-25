@@ -85,7 +85,7 @@ builder.Services.AddAuthentication(options =>
         //options.LoginPath = "/api/auth/login";
         //options.LogoutPath = "/api/auth/logout";
         //以上兩條在web api當中沒用，因為web api不會重新導向
-        options.ExpireTimeSpan = TimeSpan.FromHours(8);
+        //options.ExpireTimeSpan = TimeSpan.FromHours(8); // 暫時凍結cookie過期時間，目前我想要永久保持登入狀態
         options.Cookie.HttpOnly = true; // 禁止 JavaScript 存取 Cookie防XSS攻擊。
         // 💡 動態切換：開發環境用 Lax (允許 localhost 跨 port 傳遞)，正式環境用 None (允許跨網域)
         options.Cookie.SameSite = builder.Environment.IsDevelopment() ? SameSiteMode.Lax : SameSiteMode.None;
