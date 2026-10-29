@@ -170,6 +170,27 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
                 if (!PhoneNumberRegex().IsMatch(toNumber))
                     return new BadRequestObjectResult(new { message = "儲存在資料庫的手機號碼格式錯誤" });
 
+                // 👇 插入點：如果是開發環境，去 Redis 讀取測試驗證碼比對
+                if (_env.IsDevelopment())
+                {
+                    var cachedCode = await _cache.GetStringAsync($"DevPhoneCode_{memberId}");
+                    if (cachedCode != null && cachedCode == code)
+                    {
+                        // 驗證成功，把測試驗證碼刪除
+                        await _cache.RemoveAsync($"DevPhoneCode_{memberId}");
+
+                        // 更新資料庫狀態為已驗證
+                        await _context.MemberPhoneVerificationStatus
+                            .Where(s => s.MemberID == memberId)
+                            .ExecuteUpdateAsync(s => s.SetProperty(p => p.IsPhoneVerified, true));
+
+                        // 回傳與上一個回答統一的 Object 格式
+                        return new OkObjectResult(new { message = "手機驗證成功！(測試模式)" });
+                    }
+                    return new BadRequestObjectResult(new { message = "驗證碼無效或已過期 (測試模式)" });
+                }
+
+                // 🚀 正式環境：Twilio 驗證邏輯
                 var serviceSid = _twilioOpts?.VerifyServiceSid;
                 if (string.IsNullOrWhiteSpace(serviceSid))
                     return new ObjectResult(new { message = "VerifyServiceSid 未設定" }) { StatusCode = 500 };
@@ -303,7 +324,20 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
             var normalized = NormalizePhoneNumber(account.CellphoneNumber);
             if (!PhoneNumberRegex().IsMatch(normalized)) throw new InvalidOperationException("儲存的手機號碼格式不正確");
 
-            // 重用 Twilio 發送邏輯
+            // 👇 插入點：如果是開發環境，直接存 Redis 並回傳，不要呼叫 Twilio
+            if (_env.IsDevelopment())
+            {
+                var fakeCode = "123456";
+                await _cache.SetStringAsync($"DevPhoneCode_{memberId}", fakeCode, new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10) });
+
+                _logger?.LogInformation($"[測試環境] 會員 {memberId} 的手機驗證碼為: {fakeCode}");
+
+                // 一樣要加上 60 秒發送冷卻時間
+                await _cache.SetStringAsync(cacheKey, "1", new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(60) });
+                return "驗證碼已發送 (測試模式)";
+            }
+
+            // 🚀 正式環境：重用 Twilio 發送邏輯
             var verification = await VerificationResource.CreateAsync(to: normalized, channel: "sms", pathServiceSid: _twilioOpts.VerifyServiceSid);
 
             // 寫入 Redis 冷卻時間 60 秒

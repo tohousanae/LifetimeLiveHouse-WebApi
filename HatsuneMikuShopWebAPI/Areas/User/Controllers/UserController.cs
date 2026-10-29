@@ -78,7 +78,19 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
         {
             // 強制從登入憑證抓 ID，不理會前端傳來的 MemberId，徹底防範越權漏洞 (IDOR)
             var memberId = long.Parse(HttpContext.User.FindFirst(ClaimTypes.Sid)!.Value);
-            return Ok(new { message = await _verificationService.VerifyPhoneAsync(memberId, dto.Code) });
+
+            // 💡 1. 先取得 Service 的執行結果
+            var result = await _verificationService.VerifyPhoneAsync(memberId, dto.Code);
+
+            // 💡 2. 判斷並回傳正確的 HTTP 狀態碼與 JSON
+            // 如果 Service 回傳的是 ObjectResult (包含 BadRequestObjectResult, OkObjectResult 等自訂錯誤)
+            if (result.Result != null)
+            {
+                return result.Result; // 直接把 Service 決定好的狀態碼與訊息往外拋
+            }
+
+            // 如果 Service 只有單純 return 字串 (例如你正式環境成功時 return "手機驗證成功！")
+            return Ok(new { message = result.Value });
         }
     }
 }
