@@ -141,7 +141,8 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
         public async Task<ActionResult<string>> VerifyPhoneAsync(long memberId, string code)
         {
             if (memberId <= 0 || string.IsNullOrWhiteSpace(code))
-                return new BadRequestObjectResult("memberId and code are required.");
+                // 💡 統一改為 JSON 格式回傳
+                return new BadRequestObjectResult(new { message = "memberId and code are required." });
 
             try
             {
@@ -156,22 +157,22 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
                     .FirstOrDefaultAsync();
 
                 if (account == null)
-                    return new NotFoundObjectResult("帳號不存在");
+                    return new NotFoundObjectResult(new { message = "帳號不存在" });
 
                 if (account.IsPhoneVerified)
-                    return new BadRequestObjectResult("此手機號碼已驗證過");
+                    return new BadRequestObjectResult(new { message = "此手機號碼已驗證過" });
 
                 if (string.IsNullOrWhiteSpace(account.CellphoneNumber))
-                    return new BadRequestObjectResult("會員尚未設定手機號碼");
+                    return new BadRequestObjectResult(new { message = "會員尚未設定手機號碼" });
 
                 var toNumber = NormalizePhoneNumber(account.CellphoneNumber);
 
                 if (!PhoneNumberRegex().IsMatch(toNumber))
-                    return new BadRequestObjectResult("儲存在資料庫的手機號碼格式錯誤");
+                    return new BadRequestObjectResult(new { message = "儲存在資料庫的手機號碼格式錯誤" });
 
                 var serviceSid = _twilioOpts?.VerifyServiceSid;
                 if (string.IsNullOrWhiteSpace(serviceSid))
-                    return new ObjectResult("VerifyServiceSid 未設定") { StatusCode = 500 };
+                    return new ObjectResult(new { message = "VerifyServiceSid 未設定" }) { StatusCode = 500 };
 
                 var verificationCheck = await VerificationCheckResource.CreateAsync(
                     to: toNumber,
@@ -181,25 +182,30 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
 
                 if (verificationCheck?.Status == "approved")
                 {
-                    // 優化：直接使用 ExecuteUpdateAsync 在 DB 執行 Update，效能極佳
                     await _context.MemberPhoneVerificationStatus
                         .Where(s => s.MemberID == memberId)
                         .ExecuteUpdateAsync(s => s.SetProperty(p => p.IsPhoneVerified, true));
 
-                    return new OkObjectResult("手機驗證成功！");
+                    // 成功時保留你原本的字串回傳，因為你的 UserController 是用 { message = await ... } 包裝的
+                    return "手機驗證成功！";
                 }
 
-                return new BadRequestObjectResult("驗證碼無效或已過期");
+                return new BadRequestObjectResult(new { message = "驗證碼無效或已過期" });
             }
             catch (ApiException tex)
             {
                 _logger?.LogError(tex, "Twilio ApiException");
-                return new ObjectResult(new { error = "Twilio API error", message = tex.Message }) { StatusCode = 502 };
+                // 如果是 404，給予友善提示，否則直接吐出 Twilio 錯誤
+                if (tex.Status == 404)
+                {
+                    return new ObjectResult(new { message = "驗證逾時或查無紀錄，請重新發送驗證碼" }) { StatusCode = 404 };
+                }
+                return new ObjectResult(new { message = $"Twilio 錯誤: {tex.Message}" }) { StatusCode = 502 };
             }
             catch (Exception ex)
             {
                 _logger?.LogError(ex, "Unexpected error during phone verification");
-                return new ObjectResult(new { error = "Internal server error" }) { StatusCode = 500 };
+                return new ObjectResult(new { message = "系統發生未預期錯誤，請稍後再試" }) { StatusCode = 500 };
             }
         }
 
@@ -257,14 +263,15 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
 
             account.Member.MemberEmailVerificationStatus ??= new MemberEmailVerificationStatus();
             account.Member.MemberEmailVerificationStatus.EmailVerificationTokenHash = tokenHash;
-            account.Member.MemberEmailVerificationStatus.EmailVerificationTokenExpiry = DateTime.UtcNow.AddHours(24);
+            account.Member.MemberEmailVerificationStatus.EmailVerificationTokenExpiry = DateTime.UtcNow.AddHours(1);
             await _context.SaveChangesAsync();
 
             // 2. 組合驗證信內容
             var _frontendBaseUrl = _config["FrontendBaseUrl"] ?? "https://livetimelivehouse.sakuyaonline.uk";
             var combinedToken = $"{memberId}:{plainTokenString}";
             var emailVerifyLink = $"{_frontendBaseUrl}/verify-email?token={Uri.EscapeDataString(combinedToken)}";
-            var body = $"<p>您好 {account.Member.Name}：</p><p>請點擊以下連結完成信箱驗證：</p><p><a href='{emailVerifyLink}'>{emailVerifyLink}</a></p>";
+            var body = $"<p>您好 {account.Member.Name}：</p><p>請點擊以下連結完成信箱驗證：</p><p><a href='{emailVerifyLink}'>{emailVerifyLink}</a></p>" +
+                $"<p>此連結將在 1 小時後失效。</p>"; // 💡 補上友善提示";
 
             // 3. 發送郵件 (重用 EmailService)
             _ = Task.Run(async () =>

@@ -48,7 +48,7 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
                     MemberEmailVerificationStatus = new MemberEmailVerificationStatus
                     {
                         IsEmailVerified = false,
-                        EmailVerificationTokenExpiry = DateTime.UtcNow.AddHours(24), // 已經是 UTC[cite: 8]
+                        EmailVerificationTokenExpiry = DateTime.UtcNow.AddHours(1), // 已經是 UTC[cite: 8]
                         EmailVerificationTokenHash = tokenHash
                     },
                     MemberPhoneVerificationStatus = new MemberPhoneVerificationStatus
@@ -74,7 +74,7 @@ namespace LifetimeLiveHouseWebAPI.Modules.User.Services
             <p>您好 {dto.Name}：</p>
             <p>請點擊以下連結完成信箱驗證：</p>
             <p><a href='{emailVerifyLink}'>{emailVerifyLink}</a></p>
-            <p>此連結將在 24 小時後失效。</p>";
+            <p>此連結將在 1 小時後失效。</p>";
 
             // 💡 套用與忘記密碼相同的寄信防呆邏輯
             if (_env.IsDevelopment())

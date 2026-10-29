@@ -63,14 +63,5 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
             return await _verificationService.SendVerificationSMSAsync(dto.CellphoneNumber);
         }
-
-        // 📱 驗證手機簡訊碼
-        [Authorize] // 必須登入才能存取
-        [HttpPost("verify-phone")]
-        public async Task<ActionResult<string>> VerifyPhone([FromBody] VerifyPhoneDTO dto)
-        {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
-            return await _verificationService.VerifyPhoneAsync(dto.MemberId, dto.Code);
-        }
     }
 }
