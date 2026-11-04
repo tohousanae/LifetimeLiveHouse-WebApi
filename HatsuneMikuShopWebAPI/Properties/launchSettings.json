@@ -35,15 +35,7 @@
       "environmentVariables": {
         // 1. 確保容器內部監聽 8080 Port
         "ASPNETCORE_HTTP_PORTS": "8080",
-        "ASPNETCORE_ENVIRONMENT": "Development",
-
-        // 💡 提示：因為單一 Dockerfile 模式不會像 docker-compose 一樣自動讀取 .env 檔
-        // 所以如果你要在本機按 F5 測試寄信，必須把 Mail 的環境變數貼在這裡：
-        "Mail__AuthEmail": "負責向 Google 驗證身分的 Gmail 帳號",
-        "Mail__CustomSenderEmail": "實際顯示給使用者的自訂網域信箱",
-        "Mail__ClientId": "你的本機測試 Client ID",
-        "Mail__ClientSecret": "你的本機測試 Client Secret",
-        "Mail__RefreshToken": "你的本機測試 Refresh Token"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       },
       // 2. 把本機對外 Port 釘死在 8080 (對應 docker-compose 的 "8080:8080")
       "httpPort": 8080,

@@ -1,22 +1,17 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
 
-namespace LifetimeLiveHouse.Models
+namespace LifetimeLiveHouse.Models;
+
+public partial class RegisteredEvent
 {
-    public class RegisteredEvent
-    {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long RecordID { get; set; }
+    public long RecordID { get; set; }
 
-        [ForeignKey("Event")]
-        public long EventID { get; set; }
+    public long EventID { get; set; }
 
-        [ForeignKey("Member")]
-        public long MemberID { get; set; }
+    public long MemberID { get; set; }
 
-        public virtual Event Event { get; set; } = null!;
+    public virtual Event Event { get; set; } = null!;
 
-        public virtual Member Member { get; set; } = null!;
-    }
+    public virtual Member Member { get; set; } = null!;
 }

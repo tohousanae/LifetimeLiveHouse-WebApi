@@ -1,16 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
+
+namespace LifetimeLiveHouse.Models;
 
 public partial class MemberAccount
 {
-    [Key]
-    [StringLength(30)]
     public string Email { get; set; } = null!;
 
-    [StringLength(200)]
     public string Password { get; set; } = null!;
 
-    [ForeignKey("Member")]
     public long MemberID { get; set; }
 
     public virtual Member Member { get; set; } = null!;

@@ -1,17 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
 
-namespace LifetimeLiveHouse.Models
+namespace LifetimeLiveHouse.Models;
+
+public partial class MemberPhoneVerificationStatus
 {
-    public class MemberPhoneVerificationStatus
-    {
-        [Key]
-        [ForeignKey("Member")]
-        public long MemberID { get; set; }
+    public long MemberID { get; set; }
 
-        public bool IsPhoneVerified { get; set; } = false;
+    public bool IsPhoneVerified { get; set; }
 
-        public virtual Member Member { get; set; } = null!;
-
-    }
+    public virtual Member Member { get; set; } = null!;
 }

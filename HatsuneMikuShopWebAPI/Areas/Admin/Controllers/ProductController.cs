@@ -1,4 +1,5 @@
 ﻿using LifetimeLiveHouse.Access.Data;
+using LifetimeLiveHouse.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;

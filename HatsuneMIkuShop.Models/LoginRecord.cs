@@ -1,24 +1,18 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
 
-public class LoginRecord
+namespace LifetimeLiveHouse.Models;
+
+public partial class LoginRecord
 {
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public long RecordID { get; set; }
 
-    [StringLength(200)]
     public string? Record { get; set; }
 
-    [DataType(DataType.DateTime)]
-    [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd hh:mm:ss}")]
-    [HiddenInput]
-    public DateTime LoginDate { get; set; } = DateTime.Now;
+    public DateTime LoginDate { get; set; }
 
-    public long ContinuousLoginDate { get; set; } = 0;
+    public long ContinuousLoginDate { get; set; }
 
-    [ForeignKey("Member")]
     public long MemberID { get; set; }
 
     public virtual Member Member { get; set; } = null!;

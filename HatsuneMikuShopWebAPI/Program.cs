@@ -1,12 +1,12 @@
 using LifetimeLiveHouse.Access.Data;
-using LifetimeLiveHouse.Models;
+using LifetimeLiveHouse.Models.CustomModel;
 using LifetimeLiveHouseWebAPI.Modules.User.Interfaces;
 using LifetimeLiveHouseWebAPI.Modules.User.Services;
+using LifetimeLiveHouseWebAPI.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using NETCore.MailKit.Extensions;
-using NETCore.MailKit.Infrastructure.Internal;
+using Microsoft.AspNetCore.Antiforgery; // 👇 新增：引入 Antiforgery 命名空間
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,61 +16,60 @@ var connectionString = builder.Configuration.GetConnectionString("LifetimeLiveHo
 builder.Services.AddDbContext<LifetimeLiveHouseSysDBContext>(options =>
     options.UseSqlServer(connectionString));
 
-builder.Services.AddDbContext<LifetimeLiveHouseSysDBContext2>(options =>
-    options.UseSqlServer(connectionString));
-
-// 改寫 MailKit 註冊邏輯
-builder.Services.AddMailKit(config =>
-{
-    config.UseMailKit(new MailKitOptions()
-    {
-        Server = builder.Configuration["MailKit:Server"],
-        Port = int.Parse(builder.Configuration["MailKit:Port"] ?? "587"),
-        SenderName = builder.Configuration["MailKit:SenderName"],
-        SenderEmail = builder.Configuration["MailKit:SenderEmail"],
-        Account = builder.Configuration["MailKit:Account"],
-        // 關鍵：密碼從組態(環境變數)動態載入
-        Password = builder.Configuration["MailKit:Password"],
-        Security = bool.Parse(builder.Configuration["MailKit:Security"] ?? "true")
-    });
-});
+//builder.Services.AddDbContext<LifetimeLiveHouseSysDBContext2>(options =>
+//    options.UseSqlServer(connectionString));
 
 // 住入服務
 builder.Services.AddScoped<IForgetPasswordService, ForgetPasswordService>();
-builder.Services.AddScoped<IMemberRegisterServices, MemberRegisterServices>();
 builder.Services.AddScoped<IMemberLoginService, MemberLoginService>();
+builder.Services.AddScoped<IMemberProfileService, MemberProfileService>();
+builder.Services.AddScoped<IMemberRegisterService, MemberRegisterService>();
+builder.Services.AddScoped<IMemberVerificationService, MemberVerificationService>();
+// 註冊 Token 清理背景排程
+builder.Services.AddHostedService<TokenCleanupBackgroundService>();
 
-builder.Services.AddControllers();
+//builder.Services.AddControllers();
+// 改為註冊全域 Filter
+builder.Services.AddControllers(options =>
+{
+    // 自動套用到專案中的每一個 Controller 與 Action
+    options.Filters.Add<GlobalAntiforgeryFilter>();
+});
+
+// 加入 CSRF 防禦服務，設定前端回傳時使用的 Header 名稱
+builder.Services.AddAntiforgery(options =>
+{
+    options.HeaderName = "X-XSRF-TOKEN";
+    // 預設發送給前端的 Cookie 名稱為 XSRF-TOKEN，Vue Axios 預設會去抓這個名字
+});
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// 加入本機分散式記憶體快取服務
-builder.Services.AddDistributedMemoryCache();
+// 註冊 Redis 分散式快取
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    // 💡 絕對不要在程式碼裡寫死預設值，一律交給環境變數或組態檔決定
+    options.Configuration = builder.Configuration.GetConnectionString("RedisConnection");
+    options.InstanceName = "LifetimeLiveHouse_";
+});
 
-// 加入redis分散式快取服務
-//builder.Services.AddSingleton<IConnectionMultiplexer>(
-//    ConnectionMultiplexer.Connect(
-//        new ConfigurationOptions()
-//        {
-//            EndPoints = { { "localhost", 6379 } }
-//        }
-//    )
-// );
-
-//
 builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
     opt.TokenLifespan = TimeSpan.FromHours(2));
 
-//跨域存取政策
+// 1. 讀取前端網址變數 (若沒設定，預設給正式站網址作為保底)
+var frontendBaseUrl = builder.Configuration["FrontendBaseUrl"] ?? "https://livetimelivehouse.sakuyaonline.uk";
+
+// 2. 跨域存取政策
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("MyCorsPolicy", policy =>
     {
-        policy.WithOrigins("https://livetimelivehouse.sakuyaonline.uk")
-              .AllowAnyHeader()   // 改用這個
-              .AllowAnyMethod()   // 改用這個
+        // 3. 注入環境變數網址
+        policy.WithOrigins(frontendBaseUrl)
+              .AllowAnyHeader()
+              .AllowAnyMethod()
               .AllowCredentials();
     });
 });
@@ -86,10 +85,12 @@ builder.Services.AddAuthentication(options =>
         //options.LoginPath = "/api/auth/login";
         //options.LogoutPath = "/api/auth/logout";
         //以上兩條在web api當中沒用，因為web api不會重新導向
-        options.ExpireTimeSpan = TimeSpan.FromHours(8);
+        //options.ExpireTimeSpan = TimeSpan.FromHours(8); // 暫時凍結cookie過期時間，目前我想要永久保持登入狀態
         options.Cookie.HttpOnly = true; // 禁止 JavaScript 存取 Cookie防XSS攻擊。
-        options.Cookie.SameSite = SameSiteMode.None; // 開放前端跨域存取cookie
-        options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // 強制瀏覽器僅在 HTTPS 連線下傳送該 Cookie。
+        // 💡 動態切換：開發環境用 Lax (允許 localhost 跨 port 傳遞)，正式環境用 None (允許跨網域)
+        options.Cookie.SameSite = builder.Environment.IsDevelopment() ? SameSiteMode.Lax : SameSiteMode.None;
+        // 💡 動態切換：開發環境不強制 HTTPS，正式環境強制
+        options.Cookie.SecurePolicy = builder.Environment.IsDevelopment() ? CookieSecurePolicy.SameAsRequest : CookieSecurePolicy.Always;
         options.SlidingExpiration = true; // 自動延長有效時間
     });
 
@@ -108,7 +109,6 @@ var twilioOpts = app.Services.GetRequiredService<TwilioOptions>();
 // 在開發模式使用秘密管理員設定
 if (builder.Environment.IsDevelopment())
 {
-    builder.Configuration.AddUserSecrets<Program>();
     // 偵錯用：印出是否有設定（切勿印出完整 AuthToken 到生產 log）
     Console.WriteLine($"[DEBUG] Twilio AccountSid set? {!string.IsNullOrWhiteSpace(twilioOpts.AccountSid)}");
     Console.WriteLine($"[DEBUG] Twilio AuthToken set? {!string.IsNullOrWhiteSpace(twilioOpts.AuthToken)}");
@@ -152,8 +152,36 @@ app.MapSwagger().RequireAuthorization();
 
 app.UseCors("MyCorsPolicy");
 
-app.UseAuthorization();
+// 💡 必須在 UseAuthorization 之前加上這行，Cookie 驗證才會生效！
+app.UseAuthentication();
 
+// 👇 新增第二段：加入自訂 Middleware，發送 CSRF Token 到前端的 Cookie 中
+// 必須放在 UseCors 與 UseAuthorization 之後，MapControllers 之前
+app.Use(next => context =>
+{
+    var antiforgery = app.Services.GetRequiredService<IAntiforgery>();
+    var tokens = antiforgery.GetAndStoreTokens(context);
+
+    if (tokens.RequestToken != null)
+    {
+        var isDev = app.Environment.IsDevelopment();
+        // 將 Token 寫入前端可讀取的 Cookie (注意：不能設為 HttpOnly，且跨域需設為 SameSite=None)
+        context.Response.Cookies.Append("XSRF-TOKEN", tokens.RequestToken,
+            new CookieOptions()
+            {
+                HttpOnly = false, // 必須為 false，讓 Vue / Axios 可以用 JavaScript 讀取到
+                // 💡 動態切換 SameSite
+                SameSite = isDev ? SameSiteMode.Lax : SameSiteMode.None,
+                Secure = !isDev, // 強制瀏覽器在部署環境時僅在 HTTPS 連線下傳送該 Cookie。
+                Path = "/",       // 💡 核心修復：強制指定全站共用同一個 Cookie 路徑，確保永遠覆寫更新！
+            });
+    }
+
+    return next(context);
+});
+
+// 2. 檢查權限 (如果沒權限會回傳 401，但此時 Response 已經順利塞入 CSRF Cookie 了！)
+app.UseAuthorization();
 app.MapControllers();
 
 app.Run();

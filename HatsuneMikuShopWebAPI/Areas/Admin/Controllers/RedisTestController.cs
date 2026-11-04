@@ -1,4 +1,4 @@
-﻿using LifetimeLiveHouse.Models;
+﻿using LifetimeLiveHouse.Models.CustomModel;
 using Microsoft.AspNetCore.Mvc;
 using StackExchange.Redis;
 

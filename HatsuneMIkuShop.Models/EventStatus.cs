@@ -1,17 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
+
+namespace LifetimeLiveHouse.Models;
 
 public partial class EventStatus
 {
-    [Key]
-    [StringLength(1)]
-    [Column(TypeName = "nchar")]
-    [Required]
     public string StatusCode { get; set; } = null!;
 
-    [StringLength(10)]
-    [Required]
     public string Status { get; set; } = null!;
 
-    public virtual ICollection<Event> Events { get; set; } = new List<Event>();
+    public virtual ICollection<Event> Event { get; set; } = new List<Event>();
+
+    public virtual ICollection<Live> Live { get; set; } = new List<Live>();
 }

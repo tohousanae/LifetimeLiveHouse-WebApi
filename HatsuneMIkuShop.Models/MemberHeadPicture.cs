@@ -1,14 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
+
+namespace LifetimeLiveHouse.Models;
 
 public partial class MemberHeadPicture
 {
-    [Key]
-    [StringLength(50)]
-    public string Picture { get; set; } = null!; // GUID+.jpg/png/webp/…
+    public string Picture { get; set; } = null!;
 
-    [ForeignKey("Member")]
     public long MemberID { get; set; }
 
-    public virtual Member? Member { get; set; } = null!;
+    public virtual Member Member { get; set; } = null!;
 }

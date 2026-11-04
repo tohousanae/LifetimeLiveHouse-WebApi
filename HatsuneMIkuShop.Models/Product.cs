@@ -1,53 +1,39 @@
-﻿
-using LifetimeLiveHouse.Models;
-using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
 
-public class Product
+namespace LifetimeLiveHouse.Models;
+
+public partial class Product
 {
-    [Key]
     public long ProductID { get; set; }
 
-    [StringLength(1)]
-    [ForeignKey("ProductStatus")]
-    [Column(TypeName = "nchar")]
-    public string StatusCode { get; set; } = null!; // FK
+    public string StatusCode { get; set; } = null!;
 
-    [StringLength(40)]
     public string ProductName { get; set; } = null!;
 
-    public long ProductNum { get; set; } = 0;   // default 0
+    public long ProductNum { get; set; }
 
-    [Column(TypeName = "money")]
-    [Range(0, double.MaxValue)]
     public decimal Pricing { get; set; }
 
-    [Column(TypeName = "money")]
-    [Range(0, double.MaxValue)]
     public decimal RetailPrice { get; set; }
 
-    [StringLength(200)]
     public string? Description { get; set; }
 
-    [StringLength(50)]
     public string Photo { get; set; } = null!;
 
-    [DataType(DataType.DateTime)]
-    [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd hh:mm:ss}")]
-    [HiddenInput]
-    public DateTime CreatedDate { get; set; } = DateTime.Now;
+    public DateTime CreatedDate { get; set; }
 
-    [StringLength(5)]
-    [Column(TypeName = "nchar")]
-    [ForeignKey("Category")]
     public string CateID { get; set; } = null!;
 
-    public virtual ICollection<Coupon> Coupons { get; set; } = null!;
+    public long Inventory { get; set; }
 
-    public virtual Category Category { get; set; } = null!;
+    public virtual ICollection<Cart> Cart { get; set; } = new List<Cart>();
 
-    public virtual ProductStatus ProductStatus { get; set; } = null!;
+    public virtual Category Cate { get; set; } = null!;
+
+    public virtual ICollection<Coupon> Coupon { get; set; } = new List<Coupon>();
+
+    public virtual ProductStatus StatusCodeNavigation { get; set; } = null!;
 
     public virtual ICollection<OrderDetail> OrderDetail { get; set; } = new List<OrderDetail>();
 }

@@ -1,94 +1,59 @@
-﻿using LifetimeLiveHouse.Models;
-using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
 
-// 會員資料表
+namespace LifetimeLiveHouse.Models;
+
 public partial class Member
 {
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public long MemberID { get; set; }   // 主鍵 P.K
+    public long MemberID { get; set; }
 
-    [StringLength(40)]
-    public string Name { get; set; } = null!;    // 暱稱
+    public string Name { get; set; } = null!;
 
-    [DataType(DataType.DateTime)]
-    [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd hh:mm:ss}")]
-    [HiddenInput]
-    public DateTime CreatedDate { get; set; } = DateTime.Now; // 建立日期
+    public DateTime CreatedDate { get; set; }
 
-    [DataType(DataType.DateTime)]
-    [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd hh:mm:ss}")]
-    public DateTime Birthday { get; set; }   // 生日
+    public DateTime Birthday { get; set; }
 
-    [Column(TypeName = "money")]
-    [Range(0, double.MaxValue)]
-    public decimal Cash { get; set; } = 0;   // 儲值金額 (default 0)
+    public decimal Cash { get; set; }
 
-    [NotMapped] // 年齡計算屬性，不會在資料庫建立欄位
-    public int Age
-    {
-        get
-        {
-            var today = DateTime.Today;
-            var age = today.Year - Birthday.Year;
+    public string? CellphoneNumber { get; set; }
 
-            // 若今年生日還沒到，年齡要 -1
-            if (Birthday.Date > today.AddYears(-age))
-            {
-                age--;
-            }
+    public int MemberPoint { get; set; }
 
-            return age;
-        }
-    }
+    public string StatusCode { get; set; } = null!;
 
-    [StringLength(20)]
-    public string CellphoneNumber { get; set; } = null!;   // 手機號碼
+    public virtual ICollection<Cart> Cart { get; set; } = new List<Cart>();
 
-    [Range(0, int.MaxValue)]
-    public int MemberPoint { get; set; } = 0;   // 回饋點數
+    public virtual ICollection<Coupon> Coupon { get; set; } = new List<Coupon>();
 
-    [ForeignKey("MemberStatus")]
-    [StringLength(1)]
-    [Column(TypeName = "nchar")]
-    [Required]        // 確保在 C#／驗證層面必填
-    public string StatusCode { get; set; } = "0";  // 預設值為 "0"
+    public virtual ICollection<Event> Event { get; set; } = new List<Event>();
 
-    // 導覽屬性
-    public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
+    public virtual ICollection<Instrument> Instrument { get; set; } = new List<Instrument>();
 
-    public virtual MemberStatus MemberStatus { get; set; } = null!;
+    public virtual ICollection<Live> Live { get; set; } = new List<Live>();
 
-    public virtual MemberEmailVerificationStatus MemberEmailVerificationStatus { get; set; } = null!;
+    public virtual ICollection<LoginRecord> LoginRecord { get; set; } = new List<LoginRecord>();
 
-    public virtual MemberPhoneVerificationStatus MemberPhoneVerificationStatus { get; set; } = null!;
+    public virtual ICollection<MemberAccount> MemberAccount { get; set; } = new List<MemberAccount>();
 
-    public virtual Seat? Seat { get; set; }
-
-    public virtual ICollection<Coupon> Coupons { get; set; } = new List<Coupon>();
-
-    public virtual ICollection<Cart> Carts { get; set; } = new List<Cart>();
-
-    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
-
-    public virtual ICollection<Instrument>? Instruments { get; set; } = new List<Instrument>();
-
-    public virtual ICollection<RehearsalStudio>? RehearsalStudios { get; set; } = new List<RehearsalStudio>();
-
-    public virtual ICollection<Live> Lives { get; set; } = new List<Live>();
-
-    public virtual ICollection<Event> Events { get; set; } = new List<Event>();
-
-    public virtual ICollection<LoginRecord> LoginRecords { get; set; } = new List<LoginRecord>();
+    public virtual MemberEmailVerificationStatus? MemberEmailVerificationStatus { get; set; }
 
     public virtual MemberHeadPicture? MemberHeadPicture { get; set; }
 
-    public virtual ICollection<MemberPicture> MemberPictures { get; set; } = new List<MemberPicture>();
+    public virtual MemberPhoneVerificationStatus? MemberPhoneVerificationStatus { get; set; }
 
-    public virtual ICollection<RegisteredEvent> RegisteredEvents { get; set; } = new List<RegisteredEvent>();
+    public virtual ICollection<MemberPicture> MemberPicture { get; set; } = new List<MemberPicture>();
 
-    public virtual ICollection<PasswordResetToken> PasswordResetTokens { get; set; } = new List<PasswordResetToken>();
+    public virtual ICollection<Notification> Notification { get; set; } = new List<Notification>();
 
+    public virtual ICollection<Order> Order { get; set; } = new List<Order>();
+
+    public virtual ICollection<PasswordResetToken> PasswordResetToken { get; set; } = new List<PasswordResetToken>();
+
+    public virtual ICollection<RegisteredEvent> RegisteredEvent { get; set; } = new List<RegisteredEvent>();
+
+    public virtual ICollection<RehearsalStudio> RehearsalStudio { get; set; } = new List<RehearsalStudio>();
+
+    public virtual Seat? Seat { get; set; }
+
+    public virtual MemberStatus StatusCodeNavigation { get; set; } = null!;
 }

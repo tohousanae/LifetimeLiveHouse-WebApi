@@ -1,29 +1,23 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
 
-namespace LifetimeLiveHouse.Models
+namespace LifetimeLiveHouse.Models;
+
+public partial class PasswordResetToken
 {
-    // 會員資料表
-    public partial class PasswordResetToken
-    {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long Id { get; set; }   // 主鍵 P.K
+    public long Id { get; set; }
 
-        [ForeignKey("Member")]
-        public long MemberID { get; set; }
+    public long MemberID { get; set; }
 
-        [Required]
-        public string TokenHash { get; set; } = string.Empty;
+    public string TokenHash { get; set; } = null!;
 
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+    public DateTime CreatedAt { get; set; }
 
-        public DateTime ExpiresAt { get; set; } = DateTime.Now.AddHours(1);
+    public DateTime ExpiresAt { get; set; }
 
-        public bool Used { get; set; } = false;
+    public bool Used { get; set; }
 
-        public DateTime? UsedAt { get; set; }
+    public DateTime? UsedAt { get; set; }
 
-        public virtual Member Member { get; set; } = null!;
-    }
+    public virtual Member Member { get; set; } = null!;
 }

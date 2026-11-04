@@ -1,15 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
 
-public class ShippingMethod
+namespace LifetimeLiveHouse.Models;
+
+public partial class ShippingMethod
 {
-    [Key]
-    [StringLength(1)]
-    [Column(TypeName = "nchar")]
     public string ShippingMethodCode { get; set; } = null!;
 
-    [StringLength(10)]
     public string Method { get; set; } = null!;
 
-    public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
+    public virtual ICollection<OrderDetail> OrderDetail { get; set; } = new List<OrderDetail>();
 }

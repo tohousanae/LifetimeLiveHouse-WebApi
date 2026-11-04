@@ -1,34 +1,25 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
 
-[PrimaryKey("OrderID", "ProductID")]
-public class OrderDetail
+namespace LifetimeLiveHouse.Models;
+
+public partial class OrderDetail
 {
-    [ForeignKey("Order")]
     public long OrderID { get; set; }
 
-    [ForeignKey("Product")]
     public long ProductID { get; set; }
 
-    [Column(TypeName = "money")]
-    [Range(0, double.MaxValue)]
     public decimal Price { get; set; }
 
-    [Range(0, int.MaxValue)]
     public int Count { get; set; }
 
-    [StringLength(50)]
     public string? ShippingAddress { get; set; }
 
-    [StringLength(1)]
-    [Column(TypeName = "nchar")]
-    [ForeignKey("ShippingMethod")]
     public string ShippingMethodCode { get; set; } = null!;
 
-    public virtual ICollection<Product> Products { get; set; } = new List<Product>();
+    public virtual ShippingMethod ShippingMethodCodeNavigation { get; set; } = null!;
 
-    public virtual ShippingMethod ShippingMethod { get; set; } = null!;
+    public virtual ICollection<Order> OrdersOrder { get; set; } = new List<Order>();
 
-    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
+    public virtual ICollection<Product> ProductsProduct { get; set; } = new List<Product>();
 }

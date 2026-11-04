@@ -1,0 +1,348 @@
+﻿using Common.Helpers;
+using LifetimeLiveHouse.Access.Data;
+using LifetimeLiveHouse.Models;
+using LifetimeLiveHouse.Models.CustomModel;
+using LifetimeLiveHouseWebAPI.Modules.User.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Options;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.RegularExpressions;
+using Twilio.Exceptions;
+using Twilio.Rest.Verify.V2.Service;
+
+namespace LifetimeLiveHouseWebAPI.Modules.User.Services
+{
+    // 必須加上 partial 以支援 GeneratedRegex
+    public partial class MemberVerificationService(
+        LifetimeLiveHouseSysDBContext context,
+        IOptions<TwilioOptions> twilioOptions,
+        IServiceScopeFactory scopeFactory,
+        IConfiguration config,
+        IWebHostEnvironment env,
+        IDistributedCache cache, // 💡 注入 Redis 快取
+        ILogger<MemberVerificationService>? logger = null) : IMemberVerificationService
+    {
+        private readonly LifetimeLiveHouseSysDBContext _context = context;
+        private readonly TwilioOptions _twilioOpts = twilioOptions.Value;
+        private readonly ILogger<MemberVerificationService>? _logger = logger;
+        private readonly IServiceScopeFactory _scopeFactory = scopeFactory;
+        private readonly IWebHostEnvironment _env = env;
+        private readonly IDistributedCache _cache = cache;
+        private readonly IConfiguration _config = config;
+
+        // 優化：正規表達式源碼生成 (編譯期預先編譯，消滅執行期解析 CPU 耗時)
+        [GeneratedRegex(@"^\+\d{8,15}$", RegexOptions.Compiled)]
+        private static partial Regex PhoneNumberRegex();
+
+        public async Task<ActionResult<object>> VerifyEmailAsync(string token)
+        {
+            token = Uri.UnescapeDataString(token);
+            var parts = token.Split(':');
+
+            if (parts.Length < 2 || !long.TryParse(parts[0], out long memberId))
+            {
+                return new BadRequestObjectResult("無效的驗證連結格式");
+            }
+
+            var expectedHash = HashStringSHA256(parts[1]);
+            string redirectUrl = "/"; // 預設跳轉回首頁
+
+            // 解析第三段的跳轉路徑 (智慧跳轉)
+            if (parts.Length >= 3)
+            {
+                try
+                {
+                    redirectUrl = Encoding.UTF8.GetString(Convert.FromBase64String(parts[2]));
+                }
+                catch
+                {
+                    /* 解析失敗則忽略，保留預設跳轉首頁 */
+                }
+            }
+
+            // 優化：直接在資料庫端執行驗證與更新，消滅 SELECT 至應用程式的 I/O 成本與記憶體分配
+            var rowsAffected = await _context.MemberEmailVerificationStatus
+                .Where(t => t.MemberID == memberId
+                         // 👇 必須改成 UtcNow
+                         && t.EmailVerificationTokenExpiry > DateTime.UtcNow
+                         && t.EmailVerificationTokenHash == expectedHash)
+                .ExecuteUpdateAsync(s => s
+                    .SetProperty(p => p.IsEmailVerified, true)
+                    .SetProperty(p => p.EmailVerificationTokenHash, (string?)null)
+                    .SetProperty(p => p.EmailVerificationTokenExpiry, (DateTime?)null));
+
+            if (rowsAffected == 0)
+            {
+                return new BadRequestObjectResult("驗證連結無效或已過期");
+            }
+
+            // 回傳成功訊息與目標路徑，讓前端 Vue 接收 JSON 並自動跳轉
+            return new OkObjectResult(new { message = "信箱驗證成功！", redirectUrl });
+        }
+
+        public async Task<ActionResult<string>> SendVerificationSMSAsync(string phoneNumber)
+        {
+            if (string.IsNullOrWhiteSpace(phoneNumber))
+                return new BadRequestObjectResult("phoneNumber is required.");
+
+            var normalized = NormalizePhoneNumber(phoneNumber);
+
+            if (!PhoneNumberRegex().IsMatch(normalized))
+            {
+                return new BadRequestObjectResult($"Invalid phone number format: '{normalized}'.");
+            }
+
+            var account = await _context.Member
+                .AsNoTracking()
+                .Where(a => a.CellphoneNumber == normalized || a.CellphoneNumber == phoneNumber)
+                .Select(a => new
+                {
+                    // 根據 Member 模型的關聯抓取驗證狀態
+                    IsPhoneVerified = a.MemberPhoneVerificationStatus != null && a.MemberPhoneVerificationStatus.IsPhoneVerified
+                })
+                .FirstOrDefaultAsync();
+
+            if (account == null)
+                return new NotFoundObjectResult("此手機號碼尚未註冊");
+
+            if (account.IsPhoneVerified)
+                return new BadRequestObjectResult("此手機號碼已驗證過");
+
+            var serviceSid = _twilioOpts.VerifyServiceSid;
+            if (string.IsNullOrWhiteSpace(serviceSid))
+                return new StatusCodeResult(500);
+
+            try
+            {
+                var verification = await VerificationResource.CreateAsync(
+                    to: normalized,
+                    channel: "sms",
+                    pathServiceSid: serviceSid
+                );
+
+                return new OkObjectResult(new
+                {
+                    message = "驗證碼已發送",
+                    status = verification.Status,
+                    sid = verification.Sid,
+                    to = normalized
+                });
+            }
+            catch (ApiException tex)
+            {
+                _logger?.LogError(tex, "Twilio API error");
+                return new ObjectResult(new { error = "Twilio API error", message = tex.Message }) { StatusCode = 502 };
+            }
+        }
+
+        public async Task<ActionResult<string>> VerifyPhoneAsync(long memberId, string code)
+        {
+            if (memberId <= 0 || string.IsNullOrWhiteSpace(code))
+                // 💡 統一改為 JSON 格式回傳
+                return new BadRequestObjectResult(new { message = "memberId and code are required." });
+
+            try
+            {
+                var account = await _context.Member
+                    .AsNoTracking()
+                    .Where(a => a.MemberID == memberId)
+                    .Select(a => new
+                    {
+                        IsPhoneVerified = a.MemberPhoneVerificationStatus != null && a.MemberPhoneVerificationStatus.IsPhoneVerified,
+                        a.CellphoneNumber
+                    })
+                    .FirstOrDefaultAsync();
+
+                if (account == null)
+                    return new NotFoundObjectResult(new { message = "帳號不存在" });
+
+                if (account.IsPhoneVerified)
+                    return new BadRequestObjectResult(new { message = "此手機號碼已驗證過" });
+
+                if (string.IsNullOrWhiteSpace(account.CellphoneNumber))
+                    return new BadRequestObjectResult(new { message = "會員尚未設定手機號碼" });
+
+                var toNumber = NormalizePhoneNumber(account.CellphoneNumber);
+
+                if (!PhoneNumberRegex().IsMatch(toNumber))
+                    return new BadRequestObjectResult(new { message = "儲存在資料庫的手機號碼格式錯誤" });
+
+                // 👇 插入點：如果是開發環境，去 Redis 讀取測試驗證碼比對
+                if (_env.IsDevelopment())
+                {
+                    var cachedCode = await _cache.GetStringAsync($"DevPhoneCode_{memberId}");
+                    if (cachedCode != null && cachedCode == code)
+                    {
+                        // 驗證成功，把測試驗證碼刪除
+                        await _cache.RemoveAsync($"DevPhoneCode_{memberId}");
+
+                        // 更新資料庫狀態為已驗證
+                        await _context.MemberPhoneVerificationStatus
+                            .Where(s => s.MemberID == memberId)
+                            .ExecuteUpdateAsync(s => s.SetProperty(p => p.IsPhoneVerified, true));
+
+                        // 回傳與上一個回答統一的 Object 格式
+                        return new OkObjectResult(new { message = "手機驗證成功！(測試模式)" });
+                    }
+                    return new BadRequestObjectResult(new { message = "驗證碼無效或已過期 (測試模式)" });
+                }
+
+                // 🚀 正式環境：Twilio 驗證邏輯
+                var serviceSid = _twilioOpts?.VerifyServiceSid;
+                if (string.IsNullOrWhiteSpace(serviceSid))
+                    return new ObjectResult(new { message = "VerifyServiceSid 未設定" }) { StatusCode = 500 };
+
+                var verificationCheck = await VerificationCheckResource.CreateAsync(
+                    to: toNumber,
+                    code: code,
+                    pathServiceSid: serviceSid
+                );
+
+                if (verificationCheck?.Status == "approved")
+                {
+                    await _context.MemberPhoneVerificationStatus
+                        .Where(s => s.MemberID == memberId)
+                        .ExecuteUpdateAsync(s => s.SetProperty(p => p.IsPhoneVerified, true));
+
+                    // 成功時保留你原本的字串回傳，因為你的 UserController 是用 { message = await ... } 包裝的
+                    return "手機驗證成功！";
+                }
+
+                return new BadRequestObjectResult(new { message = "驗證碼無效或已過期" });
+            }
+            catch (ApiException tex)
+            {
+                _logger?.LogError(tex, "Twilio ApiException");
+                // 如果是 404，給予友善提示，否則直接吐出 Twilio 錯誤
+                if (tex.Status == 404)
+                {
+                    return new ObjectResult(new { message = "驗證逾時或查無紀錄，請重新發送驗證碼" }) { StatusCode = 404 };
+                }
+                return new ObjectResult(new { message = $"Twilio 錯誤: {tex.Message}" }) { StatusCode = 502 };
+            }
+            catch (Exception ex)
+            {
+                _logger?.LogError(ex, "Unexpected error during phone verification");
+                return new ObjectResult(new { message = "系統發生未預期錯誤，請稍後再試" }) { StatusCode = 500 };
+            }
+        }
+
+        // ================= 工具方法 =================
+
+        // 優化：使用現代 .NET 的 HashData，無須實例化 SHA256 即可進行極速運算，免除記憶體配置
+        private static string HashStringSHA256(string input)
+        {
+            var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(input));
+            return Convert.ToHexString(bytes).ToLowerInvariant(); // 💡 統一使用 HexString 避開 Base64 比對失敗問題
+        }
+
+        // 優化：利用 stackalloc 消除 LINQ 產生的陣列與字串垃圾 (降低 GC 回收頻率)
+        private static string NormalizePhoneNumber(string raw)
+        {
+            Span<char> buffer = stackalloc char[raw.Length];
+            int length = 0;
+
+            foreach (char c in raw)
+            {
+                if (char.IsDigit(c) || c == '+')
+                {
+                    buffer[length++] = c;
+                }
+            }
+
+            var cleaned = new string(buffer[..length]);
+
+            if (cleaned.StartsWith("09") && cleaned.Length >= 10) return "+886" + cleaned.Substring(1);
+            if (cleaned.Length == 9 && cleaned.StartsWith("9")) return "+886" + cleaned;
+            if (cleaned.StartsWith("+")) return cleaned;
+            if (PhoneNumberRegex().IsMatch(cleaned)) return "+" + cleaned;
+
+            return cleaned;
+        }
+
+        // 💡 請確保在建構子中注入 IDistributedCache _cache, IConfiguration config, IServiceScopeFactory scopeFactory, IWebHostEnvironment env
+        public async Task<string> ResendEmailVerificationAsync(long memberId)
+        {
+            var cacheKey = $"EmailVerify_CD_{memberId}";
+            if (await _cache.GetStringAsync(cacheKey) != null)
+                throw new InvalidOperationException("發送過於頻繁，請於 60 秒後再試。");
+
+            var account = await _context.MemberAccount
+                .Include(a => a.Member).ThenInclude(m => m.MemberEmailVerificationStatus)
+                .FirstOrDefaultAsync(a => a.MemberID == memberId)
+                ?? throw new InvalidOperationException("帳號不存在");
+
+            if (account.Member.MemberEmailVerificationStatus?.IsEmailVerified == true)
+                throw new InvalidOperationException("您的信箱已經驗證過了");
+
+            // 1. 👇 徹底移除 TokenGeneratorHelper，改用這個絕對安全的 Hex 亂數產生方式：
+            var plainTokenString = Convert.ToHexString(RandomNumberGenerator.GetBytes(32)).ToLowerInvariant();
+            var tokenHash = HashStringSHA256(plainTokenString);
+
+            account.Member.MemberEmailVerificationStatus ??= new MemberEmailVerificationStatus();
+            account.Member.MemberEmailVerificationStatus.EmailVerificationTokenHash = tokenHash;
+            account.Member.MemberEmailVerificationStatus.EmailVerificationTokenExpiry = DateTime.UtcNow.AddHours(1);
+            await _context.SaveChangesAsync();
+
+            // 2. 組合驗證信內容
+            var _frontendBaseUrl = _config["FrontendBaseUrl"] ?? "https://livetimelivehouse.sakuyaonline.uk";
+            var combinedToken = $"{memberId}:{plainTokenString}";
+            var emailVerifyLink = $"{_frontendBaseUrl}/verify-email?token={Uri.EscapeDataString(combinedToken)}";
+            var body = $"<p>您好 {account.Member.Name}：</p><p>請點擊以下連結完成信箱驗證：</p><p><a href='{emailVerifyLink}'>{emailVerifyLink}</a></p>" +
+                $"<p>此連結將在 1 小時後失效。</p>"; // 💡 補上友善提示";
+
+            // 3. 發送郵件 (重用 EmailService)
+            _ = Task.Run(async () =>
+            {
+                using var scope = _scopeFactory.CreateScope();
+                var emailService = scope.ServiceProvider.GetRequiredService<EmailService>();
+                await emailService.SendEmailAsync(account.Email, "會員中心 – 重新發送驗證信", body);
+            });
+
+            // 4. 寫入 Redis 冷卻時間 60 秒
+            await _cache.SetStringAsync(cacheKey, "1", new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(60) });
+            return "驗證信已發送，請至信箱查收";
+        }
+
+        public async Task<string> SendPhoneVerificationForCurrentMemberAsync(long memberId)
+        {
+            var cacheKey = $"PhoneVerify_CD_{memberId}";
+            if (await _cache.GetStringAsync(cacheKey) != null)
+                throw new InvalidOperationException("發送過於頻繁，請於 60 秒後再試。");
+
+            var account = await _context.Member.AsNoTracking()
+                .Select(a => new { a.MemberID, a.CellphoneNumber, IsPhoneVerified = a.MemberPhoneVerificationStatus != null && a.MemberPhoneVerificationStatus.IsPhoneVerified })
+                .FirstOrDefaultAsync(a => a.MemberID == memberId)
+                ?? throw new InvalidOperationException("帳號不存在");
+
+            if (account.IsPhoneVerified) throw new InvalidOperationException("您的手機號碼已經驗證過了");
+            if (string.IsNullOrWhiteSpace(account.CellphoneNumber)) throw new InvalidOperationException("請先在下方表單填寫並儲存您的手機號碼");
+
+            var normalized = NormalizePhoneNumber(account.CellphoneNumber);
+            if (!PhoneNumberRegex().IsMatch(normalized)) throw new InvalidOperationException("儲存的手機號碼格式不正確");
+
+            // 👇 插入點：如果是開發環境，直接存 Redis 並回傳，不要呼叫 Twilio
+            if (_env.IsDevelopment())
+            {
+                var fakeCode = "123456";
+                await _cache.SetStringAsync($"DevPhoneCode_{memberId}", fakeCode, new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10) });
+
+                _logger?.LogInformation($"[測試環境] 會員 {memberId} 的手機驗證碼為: {fakeCode}");
+
+                // 一樣要加上 60 秒發送冷卻時間
+                await _cache.SetStringAsync(cacheKey, "1", new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(60) });
+                return "驗證碼已發送 (測試模式)";
+            }
+
+            // 🚀 正式環境：重用 Twilio 發送邏輯
+            var verification = await VerificationResource.CreateAsync(to: normalized, channel: "sms", pathServiceSid: _twilioOpts.VerifyServiceSid);
+
+            // 寫入 Redis 冷卻時間 60 秒
+            await _cache.SetStringAsync(cacheKey, "1", new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(60) });
+            return "驗證碼已透過簡訊發送至您的手機";
+        }
+    }
+}

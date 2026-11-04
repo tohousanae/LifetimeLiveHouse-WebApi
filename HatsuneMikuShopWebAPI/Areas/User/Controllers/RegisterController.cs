@@ -8,49 +8,60 @@ namespace LifetimeLiveHouseWebAPI.Areas.User.Controllers
     [Area("User")]
     [Route("api/[controller]")]
     [ApiController]
-    public class RegisterController(IMemberRegisterServices memberRegister) : ControllerBase
+    public class RegisterController(
+        IMemberRegisterService registerService,
+        IMemberVerificationService verificationService) : ControllerBase
     {
-        private readonly IMemberRegisterServices _memberRegister = memberRegister;
+        private readonly IMemberRegisterService _registerService = registerService;
+        private readonly IMemberVerificationService _verificationService = verificationService;
 
-        // 💡 修正 1：移除 [Authorize]，加上 [AllowAnonymous] 允許未登入訪客註冊
+        // 📝 註冊帳號 (允許未登入客訪問)
         [AllowAnonymous]
+        [IgnoreAntiforgeryToken]
         [HttpPost("postRegisterMember")]
-        public async Task<IActionResult> Register(MemberRegisterDTO dto)
+        public async Task<IActionResult> Register(MemberRegisterDTO dto, [FromQuery] string? redirectUrl = null)
         {
-            var result = await _memberRegister.RegisterAsync(dto);
-            if (result.Result is BadRequestObjectResult badReq)
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            try
             {
-                return badReq;
+                // 💡 1. 這裡的 result 現在會直接接收到字串 (Name)，不再是 ActionResult
+                var userName = await _registerService.RegisterAsync(dto, redirectUrl);
+
+                // 💡 2. 直接回傳 Ok 與 userName
+                return Ok(new { Message = "註冊成功", Name = userName });
             }
-            return Ok(new { Message = "註冊成功", Name = result.Value });
+            catch (InvalidOperationException ex)
+            {
+                // 💡 3. 捕捉 Service 層拋出的業務邏輯錯誤 (例如 "信箱已被註冊")
+                return BadRequest(ex.Message);
+            }
+            catch (Exception)
+            {
+                // 💡 4. 捕捉未預期的嚴重錯誤
+                return StatusCode(500, "註冊過程發生錯誤，請稍後再試。");
+            }
         }
 
-        // 💡 修正 2：改為 HttpGet，符合點擊連結帶 Token 的驗證情境
-        [HttpGet("verify-email")]
-        public async Task<ActionResult<string>> VerifyEmail([FromQuery] string token)
+        // ✉️ 信箱連結驗證 (改用 POST 與 Body 接收，徹底隱藏 Token)
+        [AllowAnonymous]
+        [IgnoreAntiforgeryToken]
+        [HttpPost("verify-email")]
+        public async Task<ActionResult<object>> VerifyEmail([FromBody] VerifyEmailDto dto)
         {
-            return await _memberRegister.VerifyEmailAsync(token);
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            // 從 dto.Token 取出驗證碼傳給 Service
+            return await _verificationService.VerifyEmailAsync(dto.Token);
         }
 
-        //[HttpPost("sendValidationSMS")]
-        //public async Task<ActionResult<string>> SendValidationSMS(UserPhoneNumberDTO dto)
-        //{
-        //    if (!ModelState.IsValid) return BadRequest(ModelState);
-
-        //    try
-        //    {
-        //        return await _memberRegister.SendVerificationSMSAsync(dto.CellphoneNumber);
-        //    }
-        //    catch (InvalidOperationException ex)
-        //    {
-        //        return BadRequest(new { message = ex.Message });
-        //    }
-        //}
-
-        //[HttpPost("verify-phone")]
-        //public async Task<ActionResult<string>> VerifyPhone([FromBody] VerifyPhoneDTO dto)
-        //{
-        //    return await _memberRegister.VerifyPhoneAsync(dto.MemberId, dto.Code);
-        //}
+        // 📱 發送手機簡訊驗證碼
+        [Authorize] // 必須登入才能存取
+        [HttpPost("sendValidationSMS")]
+        public async Task<ActionResult<string>> SendValidationSMS([FromBody] UserPhoneNumberDTO dto)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            return await _verificationService.SendVerificationSMSAsync(dto.CellphoneNumber);
+        }
     }
 }

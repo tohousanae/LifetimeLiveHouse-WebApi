@@ -1,21 +1,17 @@
-﻿using LifetimeLiveHouse.Models;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
+
+namespace LifetimeLiveHouse.Models;
 
 public partial class Seat
 {
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public long SeatID { get; set; }   // 主鍵 P.K
+    public long SeatID { get; set; }
 
-    [ForeignKey("Member")]
     public long MemberID { get; set; }
 
-    [ForeignKey("Store")]
     public long StoreID { get; set; }
 
-    public virtual Member? Member { get; set; }
+    public virtual Member Member { get; set; } = null!;
 
     public virtual Store Store { get; set; } = null!;
-
 }

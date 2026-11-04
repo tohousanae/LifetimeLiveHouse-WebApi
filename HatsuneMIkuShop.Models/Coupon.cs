@@ -1,29 +1,27 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
+
+namespace LifetimeLiveHouse.Models;
 
 public partial class Coupon
 {
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public long cNo { get; set; }   // 主鍵 P.K
+    public long cNo { get; set; }
 
-    [StringLength(200)]
     public string? cDesc { get; set; }
 
-    [Column(TypeName = "money")]
-    [Range(0, double.MaxValue)]
-    public decimal Discount { get; set; } = 0;
+    public decimal Discount { get; set; }
 
-    [ForeignKey("Product")]
     public long ProductID { get; set; }
 
-    [ForeignKey("Member")]
     public long MemberID { get; set; }
+
+    public DateTime GetCouponDate { get; set; }
+
+    public DateTime ExpiresAt { get; set; }
+
+    public bool Used { get; set; }
 
     public virtual Member Member { get; set; } = null!;
 
     public virtual Product Product { get; set; } = null!;
-    //public virtual MemberStatus? MemberStatus { get; set; }
-    //public virtual MemberPicture? MemberPicture { get; set; }
-    //public virtual ICollection<ReBook> ReBooks { get; set; } = new List<ReBook>();
 }
