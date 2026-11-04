@@ -22,7 +22,7 @@ https://github.com/tohousanae/am3buger-vue
 <img width="2710" height="4995" alt="資料庫圖表" src="https://github.com/user-attachments/assets/29c8a2c3-72c8-419d-83a5-c9a3ffe93891" />
 
 ## 使用技術
-1. .net core 8
+1. .net core 10
 2. c#
 3. SQL Server
 
